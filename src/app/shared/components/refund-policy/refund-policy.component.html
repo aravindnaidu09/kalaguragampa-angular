@@ -1,1 +1,9 @@
 <p>refund-policy works!</p>
+<div class="refund-policy-container">
+  <h1 class="title">Refund Policy</h1>
+
+  <div class="section" *ngFor="let section of policySections" [@fadeIn]>
+    <h2 class="section-title">{{ section.title }}</h2>
+    <p class="section-content">{{ section.content }}</p>
+  </div>
+</div>
