@@ -1,0 +1,124 @@
+.footer-container {
+  background-color: #f8f8f8;
+  padding: 20px 40px;
+  font-family: 'Nunito', sans-serif;
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #ddd;
+
+    .footer-section {
+      width: 22%;
+
+      h4 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      p,
+      ul {
+        font-size: 14px;
+        color: #555;
+      }
+
+      a {
+        color: #333;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      a:hover {
+        color: #ff2929;
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+
+        li {
+          margin-bottom: 8px;
+        }
+      }
+
+      /* New styles for company info and payment icons */
+      &.company-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .payment-icons {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+
+        img {
+          height: 25px;
+        }
+      }
+    }
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+
+    .footer-left {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .footer-right {
+      text-align: right;
+
+      .social-links {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        .social-icon {
+          font-size: 18px;
+          color: #333;
+          text-decoration: none;
+          transition: color 0.3s ease;
+
+          &:hover {
+            color: #ff2929;
+          }
+        }
+      }
+    }
+  }
+
+  /* Media Queries for Responsiveness */
+  @media (max-width: 768px) {
+    .footer-top {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .footer-section {
+      width: 100%;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .payment-icons {
+      justify-content: center;
+    }
+
+    .social-links {
+      justify-content: center;
+    }
+  }
+}

@@ -1,1 +1,38 @@
-<p>login works!</p>
+<!-- Login Component HTML (app.component.html) -->
+<p-dialog header="Login" [(visible)]="display" [modal]="true" [closable]="false" width="50%">
+  <p-splitter styleClass="splitter-container">
+    <ng-template size="50%">
+      <!-- Left side with Login Form -->
+      <div class="login-form">
+        <h3>Login</h3>
+        <form (ngSubmit)="onSubmit()">
+          <div class="p-fluid">
+            <div class="p-field">
+              <label for="username">Username</label>
+              <input id="username" type="text" pInputText [(ngModel)]="username" name="username" required />
+            </div>
+            <div class="p-field">
+              <label for="password">Password</label>
+              <input id="password" type="password" pInputText [(ngModel)]="password" name="password" required />
+            </div>
+            <p-button label="Login" type="submit"></p-button>
+          </div>
+        </form>
+      </div>
+    </ng-template>
+
+    <ng-template size="50%">
+      <!-- Right side with Image and Explanation -->
+      <div class="login-info">
+        <img src="assets/sign-in-page.png" alt="Login Explanation" class="login-image" />
+        <div class="info-text">
+          <h4>Why Choose Our Platform?</h4>
+          <p>Our platform offers seamless and secure login for your account. Log in to access all features of our app, including personal settings, notifications, and more!</p>
+        </div>
+      </div>
+    </ng-template>
+  </p-splitter>
+</p-dialog>
+
+<!-- Button to open the dialog -->
+<p-button label="Open Login" icon="pi pi-sign-in" (click)="display = true"></p-button>

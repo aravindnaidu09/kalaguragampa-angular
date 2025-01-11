@@ -7,15 +7,7 @@
       <i class="pi pi-instagram mx-2"></i>
     </span>
     <span class="language-location-container">
-      <div class="language-dropdown">
-        <span>En</span>
-        <i class="pi pi-chevron-down"></i>
-      </div>
-
-      <div class="location-dropdown">
-        <span>Location</span>
-        <i class="pi pi-chevron-down"></i>
-      </div>
+      <p-select [options]="countryOptions" optionLabel="name" optionValue="id"></p-select>
     </span>
   </div>
 
@@ -40,10 +32,13 @@
         <i class="pi pi-search search-icon"></i>
       </div>
       <div class="icons">
-        <a href="#" class="account-icon">
+        <a href="#" class="account-icon" (click)="menu.toggle($event)">
           <i class="pi pi-user"></i>
           Account
         </a>
+
+        <p-menu #menu [model]="menuItems" [popup]="true" />
+
         <a href="#" class="cart-icon">
           <i class="pi pi-shopping-cart"></i>
           Cart
@@ -52,3 +47,7 @@
     </div>
   </div>
 </header>
+
+<ng-container *ngIf="showLoginDialog">
+  <app-login></app-login>
+</ng-container>
