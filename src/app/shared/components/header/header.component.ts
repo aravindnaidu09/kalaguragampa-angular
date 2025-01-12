@@ -9,6 +9,7 @@ import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { LoginComponent } from "../../../features/auth/_components/login/login.component";
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-header',
   imports: [
@@ -48,6 +49,8 @@ export class HeaderComponent implements OnInit {
     { id: 'can', name: 'Canada' },
   ];
 
+  constructor(private readonly router: Router) {}
+
   ngOnInit() {
     this.menuItems = [
       {label: 'Login/Signup', command: () => this.showLoginDialog = true}
@@ -65,6 +68,10 @@ export class HeaderComponent implements OnInit {
 
   toggleAccountDropdown() {
     this.isAccountDropdownOpen = !this.isAccountDropdownOpen;
+  }
+
+  redirectToHomePage() {
+    this.router.navigate([''])
   }
 
   showLogin() {

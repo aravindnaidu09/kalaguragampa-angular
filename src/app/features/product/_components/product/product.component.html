@@ -6,7 +6,7 @@
 
   <!-- Product Image -->
   <div class="product-image">
-    <img [src]="product.image" alt="{{ product.name }}" />
+    <img [src]="product.image" alt="{{ product.name }}" (click)="goToProductDetailsPage(product.name)" />
   </div>
 
   <!-- Product Details -->

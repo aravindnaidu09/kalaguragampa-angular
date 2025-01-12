@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product',
@@ -19,6 +20,9 @@ export class ProductComponent {
     rating: 4
   };
 
+
+  constructor(private router: Router) {}
+
   // Method to get the stars for the product rating
   getStars() {
     return new Array(this.product.rating).fill(0);
@@ -30,5 +34,9 @@ export class ProductComponent {
 
   addToWishlist() {
     console.log('Added to Wishlist');
+  }
+
+  goToProductDetailsPage(name: string) {
+    this.router.navigate([`/product/${name}`]);
   }
 }

@@ -1,45 +1,47 @@
-<div class="product-page">
-  <div class="product-left">
-    <!-- Product Image -->
-    <div class="product-image">
-      <img [src]="product.image" alt="{{ product.name }}" />
+<div class="product-container">
+  <div class="product-image">
+    <img src="assets/images/logo.png" alt="Airpods Max" />
+    <div class="thumbnail-container">
+      <img src="assets/images/logo.png" alt="Airpods Max Color Red" />
+      <img src="assets/images/logo.png" alt="Airpods Max Color Blue" />
+      <img src="assets/images/logo.png" alt="Airpods Max Color Black" />
+      <!-- Add more thumbnails as needed -->
     </div>
+  </div>
 
-    <!-- Product Color Options -->
-    <div class="color-options">
-      <label>Choose a Color</label>
-      <div class="color-options-wrapper">
-        <div *ngFor="let color of product.colors" class="color-option" [style.background-color]="color"></div>
+  <div class="product-details">
+    <h1>Airpods- Max</h1>
+    <p class="product-description">A perfect balance of exhilarating high-fidelity audio and the effortless magic of
+      AirPods.</p>
+    <div class="product-rating">
+      <span>⭐⭐⭐⭐⭐</span>
+      <span>(121)</span>
+    </div>
+    <div class="product-price">
+      <span>549.00</span>
+    </div>
+    <!-- <p class="financing">Suggested payments with 6 months special financing</p> -->
+
+    <div class="product-quantity-stock-info-wrapper">
+      <div class="product-quantity">
+        <button class="quantity-btn">-</button>
+        <label>{{ quantity }}</label>
+        <button class="quantity-btn">+</button>
+      </div>
+
+      <div class="stock-info">
+        <p>Only <span class="stock-count">12 Items Left</span>! Don’t miss it</p>
       </div>
     </div>
 
-    <!-- Product Description -->
-    <p>{{ product.description }}</p>
-
-    <!-- Product Availability -->
-    <p *ngIf="product.stock <= 10" class="stock-warning">
-      Only {{ product.stock }} Items Left! Don't miss it
-    </p>
-  </div>
-
-  <div class="product-right">
-    <!-- Product Title and Price -->
-    <h2>{{ product.name }}</h2>
-    <p class="price">${{ product.price }} or {{ product.monthlyPayment }}/month</p>
-
-    <!-- Suggested Payments -->
-    <p class="suggested-payments">Suggested payments with 6 months special financing</p>
-
-    <!-- Add to Cart and Buy Now -->
-    <div class="action-buttons">
+    <div class="product-actions">
       <button class="buy-now-btn">Buy Now</button>
-      <button class="add-to-cart-btn" (click)="addToCart()">Add to Cart</button>
+      <button class="add-to-cart-btn">Add to Cart</button>
     </div>
 
-    <!-- Delivery and Return Details -->
     <div class="delivery-info">
-      <p><strong>Free Delivery</strong> - Enter your Postal code for Delivery Availability</p>
-      <p><strong>Return Delivery</strong> - Free 30 days Delivery Returns</p>
+      <p>Free Delivery <span>Enter your Postal code for Delivery Availability</span></p>
+      <p>Return Delivery <span>Free 30days Delivery Returns. <a href="#">Details</a></span></p>
     </div>
   </div>
 </div>

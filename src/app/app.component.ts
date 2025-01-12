@@ -7,10 +7,10 @@ import { DashboardComponent } from "./shared/components/dashboard/dashboard.comp
 @Component({
   selector: 'app-root',
   imports: [
-    // RouterOutlet,
+    RouterOutlet,
     HeaderComponent,
     FooterComponent,
-    DashboardComponent
+    // DashboardComponent
 ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
