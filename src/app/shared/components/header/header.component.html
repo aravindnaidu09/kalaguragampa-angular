@@ -46,8 +46,10 @@
       </div>
     </div>
   </div>
+
+  <ng-container *ngIf="showLoginDialog">
+    <app-login></app-login>
+  </ng-container>
 </header>
 
-<ng-container *ngIf="showLoginDialog">
-  <app-login></app-login>
-</ng-container>
+

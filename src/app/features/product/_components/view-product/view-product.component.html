@@ -1,1 +1,45 @@
-<p>view-product works!</p>
+<div class="product-page">
+  <div class="product-left">
+    <!-- Product Image -->
+    <div class="product-image">
+      <img [src]="product.image" alt="{{ product.name }}" />
+    </div>
+
+    <!-- Product Color Options -->
+    <div class="color-options">
+      <label>Choose a Color</label>
+      <div class="color-options-wrapper">
+        <div *ngFor="let color of product.colors" class="color-option" [style.background-color]="color"></div>
+      </div>
+    </div>
+
+    <!-- Product Description -->
+    <p>{{ product.description }}</p>
+
+    <!-- Product Availability -->
+    <p *ngIf="product.stock <= 10" class="stock-warning">
+      Only {{ product.stock }} Items Left! Don't miss it
+    </p>
+  </div>
+
+  <div class="product-right">
+    <!-- Product Title and Price -->
+    <h2>{{ product.name }}</h2>
+    <p class="price">${{ product.price }} or {{ product.monthlyPayment }}/month</p>
+
+    <!-- Suggested Payments -->
+    <p class="suggested-payments">Suggested payments with 6 months special financing</p>
+
+    <!-- Add to Cart and Buy Now -->
+    <div class="action-buttons">
+      <button class="buy-now-btn">Buy Now</button>
+      <button class="add-to-cart-btn" (click)="addToCart()">Add to Cart</button>
+    </div>
+
+    <!-- Delivery and Return Details -->
+    <div class="delivery-info">
+      <p><strong>Free Delivery</strong> - Enter your Postal code for Delivery Availability</p>
+      <p><strong>Return Delivery</strong> - Free 30 days Delivery Returns</p>
+    </div>
+  </div>
+</div>

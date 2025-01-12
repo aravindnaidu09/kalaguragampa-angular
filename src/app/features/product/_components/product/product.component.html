@@ -1,1 +1,27 @@
-<p>product works!</p>
+<div class="product-card">
+  <!-- Wishlist Icon -->
+  <div class="wishlist-icon">
+    <i class="pi pi-heart" (click)="addToWishlist()"></i>
+  </div>
+
+  <!-- Product Image -->
+  <div class="product-image">
+    <img [src]="product.image" alt="{{ product.name }}" />
+  </div>
+
+  <!-- Product Details -->
+  <div class="product-details">
+    <div class="product-header">
+      <h4>{{ product.name }}</h4>
+      <span class="product-price">${{ product.price }}</span>
+    </div>
+    <p class="product-description">{{ product.description }}</p>
+    <div class="product-rating">
+      <span *ngFor="let star of getStars()">
+        <i class="pi pi-star" style="color: #f7a500;"></i>
+      </span>
+      <span class="rating-count">({{ product.ratingCount }})</span>
+    </div>
+    <button class="add-to-cart" (click)="addToCart()">Add to Cart</button>
+  </div>
+</div>
