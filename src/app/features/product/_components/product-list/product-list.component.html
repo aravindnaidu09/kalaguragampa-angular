@@ -1,1 +1,16 @@
-<p>product-list works!</p>
+<section class="product-list-container">
+  <!-- Shop by Category Section -->
+  <div class="shop-by-category">
+    <div class="header">
+      <h3>Shop by Category</h3>
+    </div>
+
+    <!-- Horizontal Scrollable Categories Section -->
+    <div class="categories">
+      <div *ngFor="let category of categories; let i = index" class="category-item"
+        [ngClass]="{'selected': selectedCategory === i}" (click)="selectCategory(i)">
+        <span>{{ category.name }}</span>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,3 +1,5 @@
+@import '../../styles/variables';
+
 .footer-container {
   background-color: #f8f8f8;
   padding: 20px 40px;
@@ -11,7 +13,6 @@
 
     .footer-section {
       width: 22%;
-
       h4 {
         font-size: 18px;
         margin-bottom: 10px;
@@ -31,7 +32,7 @@
       }
 
       a:hover {
-        color: #ff2929;
+        color: $secondary-color;
       }
 
       ul {
@@ -87,7 +88,7 @@
           transition: color 0.3s ease;
 
           &:hover {
-            color: #ff2929;
+            color: $secondary-color;
           }
         }
       }
@@ -120,5 +121,16 @@
     .social-links {
       justify-content: center;
     }
+  }
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .footer-logo {
+    height: 40px;
+    width: auto;
   }
 }
