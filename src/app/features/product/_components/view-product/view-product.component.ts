@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-view-product',
@@ -22,7 +23,14 @@ export class ViewProductComponent {
 
   quantity: number = 0;
 
+  constructor(private readonly router: Router) {}
+
   addToCart() {
     console.log('Product added to cart');
+    this.router.navigate(['/cart']);
+  }
+
+  goToCheckoutPage() {
+    this.router.navigate(['/checkout']);
   }
 }

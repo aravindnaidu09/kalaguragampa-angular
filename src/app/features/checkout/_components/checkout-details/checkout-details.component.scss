@@ -1,0 +1,21 @@
+.checkout-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+}
+
+.checkout-main {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+}
+
+app-shipping-billing {
+  flex: 1;
+}
+
+app-order-summary {
+  flex: 0.5;
+}

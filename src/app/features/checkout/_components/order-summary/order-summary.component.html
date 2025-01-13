@@ -1,0 +1,14 @@
+<div class="order-summary">
+  <h3>Your Order</h3>
+  <div class="order-item">
+    <p>{{ orderDetails.productName }} - {{ orderDetails.color }}</p>
+    <p>{{ orderDetails.quantity }} x ${{ orderDetails.price }}</p>
+  </div>
+  <div class="order-totals">
+    <p>Subtotal: ${{ orderDetails.subtotal }}</p>
+    <p>Discount: ${{ orderDetails.discount }}</p>
+    <p>Shipment cost: ${{ orderDetails.shipmentCost }}</p>
+    <p><strong>Grand total: ${{ orderDetails.grandTotal }}</strong></p>
+  </div>
+  <button class="continue-payment" (click)="goToPaymentPage()">Continue to payment</button>
+</div>

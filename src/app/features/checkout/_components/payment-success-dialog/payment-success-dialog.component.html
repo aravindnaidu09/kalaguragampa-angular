@@ -1,0 +1,36 @@
+<p-dialog header="Thanks for your order!" [(visible)]="isVisible" [modal]="true" [closable]="false" width="50vw" height="80vh">
+  <div class="payment-success-container">
+    <div class="status-icon">
+      <i class="pi pi-check-circle" style="font-size: 3rem; color: #28a745;"></i>
+    </div>
+
+    <div class="order-summary">
+      <p class="order-info">The order confirmation has been sent to <span>{{ config.data.email }}</span></p>
+      <div class="transaction-info">
+        <p><strong>Transaction Date:</strong> {{ config.data.transactionDate }}</p>
+        <p><strong>Payment Method:</strong> {{ config.data.paymentMethod }}</p>
+        <p><strong>Shipping Method:</strong> {{ config.data.shippingMethod }}</p>
+        <p><strong>Track Order:</strong> <a href="#">Track Order</a></p>
+      </div>
+
+      <div class="order-details">
+        <p><strong>Your Order:</strong></p>
+        <div class="order-item">
+          <img src="{{ config.data.productImage }}" alt="{{ config.data.productName }}" width="50" />
+          <div>
+            <h3>{{ config.data.productName }}</h3>
+            <p>{{ config.data.productColor }}</p>
+          </div>
+          <p class="product-price">{{ config.data.productPrice | currency }}</p>
+        </div>
+        <p><strong>Subtotal:</strong> {{ config.data.subtotal | currency }}</p>
+        <p><strong>Applied discount code:</strong> {{ config.data.discountCode }}</p>
+        <p><strong>Discount:</strong> -{{ config.data.discount | currency }}</p>
+        <p><strong>Shipment cost:</strong> {{ config.data.shipmentCost | currency }}</p>
+        <p><strong>Grand total:</strong> {{ config.data.grandTotal | currency }}</p>
+      </div>
+
+      <button (click)="closeDialog()" class="continue-shopping-btn">Continue shopping</button>
+    </div>
+  </div>
+</p-dialog>

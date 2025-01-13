@@ -30,6 +30,7 @@ export class ProductComponent {
 
   addToCart() {
     console.log('Added to Cart');
+    this.router.navigate(['/cart']);
   }
 
   addToWishlist() {

@@ -1,1 +1,52 @@
-<p>cart-details works!</p>
+<div class="cart-container">
+  <div class="cart-items">
+    <h2>Cart</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Remove</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of cartItems">
+          <td>
+            <img [src]="item.imageUrl" alt="{{ item.name }}" class="cart-item-image" />
+            <div>
+              <p>{{ item.name }}</p>
+              <p>{{ item.color }}</p>
+            </div>
+          </td>
+          <td>
+            <button (click)="updateQuantity(item, 'decrement')">-</button>
+            <input type="number" [value]="item.quantity" readonly />
+            <button (click)="updateQuantity(item, 'increment')">+</button>
+          </td>
+          <td>{{ item.price | currency }}</td>
+          <td>
+            <button (click)="removeItem(item.id)">Remove</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="checkout-summary">
+    <h2>Checkout Summary</h2>
+    <div class="summary-item">
+      <p>Subtotal:</p>
+      <p>{{ subtotal | currency }}</p>
+    </div>
+    <div class="summary-item">
+      <p>Discount:</p>
+      <p>{{ discount | currency }}</p>
+    </div>
+    <div class="summary-item">
+      <p>Grand Total:</p>
+      <p>{{ grandTotal | currency }}</p>
+    </div>
+    <button class="checkout-btn" (click)="goToCheckoutPage()">Checkout now</button>
+  </div>
+</div>
