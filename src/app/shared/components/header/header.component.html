@@ -1,55 +1,68 @@
-<header class="header-container">
-  <div class="top-bar">
-    <span class="contact-info">
-      <i class="pi pi-facebook mx-2"></i>
-      <i class="pi pi-twitter mx-2"></i>
-      <i class="pi pi-youtube mx-2"></i>
-      <i class="pi pi-instagram mx-2"></i>
-    </span>
-    <span class="language-location-container">
-      <p-select [options]="countryOptions" optionLabel="name" optionValue="id"></p-select>
-    </span>
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="social-icons">
+    <img src="../../../../assets/images/facebook.png" alt="Facebook" />
+    <img src="../../../../assets/images/youtube.png" alt="YouTube" />
+    <img src="../../../../assets/images/twitter.png" alt="Twitter" />
+    <img src="../../../../assets/images/instagram.png" alt="Instagram" />
   </div>
-
-  <div class="header-content">
-    <div class="logo" (click)="redirectToHomePage()">
-      <img src="../../../../assets/images/logo.png" alt="KalaguraGampa Logo" />
-      <span>KalaguraGampa</span>
+  <div class="top-bar-right">
+    <div class="location-dropdown">
+      <span>Location:</span>
+      <select>
+        <option>Australia</option>
+        <option>Canada</option>
+        <option>Europe</option>
+        <option>India</option>
+        <option>Singapore</option>
+        <option>UK</option>
+        <option>USA</option>
+      </select>
     </div>
-
-    <nav class="nav-links">
-      <ul>
-        <li><a href="#">Categories</a></li>
-        <li><a href="#">Deals</a></li>
-        <li><a href="#">What’s New</a></li>
-        <li><a href="#">Delivery</a></li>
-      </ul>
-    </nav>
-
-    <div class="search-and-icons">
-      <div class="search-container">
-        <input class="form-control" type="text" placeholder="Search Product" />
-        <i class="pi pi-search search-icon"></i>
-      </div>
-      <div class="icons">
-        <a href="#" class="account-icon" (click)="menu.toggle($event)">
-          <i class="pi pi-user"></i>
-          Account
-        </a>
-
-        <p-menu #menu [model]="menuItems" [popup]="true" />
-
-        <a href="#" class="cart-icon">
-          <i class="pi pi-shopping-cart"></i>
-          Cart
-        </a>
-      </div>
+    <div class="customer-care">
+      <img src="../../../../assets/images/customer-care.png" alt="Customer Care" />
+      <span>+001234567890</span>
     </div>
   </div>
+</div>
 
-  <ng-container *ngIf="showLoginDialog">
-    <app-login></app-login>
-  </ng-container>
+<!-- Header -->
+<header class="app-header">
+  <div class="logo">
+    <img src="../../../../assets/images/logo.png" alt="Kalaguragampa Logo" />
+    <span class="brand-text">Kalaguragampa</span>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Search for products..." />
+    <button class="search-button">
+      <img src="../../../../assets/images/search.png" width="20" height="20" alt="Search Icon" />
+    </button>
+  </div>
+
+  <div class="header-actions">
+    <div class="account-wrapper" (click)="toggleMenu()" aria-haspopup="true">
+      <!-- Account Section -->
+      <div class="action-item account-item">
+        <img src="../../../../assets/images/Account.png" width="20" height="20" alt="Account Icon" />
+        <span>Account</span>
+      </div>
+
+      <!-- Dropdown Menu -->
+      <app-menu-dropdown *ngIf="isMenuOpen" [menuItems]="menuItems" (menuAction)="onMenuAction($event)"
+        aria-label="Account Dropdown Menu"></app-menu-dropdown>
+    </div>
+
+
+    <div class="action-item">
+      <img src="../../../../assets/images/Wishlist.png" width="20" height="20" />
+      <span>Wishlist</span>
+    </div>
+    <div class="action-item">
+      <img src="../../../../assets/images/cart.png" width="20" height="20" />
+      <span>Cart</span>
+    </div>
+  </div>
 </header>
 
-
+<app-login [isVisible]="isLoginDialogVisible" (closeLoginDialog)="closeLoginDialog()"></app-login>

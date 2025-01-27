@@ -36,10 +36,10 @@
     <div class="footer-section">
       <h4>Policy</h4>
       <ul>
-        <li><a href="#">Refund</a></li>
-        <li><a href="#">Privacy</a></li>
-        <li><a href="#">Shipping</a></li>
-        <li><a href="#">Terms of Services</a></li>
+        <li><a class="policy-links" (click)="goToPolicyPage('/refund-policy')">Refund</a></li>
+        <li><a class="policy-links" (click)="goToPolicyPage('/privacy-policy')">Privacy</a></li>
+        <li><a class="policy-links" (click)="goToPolicyPage('/shipping-policy')">Shipping</a></li>
+        <li><a class="policy-links" (click)="goToPolicyPage('/terms-services')">Terms of Services</a></li>
       </ul>
     </div>
 

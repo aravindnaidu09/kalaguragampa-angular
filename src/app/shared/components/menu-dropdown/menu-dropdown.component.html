@@ -1,0 +1,29 @@
+<div class="menu-dropdown">
+  <ul class="menu-list" *ngIf="menuItems.length > 0" role="menu">
+    <li
+      *ngFor="let item of menuItems"
+      class="menu-item"
+      [class.disabled]="item.disabled"
+      (click)="selectMenuItem(item)"
+      role="menuitem"
+      [attr.aria-disabled]="item.disabled"
+    >
+      <span *ngIf="item.icon" class="menu-item-icon">{{ item.icon }}</span>
+      {{ item.label }}
+
+      <!-- Nested submenu -->
+      <ul *ngIf="item.children?.length" class="submenu">
+        <li
+          *ngFor="let subItem of item.children"
+          class="submenu-item"
+          (click)="selectMenuItem(subItem, $event)"
+          [class.disabled]="subItem.disabled"
+          [attr.aria-disabled]="subItem.disabled"
+          role="menuitem"
+        >
+          {{ subItem.label }}
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

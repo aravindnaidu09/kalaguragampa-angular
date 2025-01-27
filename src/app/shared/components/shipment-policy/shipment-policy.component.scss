@@ -1,11 +1,10 @@
-@import url('/src/app/shared/styles/_font.scss');
-@import url('/src/app/shared/styles/_variables.scss');
+@import '../../../../styles/_variables.scss';
+
 
 .shipping-policy-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  font-family: $Nunito-Regular;
 
   .title {
     font-size: 2rem;

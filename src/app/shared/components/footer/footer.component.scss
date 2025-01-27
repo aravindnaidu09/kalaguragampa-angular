@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@import '../../../../styles/variables';
 
 .footer-container {
   background-color: #f8f8f8;
@@ -93,6 +93,10 @@
         }
       }
     }
+  }
+
+  .policy-links {
+    cursor: pointer;
   }
 
   /* Media Queries for Responsiveness */

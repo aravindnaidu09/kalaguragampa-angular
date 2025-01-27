@@ -11,6 +11,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^19.0.0",
+    "@angular/cdk": "^19.1.1",
     "@angular/common": "^19.0.0",
     "@angular/compiler": "^19.0.0",
     "@angular/core": "^19.0.0",
@@ -18,15 +19,10 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
-    "@fortawesome/angular-fontawesome": "^1.0.0",
-    "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@ngxs/devtools-plugin": "^19.0.0",
     "@ngxs/logger-plugin": "^19.0.0",
     "@ngxs/store": "^19.0.0",
-    "@primeng/themes": "^19.0.2",
     "bootstrap": "^5.3.3",
-    "primeicons": "^7.0.0",
-    "primeng": "^19.0.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

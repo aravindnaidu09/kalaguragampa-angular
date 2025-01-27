@@ -31,14 +31,13 @@
                 "input": "public"
               },
               "src/assets",
-              "src/app/shared/styles/fonts"
+              "src/styles/fonts"
             ],
             "styles": [
               "src/styles.scss",
-              "src/app/shared/styles/_mixins.scss",
-              "src/app/shared/styles/_variables.scss",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/primeicons/primeicons.css"
+              "src/styles/_mixins.scss",
+              "src/styles/_variables.scss",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": []
           },

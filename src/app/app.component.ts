@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { FooterComponent } from "./shared/components/footer/footer.component";
 import { DashboardComponent } from "./shared/components/dashboard/dashboard.component";
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,7 @@ import { DashboardComponent } from "./shared/components/dashboard/dashboard.comp
     // DashboardComponent
 ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {
   title = 'kalaguragampa-angular';
