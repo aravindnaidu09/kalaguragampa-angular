@@ -1,133 +1,57 @@
-<div class="login-dialog" *ngIf="isVisible">
-  <div class="dialog-container">
-    <!-- Left Image Section -->
-    <div class="dialog-image">
-      <img src="../../../../../assets/images/sign-in-page.png" alt="Kalagura Gampa" />
-    </div>
+<div class="login-with-otp">
+  <!-- Left Image Section -->
+  <div class="left-section">
+    <img src="../../../../../assets/images/sign-in-page.png" alt="Kalagura Gampa" />
+  </div>
 
-    <!-- Right Content Section -->
-    <div class="dialog-content">
-      <div class="dialog-header">
-        <h2 *ngIf="!isRegistering">LOGIN</h2>
-        <h2 *ngIf="isRegistering">REGISTER</h2>
-        <button class="close-button" (click)="closeDialog()">×</button>
+  <!-- Right Content Section -->
+  <div class="right-section">
+    <h2 class="title">Let's Sign You In</h2>
+    <p class="subtitle">Welcome</p>
+
+    <!-- Login Form -->
+    <form [formGroup]="loginOtpForm" (ngSubmit)="onSubmit()">
+      <!-- Mobile Number Input -->
+      <div class="form-group">
+        <label for="mobileNumber">Mobile Number</label>
+        <input
+          type="text"
+          id="mobileNumber"
+          class="form-control"
+          placeholder="Enter your mobile number"
+          formControlName="mobileNumber"
+        />
+        <span class="validation-message" *ngIf="loginOtpForm.get('mobileNumber')?.invalid && loginOtpForm.get('mobileNumber')?.touched">
+          Valid mobile number is required.
+        </span>
+        <p class="info-text">Send OTP to the provided mobile number</p>
       </div>
 
-      <!-- Login Options -->
-      <div class="dialog-options" *ngIf="!isRegistering">
-        <button class="option-button" [class.active]="activeOption === 'otp'" (click)="setActiveOption('otp')">
-          LOGIN WITH OTP
-        </button>
-        <button class="option-button" [class.active]="activeOption === 'password'"
-          (click)="setActiveOption('password')">
-          LOGIN WITH PASSWORD
-        </button>
+      <!-- OTP Input -->
+      <div class="form-group" *ngIf="isOtpSent">
+        <label for="otp">OTP</label>
+        <input
+          type="text"
+          id="otp"
+          class="form-control"
+          placeholder="Enter OTP"
+          formControlName="otp"
+          maxlength="5"
+        />
+        <span class="validation-message" *ngIf="loginOtpForm.get('otp')?.invalid && loginOtpForm.get('otp')?.touched">
+          OTP must be 5 characters long.
+        </span>
       </div>
 
-      <!-- Login with OTP Form -->
-      <form *ngIf="!isRegistering && activeOption === 'otp'" [formGroup]="loginForm" (ngSubmit)="onSendOtp()">
-        <div class="dialog-input">
-          <div class="country-input">
-            <span>+91</span>
-            <input class="form-control" type="text" placeholder="Mobile Number" formControlName="mobileNumber" />
-          </div>
-          <span *ngIf="loginForm.get('mobileNumber')?.invalid && loginForm.get('mobileNumber')?.touched"
-            class="error-message">
-            Mobile number is required.
-          </span>
-        </div>
-        <button type="submit" class="submit-button mt-2" [disabled]="loginForm.invalid">SEND OTP</button>
-      </form>
+      <!-- Sign In Button -->
+      <button type="submit" class="btn-signin" [disabled]="loginOtpForm.invalid">
+        Sign In
+      </button>
+    </form>
 
-      <!-- Login with Password Form -->
-      <form *ngIf="!isRegistering && activeOption === 'password'" [formGroup]="loginPasswordForm"
-        (ngSubmit)="onPasswordLogin()">
-        <div class="dialog-input">
-          <input type="text" placeholder="Email Address/ Enter Mobile Number *" formControlName="emailOrMobile" />
-          <span *ngIf="loginPasswordForm.get('emailOrMobile')?.invalid && loginPasswordForm.get('emailOrMobile')?.touched"
-            class="error-message">
-            Email or Mobile Number is required.
-          </span>
-        </div>
-
-        <div class="dialog-input">
-          <input type="password" placeholder="Password" formControlName="password" />
-          <span *ngIf="loginPasswordForm.get('password')?.invalid && loginPasswordForm.get('password')?.touched"
-            class="error-message">
-            Password is required.
-          </span>
-        </div>
-
-        <div class="additional-info">
-          <p>
-            Don't have an Account?
-            <a href="#" (click)="switchToRegister($event)">Register</a>
-          </p>
-          <a href="/forgot-password" class="forgot-password-link">Forgot Password?</a>
-        </div>
-
-        <button type="submit" class="submit-button" [disabled]="loginPasswordForm.invalid">LOGIN</button>
-      </form>
-
-      <!-- Register Form -->
-      <form *ngIf="isRegistering" [formGroup]="registerForm" (ngSubmit)="onRegister()">
-        <div class="dialog-input">
-          <input type="text" class="form-control" placeholder="Username" formControlName="username" />
-          <span *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
-            class="error-message">
-            Username is required.
-          </span>
-        </div>
-        <div class="dialog-input">
-          <input type="email" class="form-control" placeholder="Email" formControlName="email" />
-          <span *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="error-message">
-            Valid email is required.
-          </span>
-        </div>
-        <div class="dialog-input">
-          <input type="text" class="form-control" placeholder="First Name" formControlName="first_name" />
-          <span *ngIf="registerForm.get('first_name')?.invalid && registerForm.get('first_name')?.touched"
-            class="error-message">
-            First name is required.
-          </span>
-        </div>
-        <div class="dialog-input">
-          <input type="text" class="form-control" placeholder="Last Name" formControlName="last_name" />
-          <span *ngIf="registerForm.get('last_name')?.invalid && registerForm.get('last_name')?.touched"
-            class="error-message">
-            Last name is required.
-          </span>
-        </div>
-        <div class="dialog-input">
-          <input type="text" class="form-control" placeholder="Mobile Number" formControlName="mobile" />
-          <span *ngIf="registerForm.get('mobile')?.invalid && registerForm.get('mobile')?.touched"
-            class="error-message">
-            Mobile number is required.
-          </span>
-        </div>
-        <div class="dialog-input">
-          <input type="password" class="form-control" placeholder="Password" formControlName="password" />
-          <span *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-            class="error-message">
-            Password is required.
-          </span>
-        </div>
-        <div class="dialog-input">
-          <input type="password" class="form-control" placeholder="Confirm Password"
-            formControlName="confirm_password" />
-          <span *ngIf="registerForm.get('confirm_password')?.invalid && registerForm.get('confirm_password')?.touched"
-            class="error-message">
-            Confirm password is required.
-          </span>
-        </div>
-        <button type="submit" class="submit-button mt-2" [disabled]="registerForm.invalid">REGISTER</button>
-        <div class="additional-info">
-          <p>
-            Already have an account?
-            <a href="#" (click)="switchToLogin($event)">Login</a>
-          </p>
-        </div>
-      </form>
-    </div>
+    <!-- Register Link -->
+    <p class="register-text">
+      Don't have an account? <a href="#" (click)="onRegister()">Register</a>
+    </p>
   </div>
 </div>

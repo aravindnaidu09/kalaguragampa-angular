@@ -18,68 +18,31 @@ export class LoginComponent {
   @Input() isVisible: boolean = false;
   @Output() closeLoginDialog = new EventEmitter<boolean>();
 
-  isRegistering: boolean = false;
-  activeOption: string = 'otp';
-
-  loginForm: FormGroup;
-  loginPasswordForm: FormGroup;
-  registerForm: FormGroup;
+  loginOtpForm: FormGroup;
+  isOtpSent: boolean = false;
 
   constructor(private fb: FormBuilder) {
-    this.loginForm = this.fb.group({
-      mobileNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-    });
-
-    this.loginPasswordForm = this.fb.group({
-      emailOrMobile: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-    });
-
-    this.registerForm = this.fb.group({
-      username: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      first_name: ['', Validators.required],
-      last_name: ['', Validators.required],
-      mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      password: ['', Validators.required],
-      confirm_password: ['', Validators.required],
+    this.loginOtpForm = this.fb.group({
+      mobileNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]], // Mobile number validation
+      otp: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]], // OTP validation
     });
   }
 
-  setActiveOption(option: string) {
-    this.activeOption = option;
-  }
-
-  onSendOtp() {
-    if (this.loginForm.valid) {
-      alert('OTP Sent');
-    }
-  }
-
-  onPasswordLogin() {
-    if (this.loginPasswordForm.valid) {
-      alert('Login Successful');
+  onSubmit() {
+    if (this.loginOtpForm.valid) {
+      if (!this.isOtpSent) {
+        // Simulate OTP sent logic
+        this.isOtpSent = true;
+        alert('OTP sent successfully to your mobile number.');
+      } else {
+        // Simulate successful login
+        alert('Logged in successfully.');
+      }
     }
   }
 
   onRegister() {
-    if (this.registerForm.valid) {
-      alert('Registration Successful');
-    }
-  }
-
-  switchToRegister(event: Event) {
-    event.preventDefault();
-    this.isRegistering = true;
-  }
-
-  switchToLogin(event: Event) {
-    event.preventDefault();
-    this.isRegistering = false;
-  }
-
-  closeDialog() {
-    this.closeLoginDialog.emit(true);
+    alert('Redirect to Registration Page');
   }
 
 }

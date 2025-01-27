@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { LoginComponent } from "../../../features/auth/_components/login/login.component";
 import { Router } from '@angular/router';
 import { MenuDropdownComponent, MenuItem } from '../menu-dropdown/menu-dropdown.component';
+import { DialogComponent } from '../dialog/dialog.component';
 
 @Component({
   selector: 'app-header',
@@ -11,7 +12,8 @@ import { MenuDropdownComponent, MenuItem } from '../menu-dropdown/menu-dropdown.
     CommonModule,
     FormsModule,
     LoginComponent,
-    MenuDropdownComponent
+    MenuDropdownComponent,
+    DialogComponent
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
@@ -87,8 +89,7 @@ export class HeaderComponent implements OnInit {
   }
 
   loginWithOtp(): void {
-    console.log('Redirect to OTP Login');
-    // Implement OTP login logic
+    this.isLoginDialogVisible = !this.isLoginDialogVisible;
   }
 
   loginWithPassword(): void {

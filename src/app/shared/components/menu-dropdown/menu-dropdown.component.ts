@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-
 export interface MenuItem {
   label: string;
   icon?: string;

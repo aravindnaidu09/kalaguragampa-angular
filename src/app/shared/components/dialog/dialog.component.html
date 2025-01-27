@@ -1,0 +1,16 @@
+<div class="dialog-backdrop" *ngIf="isVisible">
+  <div class="dialog-container" @dialogAnimation>
+    <!-- Dialog Header -->
+    <!-- <div class="dialog-header">
+      <h3>{{ dialogTitle }}</h3>
+      <button class="close-button" (click)="close()">×</button>
+    </div> -->
+
+    <!-- Dialog Content -->
+    <div class="dialog-content">
+      <ng-container *ngIf="contentTemplate">
+        <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+      </ng-container>
+    </div>
+  </div>
+</div>
