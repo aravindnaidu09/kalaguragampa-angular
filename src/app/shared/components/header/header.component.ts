@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Signal, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from "../../../features/auth/_components/login/login.component";
 import { Router } from '@angular/router';
 import { MenuDropdownComponent, MenuItem } from '../menu-dropdown/menu-dropdown.component';
 import { DialogComponent } from '../dialog/dialog.component';
 import { SelectDropdownComponent } from "../select-dropdown/select-dropdown.component";
+import { CartWishlistService } from '../../../core/services/cart-wishlist.service';
 
 @Component({
   selector: 'app-header',
@@ -15,12 +16,14 @@ import { SelectDropdownComponent } from "../select-dropdown/select-dropdown.comp
     LoginComponent,
     MenuDropdownComponent,
     DialogComponent,
-    SelectDropdownComponent
-],
+  ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnInit {
+
+  wishlistCount: Signal<number> = signal(0);
+  cartlistCount: Signal<number> = signal(0);
 
   isMenuOpen = false; // Menu visibility state
   loginState = false; // Track login state
@@ -69,11 +72,15 @@ export class HeaderComponent implements OnInit {
   }
 
   constructor(private readonly router: Router,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private readonly cartWishlistService: CartWishlistService
   ) { }
 
   ngOnInit() {
     this.setMenuItems();
+
+    this.wishlistCount = this.cartWishlistService.wishlistCount; // Signal for wishlist
+    this.cartlistCount = this.cartWishlistService.cartCount; // Signal for cart
   }
 
   setMenuItems(): void {
@@ -107,5 +114,13 @@ export class HeaderComponent implements OnInit {
 
   onSelectionChange(value: any): void {
     this.selectedCountry = value;
+  }
+
+  goToHomePage() {
+    this.router.navigate(['/'])
+  }
+
+  goToCartPage() {
+    this.router.navigate(['/cart']);
   }
 }

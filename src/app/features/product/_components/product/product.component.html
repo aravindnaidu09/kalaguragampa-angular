@@ -1,7 +1,8 @@
 <div class="product-card">
   <!-- Wishlist Icon -->
   <div class="wishlist-icon">
-    <i class="pi pi-heart" (click)="addToWishlist()"></i>
+    <img src="../../../../../assets/images/Wishlist.png" width="22px" height="22px" (click)="addToWishlist()" />
+    <!-- <i class="pi pi-heart" ></i> -->
   </div>
 
   <!-- Product Image -->
@@ -13,12 +14,12 @@
   <div class="product-details">
     <div class="product-header">
       <h4>{{ product.name }}</h4>
-      <span class="product-price">{{ product.price }}</span>
+      <span class="product-price">Rs. {{ product.price }}</span>
     </div>
     <p class="product-description">{{ product.description }}</p>
     <div class="product-rating">
+      <span>⭐⭐⭐⭐⭐</span>
       <span *ngFor="let star of getStars()">
-        <i class="pi pi-star" style="color: #f7a500;"></i>
       </span>
       <span class="rating-count">({{ product.ratingCount }})</span>
     </div>

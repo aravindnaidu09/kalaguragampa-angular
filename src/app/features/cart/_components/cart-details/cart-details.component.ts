@@ -8,33 +8,17 @@ import { Router } from '@angular/router';
     CommonModule
   ],
   templateUrl: './cart-details.component.html',
-  styleUrl: './cart-details.component.scss'
+  styleUrls: ['./cart-details.component.scss'],
 })
 export class CartDetailsComponent {
   cartItems = [
     {
       id: 1,
-      name: 'Cardigan',
-      color: 'Green',
+      name: 'Henna Powder',
+      description: 'Mehandi Powder | 500 Grams',
       quantity: 1,
-      price: 2500,
-      imageUrl: 'assets/cardigan.jpg',
-    },
-    {
-      id: 2,
-      name: 'Cahier Leather Shoulder Bag',
-      color: 'Grey',
-      quantity: 1,
-      price: 2500,
-      imageUrl: 'assets/bag.jpg',
-    },
-    {
-      id: 3,
-      name: 'Nordgreen Watches',
-      color: 'Brown',
-      quantity: 1,
-      price: 2500,
-      imageUrl: 'assets/watch.jpg',
+      price: 330,
+      imageUrl: '../../../../../assets/images/Henna-2_2nd.jpg',
     },
   ];
 
@@ -54,7 +38,7 @@ export class CartDetailsComponent {
   }
 
   removeItem(itemId: number) {
-    this.cartItems = this.cartItems.filter(item => item.id !== itemId);
+    this.cartItems = this.cartItems.filter((item) => item.id !== itemId);
     this.calculateTotal();
   }
 

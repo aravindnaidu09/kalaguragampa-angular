@@ -113,6 +113,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    cursor: pointer;
     /* Reduced gap between logo and text */
 
     img {
@@ -203,6 +204,24 @@
       span {
         font-size: 14px;
         /* Reduced font size */
+      }
+
+      .badge {
+        position: absolute;
+        top: 10px; /* Adjust position for proper placement */
+        right: 4px; /* Adjust position for proper placement */
+        background-color: #fbc02d; /* Theme yellow for badge */
+        color: #333; /* Text color inside badge */
+        font-size: 10px;
+        font-weight: bold;
+        padding: 3px 6px; /* Padding for badge */
+        border-radius: 50%; /* Circular badge */
+        min-width: 18px; /* Minimum size for small counts */
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for 3D effect */
       }
 
       &:hover {

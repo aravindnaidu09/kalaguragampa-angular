@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { CartWishlistService } from '../../../../core/services/cart-wishlist.service';
 
 @Component({
   selector: 'app-product',
@@ -12,16 +13,18 @@ import { Router } from '@angular/router';
 })
 export class ProductComponent {
   product = {
-    name: 'Henna',
-    image: '../../../../../assets/images/Henna-2_2nd.jpg',  // Add the path to your product image
-    description: 'stained veneer/black',
-    price: 239.00,
-    ratingCount: 121,
+    name: 'Henna Powder',
+    image: '../../../../../assets/images/Henna-2_2nd.jpg',
+    description: 'Mehandi Powder | 500 Grams',
+    price: 330.00,
+    ratingCount: 10,
     rating: 4
   };
 
 
-  constructor(private router: Router) {}
+  constructor(private router: Router,
+    private readonly cartWishListService: CartWishlistService
+  ) {}
 
   // Method to get the stars for the product rating
   getStars() {
@@ -30,11 +33,13 @@ export class ProductComponent {
 
   addToCart() {
     console.log('Added to Cart');
-    this.router.navigate(['/cart']);
+    // this.router.navigate(['/cart']);
+    this.cartWishListService.updateCartCount(1);
   }
 
   addToWishlist() {
     console.log('Added to Wishlist');
+    this.cartWishListService.updateWishlistCount(1);
   }
 
   goToProductDetailsPage(name: string) {
