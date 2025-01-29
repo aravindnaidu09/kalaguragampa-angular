@@ -121,6 +121,10 @@ export class HeaderComponent implements OnInit {
   }
 
   goToCartPage() {
+    if (!(this.cartlistCount() > 0)) {
+      alert('Add products to your cart to view them.');
+      return;
+    }
     this.router.navigate(['/cart']);
   }
 }
