@@ -1,0 +1,11 @@
+<div class="hero-section">
+  <div class="slider">
+    <img
+      *ngFor="let image of images; let i = index"
+      [src]="image"
+      [class.active]="i === currentIndex"
+      [class.inactive]="i !== currentIndex"
+      alt="Hero Image {{ i + 1 }}"
+    />
+  </div>
+</div>

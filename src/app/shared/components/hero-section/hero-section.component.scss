@@ -1,0 +1,36 @@
+.hero-section {
+  width: 100%;
+  height: 400px; /* Adjust as per your needs */
+  overflow: hidden;
+  position: relative;
+
+  .slider {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+    }
+
+    img.active {
+      opacity: 1;
+      transform: translateX(0);
+      z-index: 1;
+    }
+
+    img.inactive {
+      opacity: 0;
+      transform: translateX(100%);
+      z-index: 0;
+    }
+  }
+}

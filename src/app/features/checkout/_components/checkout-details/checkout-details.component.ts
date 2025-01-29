@@ -14,7 +14,7 @@ import { StepperComponent } from "../stepper/stepper.component";
     FormsModule,
     OrderSummaryComponent,
     PaymentComponent,
-    ShipmentPolicyComponent,
+    // ShipmentPolicyComponent,
     ShippingBillingComponent,
     StepperComponent
 ],
