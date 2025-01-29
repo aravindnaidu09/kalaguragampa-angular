@@ -206,24 +206,6 @@
         /* Reduced font size */
       }
 
-      .badge {
-        position: absolute;
-        top: 10px; /* Adjust position for proper placement */
-        right: 4px; /* Adjust position for proper placement */
-        background-color: #fbc02d; /* Theme yellow for badge */
-        color: #333; /* Text color inside badge */
-        font-size: 10px;
-        font-weight: bold;
-        padding: 3px 6px; /* Padding for badge */
-        border-radius: 50%; /* Circular badge */
-        min-width: 18px; /* Minimum size for small counts */
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for 3D effect */
-      }
-
       &:hover {
         color: #682f12;
         /* Theme color on hover */
@@ -259,4 +241,49 @@
     }
   }
 
+}
+
+
+.wishlist-image {
+  position: relative;
+}
+
+.wishlist-badge {
+  position: absolute;
+  top: 6px; /* Adjust position for proper placement */
+  right: 80px; /* Move away from the right edge to avoid overlap */
+  background-color: #fbc02d; /* Theme yellow for badge */
+  color: #333; /* Text color inside badge */
+  font-size: 10px;
+  font-weight: bold;
+  padding: 3px 6px; /* Padding for badge */
+  border-radius: 50%; /* Circular badge */
+  min-width: 18px; /* Minimum size for small counts */
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for 3D effect */
+}
+
+.cart-image {
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: 5px; /* Adjust position for proper placement */
+  right: 10px; /* Move away from the right edge to avoid overlap */
+  background-color: #fbc02d; /* Theme yellow for badge */
+  color: #333; /* Text color inside badge */
+  font-size: 10px;
+  font-weight: bold;
+  padding: 3px 6px; /* Padding for badge */
+  border-radius: 50%; /* Circular badge */
+  min-width: 18px; /* Minimum size for small counts */
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for 3D effect */
 }
