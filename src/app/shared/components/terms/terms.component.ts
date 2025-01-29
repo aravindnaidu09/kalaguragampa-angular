@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './terms.component.scss'
 })
 export class TermsComponent {
-
+  email: string = 'support@kalaguragampa.com';
 }
