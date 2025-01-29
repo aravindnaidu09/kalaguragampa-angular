@@ -25,14 +25,5 @@ import {
   ]
 })
 export class ShipmentPolicyComponent {
-  policySections = [
-    { title: 'Shipping Policy (Products)', content: 'For domestic buyers, orders are shipped through registered domestic courier companies... ' },
-    { title: 'International Courier Partner', content: 'For International Courier Partner: DHL Express... ' },
-    { title: 'Delivery Time', content: 'Australia has a delivery time of 15 days... ' },
-    { title: 'Product Catalogue', content: 'The product catalogue has all the possible shippable products in general... ' },
-    { title: 'Payments', content: 'Kalagura Gampa uses Razorpay and other online payment systems for fast, easy, and efficient secure payments... ' },
-    { title: 'Communications Policy', content: 'Delivery of our services will be confirmed on your mail ID as specified during registration... ' },
-    { title: 'Disclaimer', content: 'The product will be delivered to all urban areas in India... ' },
-    { title: 'Service on Holidays', content: 'Kalagura Gampa doesn’t provide services on all religious festivals and national holidays... ' }
-  ];
+  email: string = 'info@kalaguragampa.com';
 }
