@@ -12,9 +12,9 @@ import { Router } from '@angular/router';
 })
 export class ProductComponent {
   product = {
-    name: 'Gaming Headphone',
-    image: '../../../../../assets/images/logo.png',  // Add the path to your product image
-    description: 'Table with air purifier, stained veneer/black',
+    name: 'Henna',
+    image: '../../../../../assets/images/Henna-2_2nd.jpg',  // Add the path to your product image
+    description: 'stained veneer/black',
     price: 239.00,
     ratingCount: 121,
     rating: 4

@@ -1,27 +1,30 @@
 <!-- Top Bar -->
 <div class="top-bar">
   <div class="social-icons">
-    <img src="../../../../assets/images/facebook.png" alt="Facebook" />
-    <img src="../../../../assets/images/youtube.png" alt="YouTube" />
-    <img src="../../../../assets/images/twitter.png" alt="Twitter" />
-    <img src="../../../../assets/images/instagram.png" alt="Instagram" />
+    <a href="https://www.facebook.com/Kalaguragampa.Sreedevi" target="_blank" rel="noopener noreferrer">
+      <img src="../../../../assets/images/facebook-48.png" alt="Facebook" />
+    </a>
+    <a href="https://www.youtube.com/c/KalaguraGampa" target="_blank" rel="noopener noreferrer">
+      <img src="../../../../assets/images/youtube-48.png" alt="YouTube" />
+    </a>
+    <a href="https://x.com/i/flow/login?redirect_after_login=%2FKalagura_gampa" target="_blank" rel="noopener noreferrer">
+      <img src="../../../../assets/images/x-48.png" alt="Twitter" />
+    </a>
+    <a href="https://www.instagram.com/kalagura_gampa/" target="_blank" rel="noopener noreferrer">
+      <img src="../../../../assets/images/instagram-48.png" alt="Instagram" />
+    </a>
   </div>
   <div class="top-bar-right">
     <div class="location-dropdown">
-      <span>Location:</span>
-      <select>
-        <option>Australia</option>
-        <option>Canada</option>
-        <option>Europe</option>
-        <option>India</option>
-        <option>Singapore</option>
-        <option>UK</option>
-        <option>USA</option>
+      <select [(ngModel)]="selectedCountry">
+        @for (item of countryOptions; track item.value) {
+          <option [ngValue]="item.value">{{ item.label }}</option>
+        }
       </select>
     </div>
     <div class="customer-care">
-      <img src="../../../../assets/images/customer-care.png" alt="Customer Care" />
-      <span>+001234567890</span>
+      <img src="../../../../assets/images/customer-support.gif" alt="Customer Care" />
+      <span title="Dedicated Help Center (IST 9:30 AM to 6 :00 PM)">040-71903466</span>
     </div>
   </div>
 </div>
@@ -59,15 +62,15 @@
       <span>Wishlist</span>
     </div>
     <div class="action-item">
-      <img src="../../../../assets/images/cart.png" width="20" height="20" />
+      <img src="../../../../assets/images/cart-48.png" width="20" height="20" />
       <span>Cart</span>
     </div>
   </div>
 
-  <app-dialog [isVisible]="isLoginDialogVisible" [dialogTitle]="'Login'" [contentTemplate]="loginTemplate"
+  <app-dialog  [isVisible]="isLoginDialogVisible" [contentTemplate]="loginTemplate"
     (closeDialog)="closeLoginDialog()"></app-dialog>
 
   <ng-template #loginTemplate>
-    <app-login></app-login>
+    <app-login [activeLoginMethod]="selectedLoginMethod"></app-login>
   </ng-template>
 </header>

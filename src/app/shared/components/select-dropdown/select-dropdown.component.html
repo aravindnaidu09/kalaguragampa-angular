@@ -1,0 +1,37 @@
+<div class="dropdown-container" [class.disabled]="disabled">
+  <!-- Selected Value/Placeholder -->
+  <div class="dropdown-header" (click)="toggleDropdown()">
+    <span class="selected-text">
+      {{ displayValue }}
+    </span>
+    <span class="dropdown-icon">&#9662;</span>
+  </div>
+
+  <!-- Dropdown List -->
+  <div class="dropdown-menu" *ngIf="isOpen">
+    <!-- Search Box -->
+    <div class="dropdown-search">
+      <input
+        #searchInput
+        type="text"
+        class="search-input"
+        placeholder="Search..."
+        [(ngModel)]="searchQuery"
+        (input)="filterOptions()"
+      />
+    </div>
+
+    <!-- Options -->
+    <ul class="options-list">
+      <li
+        *ngFor="let option of filteredOptions"
+        class="option-item"
+        [class.selected]="option.value === selectedValue"
+        (click)="selectOption(option)"
+      >
+        {{ option.label }}
+      </li>
+      <li *ngIf="filteredOptions.length === 0" class="no-options">No options found</li>
+    </ul>
+  </div>
+</div>

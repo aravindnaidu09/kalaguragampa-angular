@@ -13,14 +13,23 @@
     display: flex;
     gap: 10px;
 
-    img {
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
+    a {
+      display: inline-block;
+      transition: transform 0.3s ease, filter 0.3s ease;
+
+      img {
+        width: 20px;
+        height: 20px;
+        transition: filter 0.3s ease;
+        filter: grayscale(100%); /* Start with grayscale for a muted effect */
+      }
 
       &:hover {
-        opacity: 0.8;
-        /* Hover effect for icons */
+        transform: scale(1.1); /* Slightly enlarge the icon */
+      }
+
+      &:hover img {
+        filter: grayscale(0%) brightness(100%) invert(100%); /* Change color to white */
       }
     }
   }
@@ -235,6 +244,5 @@
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     }
   }
-
 
 }

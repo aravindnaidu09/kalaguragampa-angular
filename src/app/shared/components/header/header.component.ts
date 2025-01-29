@@ -5,6 +5,7 @@ import { LoginComponent } from "../../../features/auth/_components/login/login.c
 import { Router } from '@angular/router';
 import { MenuDropdownComponent, MenuItem } from '../menu-dropdown/menu-dropdown.component';
 import { DialogComponent } from '../dialog/dialog.component';
+import { SelectDropdownComponent } from "../select-dropdown/select-dropdown.component";
 
 @Component({
   selector: 'app-header',
@@ -13,8 +14,9 @@ import { DialogComponent } from '../dialog/dialog.component';
     FormsModule,
     LoginComponent,
     MenuDropdownComponent,
-    DialogComponent
-  ],
+    DialogComponent,
+    SelectDropdownComponent
+],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -26,7 +28,7 @@ export class HeaderComponent implements OnInit {
 
   selectedLanguage: any = 1;
 
-  selectedCountry: string = 'India';
+  selectedCountry: string = 'IN';
   isDropdownOpen = false;
 
   isAccountDropdownOpen: boolean = false;
@@ -35,15 +37,17 @@ export class HeaderComponent implements OnInit {
 
   isLoginDialogVisible = false;
 
+  selectedLoginMethod: string = '';
 
-  countryOptions: any = [
-    { id: 'in', name: 'India' },
-    { id: 'aus', name: 'Australia' },
-    { id: 'eur', name: 'Europe' },
-    { id: 'sing', name: 'Singapore' },
-    { id: 'uk', name: 'UK' },
-    { id: 'us', name: 'USA' },
-    { id: 'can', name: 'Canada' },
+
+  countryOptions = [
+    { label: 'Australia', value: 'AUS' },
+    { label: 'Canada', value: 'CAN' },
+    { label: 'Europe', value: 'EUR' },
+    { label: 'India', value: 'IN' },
+    { label: 'Singapore', value: 'SN' },
+    { label: 'UK', value: 'UK' },
+    { label: 'USA', value: 'US' },
   ];
 
   // Close dropdown if clicked outside
@@ -74,8 +78,8 @@ export class HeaderComponent implements OnInit {
 
   setMenuItems(): void {
     this.menuItems = [
-      { label: 'Login with OTP', action: () => this.loginWithOtp() },
-      { label: 'Login with Password', action: () => this.loginWithPassword() },
+      { label: 'Login with OTP', action: () => this.openDialog('otp') },
+      { label: 'Login with Password', action: () => this.openDialog('password') },
       { label: 'Help', action: () => console.log('Help clicked') },
     ];
   }
@@ -88,13 +92,9 @@ export class HeaderComponent implements OnInit {
     console.log('Menu item selected:', item.label);
   }
 
-  loginWithOtp(): void {
-    this.isLoginDialogVisible = !this.isLoginDialogVisible;
-  }
-
-  loginWithPassword(): void {
-    console.log('Redirect to Password Login');
-    // Implement Password login logic
+  openDialog(method: 'otp' | 'password'): void {
+    this.selectedLoginMethod = method;
+    this.isLoginDialogVisible = true;
   }
 
   toggleLoginDialog() {
@@ -103,5 +103,9 @@ export class HeaderComponent implements OnInit {
 
   closeLoginDialog() {
     this.isLoginDialogVisible = false;
+  }
+
+  onSelectionChange(value: any): void {
+    this.selectedCountry = value;
   }
 }

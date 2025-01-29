@@ -16,36 +16,52 @@
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  width: auto; /* Auto width based on content */
-  max-width: 90%; /* Optional max-width for responsiveness */
-  padding: 20px;
+  width: auto;
+  /* Dialog width will adjust to its content */
+  height: auto;
+  /* Dialog height will adjust to its content */
+  padding: 0px;
+  position: relative;
+  /* To position the close button absolutely */
 
-  .dialog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+  // .dialog-header {
+  //   display: flex;
+  //   justify-content: space-between;
+  //   align-items: center;
+  //   border-bottom: 1px solid #eee;
+  //   padding-bottom: 10px;
 
-    h3 {
-      margin: 0;
-      font-size: 1.25rem;
-    }
-
-    .close-button {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #333;
-
-      &:hover {
-        color: #000;
-      }
-    }
-  }
+  //   h3 {
+  //     margin: 0;
+  //     font-size: 1.25rem;
+  //   }
+  // }
 
   .dialog-content {
     margin-top: 20px;
+  }
+}
+
+/* Close button outside the dialog */
+.close-button {
+  position: absolute;
+  top: -15px;
+  /* Position outside the dialog */
+  right: -15px;
+  /* Position outside the dialog */
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: #f8f8f8;
   }
 }
