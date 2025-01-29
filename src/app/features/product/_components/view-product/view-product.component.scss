@@ -176,3 +176,43 @@
   color: #007bff;
   text-decoration: none;
 }
+
+.horizontal-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 10px;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+}
+
+.scrollable-content {
+  display: flex;
+  gap: 20px;
+  /* Space between items */
+}
+
+.product-item {
+  flex: 0 0 auto;
+  width: 200px;
+  height: auto;
+  margin-right: 20px;
+  /* Optional: additional spacing if needed */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Optional: add a shadow */
+  border-radius: 8px;
+  /* Optional: rounded corners */
+  background-color: #fff;
+  /* Optional: background color */
+}

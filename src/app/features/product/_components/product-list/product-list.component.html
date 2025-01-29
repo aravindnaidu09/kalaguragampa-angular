@@ -5,14 +5,51 @@
       <h3>Shop by Category</h3>
     </div>
 
-    <!-- Horizontal Scrollable Categories Section -->
     <div class="categories">
       <div *ngFor="let category of categories; let i = index" class="category-item"
-        [ngClass]="{'selected': selectedCategory === i}" (click)="selectCategory(i)">
+        [ngClass]="{ selected: selectedCategory === i }" (click)="selectCategory(i)">
         <span>{{ category.name }}</span>
       </div>
     </div>
+
+    <app-product></app-product>
   </div>
 
-  <app-product></app-product>
+  <!-- Week Top Sellers Section -->
+  <div class="shop-by-category">
+    <div class="header">
+      <h3>Week Top Sellers</h3>
+    </div>
+
+    <!-- <div class="products">
+      <div *ngFor="let product of topSellers" class="product-item">
+        <img [src]="product.imageUrl" [alt]="product.name" />
+        <p class="product-name">{{ product.name }}</p>
+        <p class="product-price">{{ product.price | currency: 'INR' }}</p>
+        <button (click)="addToCart(product)">Add to Cart</button>
+      </div>
+    </div> -->
+
+    <app-product></app-product>
+
+  </div>
+
+  <!-- Popular Products Section -->
+  <div class="shop-by-category">
+    <div class="header">
+      <h3>Popular Products</h3>
+    </div>
+
+    <!-- <div class="products">
+      <div *ngFor="let product of popularProducts" class="product-item">
+        <img [src]="product.imageUrl" [alt]="product.name" />
+        <p class="product-name">{{ product.name }}</p>
+        <p class="product-price">{{ product.price | currency: 'INR' }}</p>
+        <button (click)="addToCart(product)">Add to Cart</button>
+      </div>
+    </div> -->
+
+    <app-product></app-product>
+
+  </div>
 </section>
