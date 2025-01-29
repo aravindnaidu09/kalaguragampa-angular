@@ -1,21 +1,51 @@
+// Variables for customization
+$primary-color: #ff9800; // Active step
+$completed-color: #28a745; // Completed step
+$locked-color: #ddd; // Locked step
+$shadow-color: rgba(0, 0, 0, 0.1);
+$font-color: #333;
+
 .checkout-container {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  padding: 20px;
-}
+  margin-top: 30px;
+  padding: 10px;
 
-.checkout-main {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  width: 100%;
-}
+  .left-panel {
+    flex: 2;
+    background-color: #fff;
+    // border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px $shadow-color;
+    padding: 20px;
+    height: fit-content;
+  }
 
-app-shipping-billing {
-  flex: 1;
-}
+  .right-panel {
+    flex: 1.2;
+    background-color: #fff;
+    // border: 1px solid #ddd;
+    // border-radius: 8px;
+    // box-shadow: 0 4px 8px $shadow-color;
+    padding: 20px;
+    height: fit-content;
+  }
 
-app-order-summary {
-  flex: 0.5;
+  .step-content {
+    margin-top: 20px;
+    padding: 20px;
+    // border: 1px solid #ddd;
+    // border-radius: 8px;
+    // box-shadow: 0 4px 8px $shadow-color;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+
+    .left-panel,
+    .right-panel {
+      width: 100%;
+    }
+  }
 }

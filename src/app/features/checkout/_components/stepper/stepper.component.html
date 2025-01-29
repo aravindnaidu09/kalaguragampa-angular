@@ -1,0 +1,22 @@
+<div class="checkout-stepper">
+  <div
+    class="step"
+    *ngFor="let step of steps; let index = index"
+    [class.completed]="index < currentStep"
+    [class.active]="index === currentStep"
+    [class.locked]="index > currentStep"
+  >
+    <div class="step-icon">
+      <ng-container *ngIf="index < currentStep">
+        <i class="check-icon">&#10003;</i> <!-- Check icon -->
+      </ng-container>
+      <ng-container *ngIf="index === currentStep">
+        <span class="current-step">{{ index + 1 }}</span>
+      </ng-container>
+      <ng-container *ngIf="index > currentStep">
+        <i class="lock-icon">&#128274;</i> <!-- Lock icon -->
+      </ng-container>
+    </div>
+    <div class="step-label">{{ step }}</div>
+  </div>
+</div>

@@ -1,6 +1,32 @@
 <div class="checkout-container">
-  <div class="checkout-main">
-    <app-shipping-billing></app-shipping-billing>
+  <!-- Left Side Panel: Stepper -->
+  <div class="left-panel">
+    <app-stepper
+      [steps]="steps"
+      [currentStep]="currentStep"
+      (next)="goToNextStep()"
+      (prev)="goToPreviousStep()"
+    ></app-stepper>
+
+    <div class="step-content">
+      <ng-container [ngSwitch]="currentStep">
+        <app-shipping-billing *ngSwitchCase="0" (next)="goToNextStep()"></app-shipping-billing>
+        <app-order-summary *ngSwitchCase="1" (next)="goToNextStep()" (prev)="goToPreviousStep()"></app-order-summary>
+        <app-payment *ngSwitchCase="2" (prev)="goToPreviousStep()"></app-payment>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Right Side Panel: Checkout Summary -->
+  <div class="right-panel">
     <app-order-summary></app-order-summary>
+    <!-- <app-checkout-summary
+      [price]="330"
+      [discount]="120"
+      [gst]="100"
+      [deliveryCharges]="0"
+      [totalAmount]="310"
+      [savings]="120"
+    ></app-checkout-summary> -->
   </div>
 </div>

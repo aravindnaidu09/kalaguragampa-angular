@@ -1,9 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-order-summary',
-  imports: [],
+  imports: [
+    CommonModule
+  ],
   templateUrl: './order-summary.component.html',
   styleUrl: './order-summary.component.scss'
 })
