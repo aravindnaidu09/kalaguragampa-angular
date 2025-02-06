@@ -42,5 +42,29 @@ input::placeholder {
   font-family: "Nunito-Regular", sans-serif;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body { height: 100vh; }
+
+.toast-success {
+  background-color: #4caf50 !important; // Green
+  color: #fff !important;
+  font-family: "Nunito-Bold";
+}
+
+.toast-error {
+  background-color: #f44336 !important; // Red
+  color: #fff !important;
+  font-family: "Nunito-Bold";
+}
+
+.toast-warning {
+  background-color: #ff9800 !important; // Orange
+  color: #fff !important;
+  font-family: "Nunito-Bold";
+}
+
+.toast-info {
+  background-color: #2196f3 !important; // Blue
+  color: #fff !important;
+  font-family: "Nunito-Bold";
+}
+

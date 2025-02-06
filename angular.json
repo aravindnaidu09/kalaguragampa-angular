@@ -34,6 +34,7 @@
               "src/styles/fonts"
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/cyan-orange.css",
               "src/styles.scss",
               "src/styles/_mixins.scss",
               "src/styles/_variables.scss",
@@ -96,6 +97,7 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/cyan-orange.css",
               "src/styles.scss"
             ],
             "scripts": []

@@ -30,6 +30,8 @@ export class LoginComponent {
   isOtpSent: boolean = false;
   isMobileValid: boolean = false;
 
+  isLoading: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private readonly otpService: OtpService
@@ -71,19 +73,21 @@ export class LoginComponent {
     event.preventDefault();
 
     if (this.isMobileValid) {
+      this.isLoading = true; // Show loader
       const mobileNumber = this.loginOtpForm.get('mobileNumber')?.value;
 
-      this.otpService
-        .sendOtp(mobileNumber, 'mobile', '91')
-        .subscribe(
-          (result: any) => {
-            console.log('otp-result: ', result);
-            this.isOtpSent = true;
-          },
-          (error) => {
-            console.error('Error sending OTP:', error);
-          }
-        );
+      this.otpService.sendOtp(mobileNumber, 'mobile', '91').subscribe(
+        (result: any) => {
+          console.log('OTP sent:', result);
+          this.isOtpSent = true;
+          this.isLoading = false; // Hide loader on success
+        },
+        (error) => {
+          console.error('Error sending OTP:', error);
+          this.isLoading = false; // Hide loader on error
+          this.isOtpSent = false;
+        }
+      );
     }
   }
 

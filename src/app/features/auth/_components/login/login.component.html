@@ -34,13 +34,15 @@
         <p class="info-text">
           <a
             class="send-otp-link"
-            [class.disabled]="!isMobileValid"
+            [class.disabled]="!isMobileValid || isLoading"
             (click)="sendOtp($event)"
-            [attr.aria-disabled]="!isMobileValid"
+            [attr.aria-disabled]="!isMobileValid || isLoading"
           >
-            Send OTP
+            <span *ngIf="!isLoading">Send OTP</span>
+            <span *ngIf="isLoading" class="loader"></span>
           </a>
         </p>
+
       </div>
 
       <div class="form-group" *ngIf="isOtpSent">
