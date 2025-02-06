@@ -1,6 +1,6 @@
-import type { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import type { HttpInterceptorFn } from '@angular/common/http';
+import { HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { AuthState, ClearToken } from '../../features/auth/_state/auth.state';
 import { ToastService } from '../services/toast.service';
 
-export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> => {
+export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
   const store = inject(Store);
   const router = inject(Router);
   const toastService = inject(ToastService);
