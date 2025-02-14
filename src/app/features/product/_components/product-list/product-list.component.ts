@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ProductComponent } from "../product/product.component";
 
 @Component({
@@ -7,11 +7,11 @@ import { ProductComponent } from "../product/product.component";
   imports: [
     CommonModule,
     ProductComponent
-],
+  ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss'
 })
-export class ProductListComponent {
+export class ProductListComponent implements OnInit {
   categories = [
     { name: 'All' },
     { name: 'Herbs & Extracts' },
@@ -41,5 +41,15 @@ export class ProductListComponent {
 
   selectCategory(index: number) {
     this.selectedCategory = index;
+  }
+
+  constructor() {}
+
+  ngOnInit(): void {
+    this.getProductList();
+  }
+
+  getProductList() {
+
   }
 }

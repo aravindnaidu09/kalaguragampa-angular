@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { OtpService } from '../../_services/otp.service';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../_services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -21,8 +22,8 @@ import { CommonModule } from '@angular/common';
   providers: [OtpService],
 })
 export class LoginComponent {
-  @Input() activeLoginMethod: string = 'otp'; // Determine the default login method
-  @Input() isVisible: boolean = false; // Control dialog visibility
+  @Input() activeLoginMethod: string = 'otp';
+  @Input() isVisible: boolean = false;
   @Output() closeLoginDialog = new EventEmitter<boolean>();
 
   loginOtpForm: FormGroup;
@@ -31,10 +32,12 @@ export class LoginComponent {
   isMobileValid: boolean = false;
 
   isLoading: boolean = false;
+  isSignInLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
-    private readonly otpService: OtpService
+    private readonly otpService: OtpService,
+    private readonly authService: AuthService
   ) {
     // OTP Login Form
     this.loginOtpForm = this.fb.group({
@@ -80,11 +83,11 @@ export class LoginComponent {
         (result: any) => {
           console.log('OTP sent:', result);
           this.isOtpSent = true;
-          this.isLoading = false; // Hide loader on success
+          this.isLoading = false;
         },
         (error) => {
           console.error('Error sending OTP:', error);
-          this.isLoading = false; // Hide loader on error
+          this.isLoading = false;
           this.isOtpSent = false;
         }
       );
@@ -96,8 +99,16 @@ export class LoginComponent {
    */
   onSubmitOtp(): void {
     if (this.loginOtpForm.valid) {
-      console.log('Logging in with OTP:', this.loginOtpForm.value);
-      alert('Logged in successfully with OTP!');
+
+      this.isSignInLoading = true;
+
+      const mobileNumber = this.loginOtpForm.get('mobileNumber')?.value;
+      const credential = this.loginOtpForm.get('otp')?.value;
+      this.authService.login(this.activeLoginMethod === 'otp' ? true : false, mobileNumber, credential).subscribe((result: any) => {
+        this.isSignInLoading = false;
+      }, (error) => {
+        this.isSignInLoading = false;
+      });
     }
   }
 
@@ -122,6 +133,5 @@ export class LoginComponent {
    * Close the login dialog
    */
   onRegister(): void {
-    alert('Redirecting to Registration page...');
   }
 }

@@ -29,8 +29,8 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
           let errorMessage = 'An unexpected error occurred';
 
           if (error.status === 401) {
-            errorMessage = 'Session expired. Please log in again.';
-            store.dispatch(new ClearToken()); // Clear Token
+            errorMessage = error.error.detail;
+            store.dispatch(new ClearToken());
             router.navigate(['/login']);
           } else if (error.status === 403) {
             errorMessage = 'Access Denied.';

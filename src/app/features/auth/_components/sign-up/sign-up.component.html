@@ -1,1 +1,50 @@
-<p>sign-up works!</p>
+<form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+
+  <!-- Mobile Number Verification -->
+  <div class="form-group">
+    <label>Mobile Number</label>
+    <input type="text" formControlName="mobileNumber" placeholder="Enter mobile number" [disabled]="isMobileVerified" />
+    <button *ngIf="!isMobileVerified" (click)="sendMobileOtp()" [disabled]="isLoadingMobileOtp">
+      <span *ngIf="!isLoadingMobileOtp">Send OTP</span>
+      <span *ngIf="isLoadingMobileOtp" class="loader"></span>
+    </button>
+    <input *ngIf="isMobileOtpSent && !isMobileVerified" type="text" formControlName="mobileOtp" placeholder="Enter OTP" />
+    <button *ngIf="isMobileOtpSent && !isMobileVerified" (click)="verifyMobileOtp()">Verify OTP</button>
+  </div>
+
+  <!-- Email Verification -->
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" formControlName="email" placeholder="Enter email" [disabled]="isEmailVerified" />
+    <button *ngIf="!isEmailVerified" (click)="sendEmailOtp()" [disabled]="isLoadingEmailOtp">
+      <span *ngIf="!isLoadingEmailOtp">Send OTP</span>
+      <span *ngIf="isLoadingEmailOtp" class="loader"></span>
+    </button>
+    <input *ngIf="isEmailOtpSent && !isEmailVerified" type="text" formControlName="emailOtp" placeholder="Enter OTP" />
+    <button *ngIf="isEmailOtpSent && !isEmailVerified" (click)="verifyEmailOtp()">Verify OTP</button>
+  </div>
+
+  <!-- Remaining Fields -->
+  <div *ngIf="isMobileVerified && isEmailVerified">
+    <label>Username</label>
+    <input type="text" formControlName="username" placeholder="Enter username" />
+
+    <label>First Name</label>
+    <input type="text" formControlName="firstName" placeholder="Enter first name" />
+
+    <label>Last Name</label>
+    <input type="text" formControlName="lastName" placeholder="Enter last name" />
+
+    <label>Password</label>
+    <input type="password" formControlName="password" placeholder="Enter password" />
+
+    <label>Confirm Password</label>
+    <input type="password" formControlName="confirmPassword" placeholder="Confirm password" />
+
+    <button type="submit" [disabled]="isLoadingRegister">
+      <span *ngIf="!isLoadingRegister">Register</span>
+      <span *ngIf="isLoadingRegister" class="loader"></span>
+    </button>
+  </div>
+
+</form>

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { APP_SETTINGS } from '../../../core/constants/app-settings';
-import { AUTH_API_URLS } from '../_constants/auth-api-urls';
+import { AUTH_API_URLS } from '../../../core/constants/auth-api-urls';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +17,5 @@ export class OtpService {
     return this.httpClient.post(url, payload);
   }
 
-  login(isOtpLogin: boolean, username: string, credential: string) {
-    const url = `${APP_SETTINGS.apiBaseUrl}${AUTH_API_URLS.auth.login}`;
-    const payload = isOtpLogin ? { username, otp: credential } : { username, password: credential };
-    return this.httpClient.post(url, payload);
-  }
+
 }

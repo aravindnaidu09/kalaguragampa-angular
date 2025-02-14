@@ -5,6 +5,8 @@ import {provideAnimationsAsync} from '@angular/platform-browser/animations/async
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { provideStore } from '@ngxs/store';
+import { AuthState } from './features/auth/_state/auth.state';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,7 +14,14 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes),
     provideAnimationsAsync(),
-    provideAnimationsAsync(),
-    provideHttpClient(), provideAnimationsAsync()
+    provideHttpClient(),
+    provideStore([AuthState],
+      // withNgxsReduxDevtoolsPlugin(),
+      // withNgxsFormPlugin(),
+      // withNgxsLoggerPlugin(),
+      // withNgxsStoragePlugin({
+      //   keys: '*'
+      // })
+    ),
   ]
 };

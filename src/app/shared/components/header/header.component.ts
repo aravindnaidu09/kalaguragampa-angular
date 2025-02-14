@@ -5,7 +5,6 @@ import { LoginComponent } from "../../../features/auth/_components/login/login.c
 import { Router } from '@angular/router';
 import { MenuDropdownComponent, MenuItem } from '../menu-dropdown/menu-dropdown.component';
 import { DialogComponent } from '../dialog/dialog.component';
-import { SelectDropdownComponent } from "../select-dropdown/select-dropdown.component";
 import { CartWishlistService } from '../../../core/services/cart-wishlist.service';
 
 @Component({
@@ -33,6 +32,8 @@ export class HeaderComponent implements OnInit {
 
   selectedCountry: string = 'IN';
   isDropdownOpen = false;
+
+  selectedMenuItem: any;
 
   isAccountDropdownOpen: boolean = false;
 
