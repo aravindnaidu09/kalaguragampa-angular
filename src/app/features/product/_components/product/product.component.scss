@@ -1,4 +1,20 @@
+.product-list-container {
+  display: flex;
+  gap: 15px; /* Space between items */
+  overflow-x: auto; /* Enable horizontal scrolling */
+  scroll-behavior: smooth;
+  padding: 10px;
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+/* Hide scrollbar in webkit browsers */
+.product-list-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Individual Product Styling */
 .product-card {
+  flex: 0 0 auto; /* Prevents shrinking and ensures fixed width */
   width: 250px;
   background-color: #fff;
   border-radius: 10px;
@@ -6,20 +22,20 @@
   overflow: hidden;
   position: relative;
   padding: 15px;
-  margin: 20px;
+  margin: 10px 0; /* Adjust margin for better spacing */
 
   /* Wishlist Icon Styling */
   .wishlist-icon {
     position: absolute;
-    top: -4px;
-    right: 4px;
+    top: 5px;
+    right: 10px;
     font-size: 1.5rem;
     color: #666;
     cursor: pointer;
     transition: color 0.3s;
 
     &:hover {
-      color: #f7a500;  /* Gold color for hover effect */
+      color: #f7a500; /* Gold color for hover effect */
     }
   }
 
@@ -29,6 +45,7 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
+
     img {
       width: 100%;
       height: auto;
@@ -89,9 +106,38 @@
       font-size: .7rem;
       transition: background-color 0.3s;
 
-      // &:hover {
-      //   background-color: #7c4f28;
-      // }
+      &:hover {
+        background-color: #f7a500;
+        color: white;
+      }
     }
   }
+}
+
+/* Scroll Buttons */
+.scroll-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.7);
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 18px;
+  z-index: 10;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    background-color: #f7a500;
+    color: white;
+  }
+}
+
+.left-scroll {
+  left: 10px;
+}
+
+.right-scroll {
+  right: 10px;
 }

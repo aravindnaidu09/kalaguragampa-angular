@@ -1,28 +1,35 @@
-<div class="product-card">
-  <!-- Wishlist Icon -->
-  <div class="wishlist-icon">
-    <img src="../../../../../assets/images/Wishlist.png" width="22px" height="22px" (click)="addToWishlist()" />
-    <!-- <i class="pi pi-heart" ></i> -->
+<div class="scroll-container">
+  <button class="scroll-button left-scroll" (click)="scrollLeft()">◀</button>
+
+  <div class="product-list-container">
+    @for (product of displayedProducts(); ; track product.id) {
+      <div class="product-card">
+        <!-- Wishlist Icon -->
+        <div class="wishlist-icon">
+          <img src="../../../../../assets/images/Wishlist.png" width="22px" height="22px" (click)="addToWishlist(product.id)" />
+        </div>
+
+        <!-- Product Image -->
+        <div class="product-image">
+          <img [src]="product.image" alt="{{ product.name }}" (click)="goToProductDetailsPage(product.name)" />
+        </div>
+
+        <!-- Product Details -->
+        <div class="product-details">
+          <div class="product-header">
+            <h4>{{ product.name }}</h4>
+            <span class="product-price">Rs. {{ product.price }}</span>
+          </div>
+          <p class="product-description" [innerHTML]="product.description | appHtmlParser"></p>
+          <div class="product-rating">
+            <span>⭐⭐⭐⭐⭐</span>
+            <span class="rating-count">({{ product.rating }})</span>
+          </div>
+          <button class="add-to-cart" (click)="addToCart()">Add to Cart</button>
+        </div>
+      </div>
+    }
   </div>
 
-  <!-- Product Image -->
-  <div class="product-image">
-    <img [src]="product.image" alt="{{ product.name }}" (click)="goToProductDetailsPage(product.name)" />
-  </div>
-
-  <!-- Product Details -->
-  <div class="product-details">
-    <div class="product-header">
-      <h4>{{ product.name }}</h4>
-      <span class="product-price">Rs. {{ product.price }}</span>
-    </div>
-    <p class="product-description">{{ product.description }}</p>
-    <div class="product-rating">
-      <span>⭐⭐⭐⭐⭐</span>
-      <span *ngFor="let star of getStars()">
-      </span>
-      <span class="rating-count">({{ product.ratingCount }})</span>
-    </div>
-    <button class="add-to-cart" (click)="addToCart()">Add to Cart</button>
-  </div>
+  <button class="scroll-button right-scroll" (click)="scrollRight()">▶</button>
 </div>

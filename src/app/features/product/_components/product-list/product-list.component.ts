@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ProductComponent } from "../product/product.component";
+import { ICategory } from '../../_models/category-model';
+import { ProductService } from '../../_services/product.service';
+import { IProduct } from '../../_models/product-model';
 
 @Component({
   selector: 'app-product-list',
@@ -12,44 +15,40 @@ import { ProductComponent } from "../product/product.component";
   styleUrl: './product-list.component.scss'
 })
 export class ProductListComponent implements OnInit {
-  categories = [
-    { name: 'All' },
-    { name: 'Herbs & Extracts' },
-    { name: 'Pickles & Powders' },
-    { name: 'Nuts, Dry Fruits & Seeds' },
-    { name: 'Sweeteners & Salts' },
-    { name: 'Indian Snacks & Fryums' },
-    { name: 'Essential Oils' },
-    { name: 'Indian Dals & Pulses' },
-    { name: 'Indian Spices & Masalas' },
-    { name: 'Garden Tools & Fertilizers' },
-    { name: 'Indian Honey & Syrups' },
-    { name: 'Farooky Products' },
-    { name: 'Millets & Flakes' },
-    { name: 'Kottakal' },
-    { name: 'Home & Kitchen' },
-    { name: 'Cold Pressed Oils' },
-    { name: 'UnCategorized' },
-    { name: 'Seeds & Plants' },
-    { name: 'Personal & Hair Care' },
-    { name: 'Indian Grocery' },
-    { name: 'Indian Rice & Flours' },
-    { name: 'Bull Driven Ghani Oils' },
-  ];
+  categories: ICategory[] = [];
+  productsList = signal<IProduct[]>([]);
 
   selectedCategory: number = 0;
 
-  selectCategory(index: number) {
-    this.selectedCategory = index;
-  }
 
-  constructor() {}
+  constructor(private readonly productService: ProductService) { }
 
   ngOnInit(): void {
-    this.getProductList();
+    this.getCategoryList();
   }
 
-  getProductList() {
+  getCategoryList() {
+    this.productService.getCategories().subscribe((categories: ICategory[]) => {
+      this.categories = categories;
+      this.getProductList();
+    });
+  }
 
+  getProductList(category?: string) {
+    this.productService.getAllProducts(category).subscribe({
+      next: (products) => {
+        console.log('data: ', products);
+        this.productsList.set(products);
+      },
+      error: (error) => {
+        console.error('Error fetching products:', error);
+      }
+    });
+  }
+
+  selectCategory(index: number, categoryName: string) {
+    this.selectedCategory = index;
+
+    this.getProductList(categoryName);
   }
 }

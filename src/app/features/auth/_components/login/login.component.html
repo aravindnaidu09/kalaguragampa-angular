@@ -5,89 +5,99 @@
   </div>
 
   <!-- Right Content Section -->
-  <div class="right-section">
-    <h2 class="title">Let's Sign You In</h2>
-    <p class="subtitle">Welcome</p>
+  <ng-container *ngIf="!isRegistering(); else signUpForm">
+    <div class="right-section">
+      <h2 class="title">Let's Sign You In</h2>
+      <p class="subtitle">Welcome</p>
 
-    <!-- Login with OTP Form -->
-    <form *ngIf="activeLoginMethod === 'otp'" [formGroup]="loginOtpForm" (ngSubmit)="onSubmitOtp()">
-      <div class="form-group">
-        <label for="mobileNumber">Mobile Number</label>
-        <input type="text" id="mobileNumber" class="form-control" placeholder="Enter your mobile number"
-          formControlName="mobileNumber" (input)="onMobileNumberInput()" />
-        <span class="validation-message"
-          *ngIf="loginOtpForm.get('mobileNumber')?.invalid && loginOtpForm.get('mobileNumber')?.touched">
-          Valid mobile number is required.
-        </span>
-        <p class="info-text">
-          <a class="send-otp-link" [class.disabled]="!isMobileValid || isLoading" (click)="sendOtp($event)"
-            [attr.aria-disabled]="!isMobileValid || isLoading">
-            <span *ngIf="!isLoading">Send OTP</span>
-            <span *ngIf="isLoading" class="loader"></span>
-          </a>
+      <!-- Login with OTP Form -->
+      <form *ngIf="activeLoginMethod === 'otp'" [formGroup]="loginOtpForm" (ngSubmit)="onSubmitOtp()">
+        <div class="form-group">
+          <label for="mobileNumber">Mobile Number</label>
+          <input type="text" id="mobileNumber" class="form-control" placeholder="Enter your mobile number"
+            formControlName="mobileNumber" (input)="onMobileNumberInput()" />
+          <span class="validation-message"
+            *ngIf="loginOtpForm.get('mobileNumber')?.invalid && loginOtpForm.get('mobileNumber')?.touched">
+            Valid mobile number is required.
+          </span>
+          <p class="info-text">
+            <a class="send-otp-link" [class.disabled]="!isMobileValid || isLoading" (click)="sendOtp($event)"
+              [attr.aria-disabled]="!isMobileValid || isLoading">
+              <span *ngIf="!isLoading">Send OTP</span>
+              <span *ngIf="isLoading" class="loader"></span>
+            </a>
+          </p>
+
+        </div>
+
+        <div class="form-group" *ngIf="isOtpSent">
+          <label for="otp">OTP</label>
+          <input type="text" id="otp" class="form-control" placeholder="Enter OTP" formControlName="otp"
+            maxlength="5" />
+          <span class="validation-message" *ngIf="loginOtpForm.get('otp')?.invalid && loginOtpForm.get('otp')?.touched">
+            OTP must be 5 characters long.
+          </span>
+        </div>
+
+        <button type="submit" class="btn-signin" [disabled]="loginOtpForm.invalid">
+          <span *ngIf="!isSignInLoading">Sign In</span>
+          <span *ngIf="isSignInLoading" class="signIn-loader"></span>
+        </button>
+
+        <!-- Register Link -->
+        <p class="register-text">
+          Don't have an account? <a (click)="onRegister()" class="register-link">Register</a>
+        </p>
+      </form>
+
+      <!-- Login with Password Form -->
+      <form *ngIf="activeLoginMethod === 'password'" [formGroup]="loginPasswordForm" (ngSubmit)="onSubmitPassword()">
+        <div class="form-group">
+          <label for="emailOrMobile">Email or Mobile Number</label>
+          <input type="text" id="emailOrMobile" class="form-control" placeholder="Enter your email or mobile number"
+            formControlName="emailOrMobile" />
+          <span class="validation-message"
+            *ngIf="loginPasswordForm.get('emailOrMobile')?.invalid && loginPasswordForm.get('emailOrMobile')?.touched">
+            Email or Mobile Number is required.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Enter your password"
+            formControlName="password" />
+          <span class="validation-message"
+            *ngIf="loginPasswordForm.get('password')?.invalid && loginPasswordForm.get('password')?.touched">
+            Password is required.
+          </span>
+        </div>
+
+        <div class="form-group remember-me">
+          <input type="checkbox" id="rememberMe" formControlName="rememberMe" />
+          <label for="rememberMe">Remember Me</label>
+        </div>
+
+
+        <p class="forgot-password">
+          <a href="#" (click)="onForgotPassword()">Forgot Password?</a>
         </p>
 
-      </div>
+        <button type="submit" class="btn-signin" [disabled]="loginPasswordForm.invalid">
+          Sign In
+        </button>
 
-      <div class="form-group" *ngIf="isOtpSent">
-        <label for="otp">OTP</label>
-        <input type="text" id="otp" class="form-control" placeholder="Enter OTP" formControlName="otp" maxlength="5" />
-        <span class="validation-message" *ngIf="loginOtpForm.get('otp')?.invalid && loginOtpForm.get('otp')?.touched">
-          OTP must be 5 characters long.
-        </span>
-      </div>
-
-      <button type="submit" class="btn-signin" [disabled]="loginOtpForm.invalid">
-        <span *ngIf="!isSignInLoading">Sign In</span>
-        <span *ngIf="isSignInLoading" class="signIn-loader"></span>
-      </button>
-
-      <!-- Register Link -->
-      <p class="register-text">
-        Don't have an account? <a (click)="onRegister()" class="register-link">Register</a>
-      </p>
-    </form>
-
-    <!-- Login with Password Form -->
-    <form *ngIf="activeLoginMethod === 'password'" [formGroup]="loginPasswordForm" (ngSubmit)="onSubmitPassword()">
-      <div class="form-group">
-        <label for="emailOrMobile">Email or Mobile Number</label>
-        <input type="text" id="emailOrMobile" class="form-control" placeholder="Enter your email or mobile number"
-          formControlName="emailOrMobile" />
-        <span class="validation-message"
-          *ngIf="loginPasswordForm.get('emailOrMobile')?.invalid && loginPasswordForm.get('emailOrMobile')?.touched">
-          Email or Mobile Number is required.
-        </span>
-      </div>
-
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" class="form-control" placeholder="Enter your password"
-          formControlName="password" />
-        <span class="validation-message"
-          *ngIf="loginPasswordForm.get('password')?.invalid && loginPasswordForm.get('password')?.touched">
-          Password is required.
-        </span>
-      </div>
-
-      <div class="form-group remember-me">
-        <input type="checkbox" id="rememberMe" formControlName="rememberMe" />
-        <label for="rememberMe">Remember Me</label>
-      </div>
+        <!-- Register Link -->
+        <p class="register-text">
+          Don't have an account? <a (click)="onRegister()" class="register-link">Register</a>
+        </p>
+      </form>
+    </div>
+  </ng-container>
 
 
-      <p class="forgot-password">
-        <a href="#" (click)="onForgotPassword()">Forgot Password?</a>
-      </p>
-
-      <button type="submit" class="btn-signin" [disabled]="loginPasswordForm.invalid">
-        Sign In
-      </button>
-
-      <!-- Register Link -->
-      <p class="register-text">
-        Don't have an account? <a (click)="onRegister()" class="register-link">Register</a>
-      </p>
-    </form>
-  </div>
+  <ng-template #signUpForm>
+    <div class="right-section">
+      <app-sign-up></app-sign-up>
+    </div>
+  </ng-template>
 </div>

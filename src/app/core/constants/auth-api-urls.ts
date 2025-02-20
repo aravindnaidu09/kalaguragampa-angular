@@ -9,8 +9,8 @@ export const AUTH_API_URLS = {
     tokenVerify: '/auth/api/v1/token/verify/',
   },
   user: {
-    register: '/auth/api/v1/users/register/',
-    changePassword: '/auth/api/v1/users/change-pwd/',
-    passwordReset: '/auth/api/v1/users/password-reset/',
+    register: '/auth/api/v1/users/register',
+    changePassword: '/auth/api/v1/users/change-pwd',
+    passwordReset: '/auth/api/v1/users/password-reset',
   },
 };

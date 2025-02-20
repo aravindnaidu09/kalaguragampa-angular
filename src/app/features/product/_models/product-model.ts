@@ -1,4 +1,5 @@
 export interface IProduct {
+  id: string;
   name: string;
   sku: string;
   category: number;
@@ -9,10 +10,14 @@ export interface IProduct {
   maxQuantity: number;
   barcode: string;
   stockStatus: string;
+  image: string;
+  price: string;
+  rating: string;
 }
 
 export function deserializeProducts(data: any[]): IProduct[] {
   return data.map((product) => ({
+    id: product.id,
     name: product.name,
     sku: product.sku,
     category: product.category,
@@ -23,12 +28,16 @@ export function deserializeProducts(data: any[]): IProduct[] {
     maxQuantity: Number(product.max_quantity),
     barcode: product.barcode,
     stockStatus: product.stock_status,
+    image: product.image,
+    price: product.price,
+    rating: product.rating
   }));
 }
 
 
 export function deserializeProduct(data: any): IProduct {
   return {
+    id: data.id,
     name: data.name,
     sku: data.sku,
     category: data.category,
@@ -39,5 +48,8 @@ export function deserializeProduct(data: any): IProduct {
     maxQuantity: Number(data.max_quantity),
     barcode: data.barcode,
     stockStatus: data.stock_status,
+    image: data.image,
+    price: data.price,
+    rating: data.rating
   };
 }

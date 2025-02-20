@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -9,6 +9,7 @@ import {
 import { OtpService } from '../../_services/otp.service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../_services/auth.service';
+import { SignUpComponent } from "../sign-up/sign-up.component";
 
 @Component({
   selector: 'app-login',
@@ -17,8 +18,9 @@ import { AuthService } from '../../_services/auth.service';
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
-  ],
+    ReactiveFormsModule,
+    SignUpComponent
+],
   providers: [OtpService],
 })
 export class LoginComponent {
@@ -33,6 +35,8 @@ export class LoginComponent {
 
   isLoading: boolean = false;
   isSignInLoading: boolean = false;
+
+  isRegistering = signal<boolean>(false);
 
   constructor(
     private fb: FormBuilder,
@@ -133,5 +137,6 @@ export class LoginComponent {
    * Close the login dialog
    */
   onRegister(): void {
+    this.isRegistering.set(true)
   }
 }
