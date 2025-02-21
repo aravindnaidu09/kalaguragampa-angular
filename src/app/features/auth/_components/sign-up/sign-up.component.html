@@ -64,7 +64,7 @@
       <small *ngIf="registerForm.errors?.['passwordMismatch']" class="error-message">Passwords do not match.</small>
     </div>
 
-    <button type="submit" class="submit-btn" [disabled]="isLoadingRegister">
+    <button type="submit" class="submit-btn mt-2" [disabled]="isLoadingRegister">
       <span *ngIf="!isLoadingRegister">Register</span>
       <span *ngIf="isLoadingRegister" class="loader"></span>
     </button>
