@@ -14,6 +14,7 @@
         "list": "off"
       }
     ],
-    "axe/aria": "off"
+    "axe/aria": "off",
+    "button-type": "off"
   }
 }
