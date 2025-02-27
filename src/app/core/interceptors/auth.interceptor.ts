@@ -13,7 +13,7 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
   const router = inject(Router);
   const toastService = inject(ToastService);
 
-  return store.select(AuthState.getToken).pipe(
+  return store.select(AuthState.getAccessToken).pipe(
     switchMap((token) => {
       let clonedRequest = req;
 

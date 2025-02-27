@@ -80,54 +80,76 @@
 
     <!-- Remaining Fields -->
     <div *ngIf="isMobileVerified && isEmailVerified">
-      <div class="form-group">
-        <label>Username</label>
-        <input type="text" formControlName="username" placeholder="Enter username" />
-        <small *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
-          class="error-message">
-          Username must be at least 4 characters and must not contain spaces.
-        </small>
-      </div>
-
-      <div class="form-group">
-        <label>First Name</label>
-        <input type="text" formControlName="firstName" placeholder="Enter first name" />
-      </div>
-
-      <div class="form-group">
-        <label>Last Name</label>
-        <input type="text" formControlName="lastName" placeholder="Enter last name" />
-      </div>
-
-      <div class="form-group password-group">
-        <label>Password</label>
-        <div class="password-container">
-          <input [type]="isPasswordVisible ? 'text' : 'password'" formControlName="password"
-            placeholder="Enter password" />
-            <span (click)="togglePasswordVisibility('password')" class="eye-icon material-icons">
-              {{ isPasswordVisible ? 'visibility' : 'visibility_off' }}
-            </span>
+      <!-- First Row: Username & First Name -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" class="form-control" formControlName="username" placeholder="Enter username" />
+            <small *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+              class="error-message">
+              Username must be at least 4 characters and must not contain spaces.
+            </small>
+          </div>
         </div>
-        <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-          class="error-message">
-          Password must be 8-16 characters, include at least one uppercase letter, one number, and one special
-          character.
-        </small>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" class="form-control" formControlName="firstName" placeholder="Enter first name" />
+          </div>
+        </div>
       </div>
 
-      <div class="form-group password-group">
-        <label>Confirm Password</label>
-        <div class="password-container">
-          <input [type]="isConfirmPasswordVisible ? 'text' : 'password'" formControlName="confirmPassword"
-            placeholder="Confirm password" />
-            <span (click)="togglePasswordVisibility('confirmPassword')" class="eye-icon material-icons">
-              {{ isConfirmPasswordVisible ? 'visibility' : 'visibility_off' }}
-            </span>
+      <!-- Second Row: Last Name & Password -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" class="form-control" formControlName="lastName" placeholder="Enter last name" />
+          </div>
         </div>
-        <small *ngIf="registerForm.errors?.['passwordMismatch']" class="error-message">
-          Passwords do not match.
-        </small>
+
+        <div class="col-md-6">
+          <div class="form-group password-group">
+            <label>Password</label>
+            <div class="d-flex align-items-center position-relative">
+              <input [type]="isPasswordVisible ? 'text' : 'password'" class="form-control" formControlName="password"
+                placeholder="Enter password" />
+              <span (click)="togglePasswordVisibility('password')"
+                class="eye-icon material-icons position-absolute end-0 me-2">
+                {{ isPasswordVisible ? 'visibility' : 'visibility_off' }}
+              </span>
+            </div>
+            <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+              class="error-message">
+              Password must be 8-16 characters, include at least one uppercase letter, one number, and one special
+              character.
+            </small>
+          </div>
+        </div>
       </div>
+
+      <!-- Third Row: Confirm Password -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group password-group">
+            <label>Confirm Password</label>
+            <div class="d-flex align-items-center position-relative">
+              <input [type]="isConfirmPasswordVisible ? 'text' : 'password'" class="form-control"
+                formControlName="confirmPassword" placeholder="Confirm password" />
+              <span (click)="togglePasswordVisibility('confirmPassword')"
+                class="eye-icon material-icons position-absolute end-0 me-2">
+                {{ isConfirmPasswordVisible ? 'visibility' : 'visibility_off' }}
+              </span>
+            </div>
+            <small *ngIf="registerForm.errors?.['passwordMismatch']" class="error-message">
+              Passwords do not match.
+            </small>
+          </div>
+        </div>
+      </div>
+
 
       <button type="submit" class="submit-btn mt-2" [disabled]="isLoadingRegister || registerForm.invalid">
         <span *ngIf="!isLoadingRegister">Register</span>

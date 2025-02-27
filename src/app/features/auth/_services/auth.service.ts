@@ -3,6 +3,8 @@ import { APP_SETTINGS } from '../../../core/constants/app-settings';
 import { AUTH_API_URLS } from '../../../core/constants/auth-api-urls';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { ClearToken } from '../_state/auth.state';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +13,9 @@ export class AuthService {
 
   private readonly baseUrl = APP_SETTINGS.apiBaseUrl;
 
-  constructor(private readonly httpClient: HttpClient) { }
+  constructor(private readonly httpClient: HttpClient,
+    private readonly store: Store
+  ) { }
 
   login(isOtpLogin: boolean, username: string, credential: string): Observable<any> {
     const url = `${this.baseUrl}${AUTH_API_URLS.auth.login}`;
@@ -19,9 +23,7 @@ export class AuthService {
     return this.httpClient.post(url, payload);
   }
 
-  logout(): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.auth.logout}`, {});
-  }
+
 
   refreshToken(token: string): Observable<any> {
     return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.auth.tokenRefresh}`, { token });
@@ -50,4 +52,19 @@ export class AuthService {
     return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.user.passwordReset}`, { email });
   }
 
+
+  getAccessToken(): string | null {
+    return localStorage.getItem('accessToken');
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem('refreshToken');
+  }
+
+  logout(): Observable<any> {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    this.store.dispatch(new ClearToken());
+    return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.auth.logout}`, {});
+  }
 }

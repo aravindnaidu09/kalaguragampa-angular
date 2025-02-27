@@ -1,57 +1,47 @@
 import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OtpService } from '../../_services/otp.service';
-import { CommonModule } from '@angular/common';
 import { AuthService } from '../../_services/auth.service';
-import { SignUpComponent } from "../sign-up/sign-up.component";
 import { jwtDecode } from 'jwt-decode';
-import { Select, Store } from '@ngxs/store';
-import { OtpState, SetOtpRequested, StartOtpCooldown } from '../../_state/otp.state';
-import { Observable } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { SignUpComponent } from '../sign-up/sign-up.component';
+import { Store } from '@ngxs/store';
+import { SetToken } from '../../_state/auth.state';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  providers: [OtpService],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     SignUpComponent
   ],
-  providers: [OtpService],
 })
 export class LoginComponent implements OnInit {
   @Input() activeLoginMethod: string = 'otp';
   @Input() isVisible: boolean = false;
   @Output() closeLoginDialog = new EventEmitter<boolean>();
 
-  loginPasswordForm: FormGroup;
   loginOtpForm!: FormGroup;
-  isOtpSent = false;
-  isLoginBlocked = false;
-  loginAttempts = 0;
-  loginCooldown = 30;
-  otpCooldown = 30;
-  isOtpCooldownActive = false;
-  isMobileValid: boolean = false;
-  isResendAvailable: boolean = false;
+  loginPasswordForm!: FormGroup;
 
-  isLoading: boolean = false;
-  isSignInLoading: boolean = false;
+  isOtpSent = false;
+  isMobileValid = false;
+  isLoading = false;
+  isSignInLoading = false;
+  isOtpResendEnabled = false;
+  otpCooldown = 30; // Initial cooldown time (in seconds)
+  otpInterval: any;
+
+  resendAttempts = 0; // Tracks the number of resend attempts
+  maxResendAttempts = 3; // Limit resend to 3 times
+  resendCooldown = 300; // 5 minutes (300 seconds) after 3 attempts
+  isResendBlocked = false; // Flag to block resending
 
   isRegistering = signal<boolean>(false);
-
-  otpCooldown$!: Observable<number>
-  isOtpRequested$!: Observable<boolean>
-  isResendAvailable$!: Observable<boolean>
-
 
   constructor(
     private fb: FormBuilder,
@@ -59,7 +49,6 @@ export class LoginComponent implements OnInit {
     private readonly authService: AuthService,
     private readonly store: Store
   ) {
-    // OTP Login Form
     this.loginOtpForm = this.fb.group({
       mobileNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       otp: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
@@ -73,20 +62,17 @@ export class LoginComponent implements OnInit {
     });
 
     this.checkTokenExpiration();
-
-    this.isOtpRequested$ = this.store.select(OtpState.isOtpRequested);
-    this.otpCooldown$ = this.store.select(OtpState.getOtpCooldown);
-    this.isResendAvailable$ = this.store.select(OtpState.canResendOtp);
   }
 
-  ngOnInit() {
-    this.isOtpSent = this.store.selectSnapshot(OtpState.isOtpRequested);
-    if (this.isOtpSent) {
-      this.store.dispatch(new StartOtpCooldown());
-    }
+  ngOnInit() { }
+
+  ngOnDestroy() {
+    clearInterval(this.otpInterval);
   }
 
-  // ✅ Check if JWT Token is Expired
+  /**
+   * ✅ Check if JWT Token is Expired and Logout
+   */
   checkTokenExpiration() {
     const token = localStorage.getItem('authToken');
     if (token) {
@@ -98,38 +84,55 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  /**
-   * Switch login method dynamically
-   * Called if the user switches between login methods.
-   */
-  setLoginMethod(method: 'otp' | 'password'): void {
-    this.activeLoginMethod = method;
+  onMobileNumberInput(event: any): void {
+    const inputValue = event.target.value;
+    const sanitizedValue = inputValue.replace(/\D/g, ''); // Remove non-numeric characters
+
+    if (sanitizedValue.length > 10) {
+      event.target.value = sanitizedValue.slice(0, 10); // Limit to 10 digits
+      this.loginOtpForm.get('mobileNumber')?.setValue(sanitizedValue.slice(0, 10), { emitEvent: false });
+    }
+  }
+
+  allowOnlyNumbers(event: KeyboardEvent): boolean {
+    const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Delete', 'Tab'];
+
+    if (allowedKeys.includes(event.key)) {
+      return true; // Allow navigation and control keys
+    }
+
+    const regex = /^[0-9]$/;
+    if (!regex.test(event.key)) {
+      event.preventDefault(); // Block non-numeric input
+      return false;
+    }
+
+    return true;
   }
 
   /**
-   * Validate mobile number input and activate Send OTP link
+   * ✅ Handles the "Send OTP" API call.
    */
-  onMobileNumberInput(): void {
-    const mobileControl = this.loginOtpForm.get('mobileNumber');
-    this.isMobileValid = mobileControl?.valid || false;
-  }
-
-  /**
- * Handles the "Send OTP" API call.
- */
   sendOtp(event: Event): void {
     event.preventDefault();
+
+    const mobileControl = this.loginOtpForm.get('mobileNumber');
+    if (!mobileControl?.value) {
+      mobileControl?.markAsTouched(); // Show validation message
+      return;
+    }
+
     if (this.isLoading) return;
 
     this.isLoading = true;
-    const mobileNumber = this.loginOtpForm.get('mobileNumber')?.value;
+    const mobileNumber = mobileControl.value;
 
     this.otpService.sendOtp(mobileNumber, 'mobile', '91').subscribe(
       () => {
         this.isOtpSent = true;
         this.isLoading = false;
-        this.store.dispatch(new SetOtpRequested());
-        this.store.dispatch(new StartOtpCooldown());
+        this.resendAttempts = 0; // Reset attempts on a fresh OTP send
+        this.startOtpCooldown();
       },
       () => {
         this.isLoading = false;
@@ -137,21 +140,38 @@ export class LoginComponent implements OnInit {
     );
   }
 
-
   /**
-   * Handles the "Resend OTP" API call.
+   * ✅ Handles the "Resend OTP" API call.
    */
   resendOtp(event: Event): void {
     event.preventDefault();
-    if (this.isLoading) return;
+
+    const mobileControl = this.loginOtpForm.get('mobileNumber');
+    if (!mobileControl?.value) {
+      mobileControl?.markAsTouched(); // Show validation message
+      return;
+    }
+
+    if (this.isLoading || !this.isOtpResendEnabled || this.isResendBlocked) return;
+
+    if (this.resendAttempts >= this.maxResendAttempts) {
+      this.blockResendFor5Minutes();
+      return;
+    }
 
     this.isLoading = true;
-    const mobileNumber = this.loginOtpForm.get('mobileNumber')?.value;
+    const mobileNumber = mobileControl.value;
 
     this.otpService.resendOtp(mobileNumber, 'mobile', '91').subscribe(
       () => {
         this.isLoading = false;
-        this.store.dispatch(new StartOtpCooldown());
+        this.resendAttempts++;
+
+        if (this.resendAttempts >= this.maxResendAttempts) {
+          this.blockResendFor5Minutes();
+        } else {
+          this.startOtpCooldown();
+        }
       },
       () => {
         this.isLoading = false;
@@ -159,34 +179,71 @@ export class LoginComponent implements OnInit {
     );
   }
 
-
   /**
-   * Handle OTP submission
+   * ✅ Start 30s Countdown for Resend OTP
    */
-  onSubmitOtp(): void {
-    if (this.isLoginBlocked) return;
+  private startOtpCooldown() {
+    this.isOtpResendEnabled = false;
+    this.otpCooldown = 30;
 
-    if (this.loginOtpForm.valid) {
-
-
-
-      this.isSignInLoading = true;
-
-      const mobileNumber = this.loginOtpForm.get('mobileNumber')?.value;
-      const credential = this.loginOtpForm.get('otp')?.value;
-      this.authService.login(this.activeLoginMethod === 'otp' ? true : false, mobileNumber, credential).subscribe((result: any) => {
-        this.isSignInLoading = false;
-        this.loginAttempts = 0;
-      }, (error) => {
-        this.isSignInLoading = false;
-        this.handleFailedLogin();
-      });
-    }
+    clearInterval(this.otpInterval);
+    this.otpInterval = setInterval(() => {
+      this.otpCooldown--;
+      if (this.otpCooldown <= 0) {
+        clearInterval(this.otpInterval);
+        this.isOtpResendEnabled = true;
+      }
+    }, 1000);
   }
 
   /**
-   * Handle password-based login
+  * ✅ Block OTP Resend for 5 minutes after 3 attempts
+  */
+  private blockResendFor5Minutes() {
+    this.isResendBlocked = true;
+    this.resendCooldown = 300;
+
+    const cooldownInterval = setInterval(() => {
+      this.resendCooldown--;
+
+      if (this.resendCooldown <= 0) {
+        clearInterval(cooldownInterval);
+        this.isResendBlocked = false;
+        this.resendAttempts = 0; // Reset attempts after cooldown
+      }
+    }, 1000);
+  }
+
+  /**
+   * ✅ Handles OTP Submission
    */
+  onSubmitOtp(): void {
+    if (this.loginOtpForm.invalid) return;
+
+    this.isSignInLoading = true;
+
+    const mobileNumber = this.loginOtpForm.get('mobileNumber')?.value;
+    const otp = this.loginOtpForm.get('otp')?.value;
+
+    this.authService.login(true, mobileNumber, otp).subscribe(
+      (response: any) => {
+        if (response && response.access && response.refresh) {
+          this.store.dispatch(new SetToken(response.access, response.refresh));
+          localStorage.setItem('accessToken', response.access);
+          localStorage.setItem('refreshToken', response.refresh);
+        }
+        this.isSignInLoading = false;
+        this.closeLoginDialog.emit(true);
+      },
+      () => {
+        this.isSignInLoading = false;
+      }
+    );
+  }
+
+  /**
+  * Handle password-based login
+  */
   onSubmitPassword(): void {
     if (this.loginPasswordForm.valid) {
       console.log('Logging in with Password:', this.loginPasswordForm.value);
@@ -206,35 +263,5 @@ export class LoginComponent implements OnInit {
    */
   onRegister(): void {
     this.isRegistering.set(true)
-  }
-
-  startOtpCooldown() {
-    const interval = setInterval(() => {
-      this.otpCooldown--;
-      if (this.otpCooldown <= 0) {
-        clearInterval(interval);
-        this.isOtpCooldownActive = false;
-        this.otpCooldown = 30;
-      }
-    }, 1000);
-  }
-
-  handleFailedLogin() {
-    this.loginAttempts++;
-    if (this.loginAttempts >= 5) {
-      this.isLoginBlocked = true;
-      this.startLoginCooldown();
-    }
-  }
-
-  startLoginCooldown() {
-    const interval = setInterval(() => {
-      this.loginCooldown--;
-      if (this.loginCooldown <= 0) {
-        clearInterval(interval);
-        this.isLoginBlocked = false;
-        this.loginCooldown = 30;
-      }
-    }, 1000);
   }
 }

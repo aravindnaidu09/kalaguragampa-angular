@@ -109,8 +109,8 @@ export class HeaderComponent implements OnInit {
     this.isLoginDialogVisible = !this.isLoginDialogVisible;
   }
 
-  closeLoginDialog() {
-    this.isLoginDialogVisible = false;
+  closeLoginDialog(event: any) {
+    this.isLoginDialogVisible = !event;
   }
 
   onSelectionChange(value: any): void {

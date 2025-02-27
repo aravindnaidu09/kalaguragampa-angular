@@ -1,9 +1,13 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
-import { AuthStateModel } from '../_models/auth';
+
+export interface AuthStateModel {
+  accessToken: string | null;
+  refreshToken: string | null;
+}
 
 export class SetToken {
   static readonly type = '[Auth] Set Token';
-  constructor(public token: string) {}
+  constructor(public accessToken: string, public refreshToken: string) {}
 }
 
 export class ClearToken {
@@ -13,22 +17,34 @@ export class ClearToken {
 @State<AuthStateModel>({
   name: 'auth',
   defaults: {
-    token: null
+    accessToken: localStorage.getItem('accessToken') || null,
+    refreshToken: localStorage.getItem('refreshToken') || null
   }
 })
 export class AuthState {
   @Selector()
-  static getToken(state: AuthStateModel) {
-    return state.token;
+  static getAccessToken(state: AuthStateModel): string | null {
+    return state.accessToken;
+  }
+
+  @Selector()
+  static getRefreshToken(state: AuthStateModel): string | null {
+    return state.refreshToken;
   }
 
   @Action(SetToken)
   setToken(ctx: StateContext<AuthStateModel>, action: SetToken) {
-    ctx.patchState({ token: action.token });
+    ctx.patchState({
+      accessToken: action.accessToken,
+      refreshToken: action.refreshToken
+    });
   }
 
   @Action(ClearToken)
   clearToken(ctx: StateContext<AuthStateModel>) {
-    ctx.patchState({ token: null });
+    ctx.patchState({
+      accessToken: null,
+      refreshToken: null
+    });
   }
 }

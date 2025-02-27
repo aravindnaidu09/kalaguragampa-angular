@@ -70,9 +70,9 @@
   </div>
 
   <app-dialog  [isVisible]="isLoginDialogVisible" [contentTemplate]="loginTemplate"
-    (closeDialog)="closeLoginDialog()"></app-dialog>
+    (closeDialog)="closeLoginDialog(true)"></app-dialog>
 
   <ng-template #loginTemplate>
-    <app-login [activeLoginMethod]="selectedLoginMethod"></app-login>
+    <app-login [activeLoginMethod]="selectedLoginMethod" (closeLoginDialog)="closeLoginDialog($event)"></app-login>
   </ng-template>
 </header>
