@@ -6,7 +6,12 @@ import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { provideStore } from '@ngxs/store';
+import { withNgxsLoggerPlugin } from '@ngxs/logger-plugin';
+import { withNgxsReduxDevtoolsPlugin } from '@ngxs/devtools-plugin';
+import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
+
 import { AuthState } from './features/auth/_state/auth.state';
+import { OtpState } from './features/auth/_state/otp.state';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,13 +20,13 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(),
-    provideStore([AuthState],
-      // withNgxsReduxDevtoolsPlugin(),
+    provideStore([AuthState, OtpState, ],
+      withNgxsReduxDevtoolsPlugin(),
       // withNgxsFormPlugin(),
-      // withNgxsLoggerPlugin(),
-      // withNgxsStoragePlugin({
-      //   keys: '*'
-      // })
+      withNgxsLoggerPlugin(),
+      withNgxsStoragePlugin({
+        keys: '*'
+      })
     ),
   ]
 };

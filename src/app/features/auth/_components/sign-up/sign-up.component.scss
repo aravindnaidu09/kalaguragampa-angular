@@ -2,10 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  // background: #fff;
   padding: 20px;
   border-radius: 8px;
-  // box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   max-width: 400px;
   margin: auto;
 
@@ -13,9 +11,11 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    position: relative;
+    margin-bottom: 15px;
 
     label {
-      font-size: 14px;
+      font-size: 13px; // Reduced by 1px for better readability
       font-weight: bold;
       color: #333;
     }
@@ -36,6 +36,7 @@
     .input-container {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 10px;
 
       a {
@@ -56,6 +57,41 @@
         }
       }
     }
+
+    .password-container {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .password-container input {
+      flex: 1;
+      padding-right: 35px; /* Space for the eye icon */
+    }
+
+    .eye-icon {
+      position: absolute;
+      right: 10px;
+      cursor: pointer;
+      font-size: 18px;
+      color: #888;
+    }
+
+    .eye-icon:hover {
+      color: #000;
+    }
+
+    .error-message {
+      color: red;
+      font-size: 12px;
+    }
+  }
+
+  // ✅ Styles for OTP Timer
+  .otp-timer {
+    font-size: 14px;
+    color: #ff9800; // Warning color for timer
+    font-weight: bold;
   }
 
   .submit-btn {
@@ -71,7 +107,7 @@
     transition: background-color 0.3s ease;
 
     &:hover {
-      background-color: #444;
+      background-color: #844026;
     }
 
     &:disabled {
@@ -80,6 +116,7 @@
     }
   }
 
+  // ✅ Loader Style
   .loader {
     display: inline-block;
     width: 14px;
@@ -101,6 +138,22 @@
     }
     to {
       transform: rotate(360deg);
+    }
+  }
+
+  // ✅ Back to Login Link Styling
+  .back-to-login {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #682f12;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #844026;
+      text-decoration: underline;
     }
   }
 }

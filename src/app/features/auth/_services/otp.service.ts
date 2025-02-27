@@ -9,12 +9,48 @@ import { AUTH_API_URLS } from '../../../core/constants/auth-api-urls';
 })
 export class OtpService {
 
+  private readonly baseUrl = APP_SETTINGS.apiBaseUrl;
+
   constructor(private readonly httpClient: HttpClient) { }
 
-  sendOtp(mobile: string, otp_type: string, country_code: string): Observable<any> {
-    const url = `${APP_SETTINGS.apiBaseUrl}${AUTH_API_URLS.auth.sendOtp}`;
-    const payload = { mobile, otp_type, country_code };
-    return this.httpClient.post(url, payload);
+  sendOtp(identifier: string, otpType: 'email' | 'mobile', countryCode?: string): Observable<any> {
+    let payload: any = { otp_type: otpType };
+
+    if (otpType === 'mobile') {
+      payload.mobile = identifier;
+      if (countryCode) payload.country_code = countryCode; // Only add country_code if provided
+    } else {
+      payload.email = identifier;
+    }
+
+    return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.auth.sendOtp}`, payload);
+  }
+
+  verifyOtp(identifier: string, otp: string, otpType: 'email' | 'mobile', countryCode?: string): Observable<any> {
+    let payload: any = { otp_type: otpType, otp };
+
+    if (otpType === 'mobile') {
+      payload.mobile = identifier;
+      if (countryCode) payload.country_code = countryCode; // Add only if provided
+    } else {
+      payload.email = identifier;
+    }
+
+    return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.auth.verifyOtp}`, payload);
+  }
+
+
+  resendOtp(identifier: string, otpType: 'email' | 'mobile', countryCode?: string): Observable<any> {
+    let payload: any = { otp_mode: otpType };
+
+    if (otpType === 'mobile') {
+      payload.mobile = identifier;
+      // if (countryCode) payload.country_code = countryCode; // Only add country_code if provided
+    } else {
+      payload.email = identifier;
+    }
+
+    return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.auth.resendOtp}`, payload);
   }
 
 
