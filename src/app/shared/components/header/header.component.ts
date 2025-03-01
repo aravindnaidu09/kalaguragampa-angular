@@ -88,7 +88,20 @@ export class HeaderComponent implements OnInit {
   setMenuItems(): void {
     this.menuItems = computed(() => this.menuService.menuItems());
 
+    // ✅ Fetch stored username (if user refreshes)
+    const storedUserName = localStorage.getItem('userName');
+    if (storedUserName) {
+      this.refreshMenu(storedUserName);
+    }
+
     this.menuService.registerLoginDialogTrigger(this.openDialog.bind(this));
+  }
+
+  /**
+  * ✅ Refresh Menu After Login (Called after successful login)
+  */
+  refreshMenu(username: string): void {
+    this.menuService.updateMenu(username);
   }
 
   toggleMenu(): void {

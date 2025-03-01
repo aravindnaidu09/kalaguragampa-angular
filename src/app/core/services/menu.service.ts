@@ -9,65 +9,72 @@ export class MenuService {
   private loginDialogTrigger: ((method: 'otp' | 'password') => void) | null = null;
 
   constructor() {
-    this.setDefaultMenu();
+    this.updateMenu(); // Initialize menu based on stored login state
   }
 
   /**
-   * Get menu items as Signal
+   * ✅ Get menu items as Signal
    */
   get menuItems(): Signal<MenuItem[]> {
     return this.menuItemsSignal;
   }
 
   /**
-   * Register login dialog trigger function in HeaderComponent
+   * ✅ Register login dialog trigger function in HeaderComponent
    */
   registerLoginDialogTrigger(triggerFn: (method: 'otp' | 'password') => void): void {
     this.loginDialogTrigger = triggerFn;
   }
 
   /**
-   * Set default menu items (Before Login)
+   * ✅ Dynamically update menu based on login state
    */
-  private setDefaultMenu(): void {
-    this.menuItemsSignal.set([
-      { label: 'Login with OTP', action: () => this.triggerAction('otp') },
-      { label: 'Login with Password', action: () => this.triggerAction('password') },
-      { label: 'Help', action: () => console.log('Help clicked') }
-    ]);
+  updateMenu(username?: string): void {
+    if (username) {
+      // 🔹 Set menu for logged-in users
+      this.menuItemsSignal.set([
+        { label: `👤Hi, ${username}`, disabled: true },
+        { label: 'Dashboard', action: () => console.log('Navigate to Dashboard') },
+        { label: 'Profile', action: () => console.log('Navigate to Profile') },
+        { label: 'Settings', action: () => console.log('Navigate to Settings') },
+        { label: 'Logout', action: () => this.logout() }
+      ]);
+    } else {
+      // 🔹 Set default menu (Before login)
+      this.menuItemsSignal.set([
+        { label: 'Login with OTP', action: () => this.triggerAction('otp') },
+        { label: 'Login with Password', action: () => this.triggerAction('password') },
+        { label: 'Help', action: () => console.log('Help clicked') }
+      ]);
+    }
+
+    console.log('🔄 Menu Items Updated:', this.menuItemsSignal());
   }
 
   /**
-   * Set menu items after successful login
+   * ✅ Call this method after login success
    */
   setLoggedInMenu(username: string): void {
-    this.menuItemsSignal.set([
-      { label: `👤 ${username}`, disabled: true },
-      { label: 'Dashboard', action: () => console.log('Navigate to Dashboard') },
-      { label: 'Profile', action: () => console.log('Navigate to Profile') },
-      { label: 'Settings', action: () => console.log('Navigate to Settings') },
-      { label: 'Logout', action: () => this.logout() }
-    ]);
-
-    console.log('Menu Items Updated:', this.menuItemsSignal());
+    this.updateMenu(username);
   }
 
   /**
-   * Handle login menu actions
+   * ✅ Handle login menu actions
    */
   private triggerAction(method: 'otp' | 'password'): void {
     if (this.loginDialogTrigger) {
-      this.loginDialogTrigger(method); // ✅ Calls the registered function in HeaderComponent
+      this.loginDialogTrigger(method); // Calls registered function in HeaderComponent
     } else {
-      console.warn('Login dialog trigger is not registered.');
+      console.warn('⚠ Login dialog trigger is not registered.');
     }
   }
 
   /**
-   * Handle Logout
+   * ✅ Handle Logout
    */
   private logout(): void {
-    console.log('Logging out...');
-    this.setDefaultMenu();
+    console.log('🔓 Logging out...');
+    localStorage.removeItem('userName'); // Clear stored user data
+    this.updateMenu(); // Reset menu to default
   }
 }

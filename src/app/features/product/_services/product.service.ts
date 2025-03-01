@@ -39,8 +39,14 @@ export class ProductService {
     if (sortBy) params = params.set('sort_by', sortBy);
     if (stockStatus) params = params.set('stock_status', stockStatus);
 
-    return this.httpClient.get<IProduct[]>(`${this.baseUrl}${PRODUCT_API_URLS.product.product.list}`, { params })
-    .pipe(map((productsList) => deserializeProducts(productsList)));
+    return this.httpClient.get<any>(`${this.baseUrl}${PRODUCT_API_URLS.product.product.list}`, { params })
+    .pipe(
+      map((response) => {
+        // Check if `results` key exists (Paginated Response)
+        const products = response?.results ? response.results : response;
+        return deserializeProducts(products);
+      })
+    );
   }
 
   /**

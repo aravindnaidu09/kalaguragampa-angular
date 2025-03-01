@@ -252,8 +252,12 @@ export class LoginComponent implements OnInit {
               localStorage.setItem('accessToken', response.access);
               localStorage.setItem('refreshToken', response.refresh);
 
-              const userName = response?.user?.name || 'User'; // Default fallback
-              this.menuService.setLoggedInMenu(userName); // ✅ Update menu with user name
+              const userName = response?.user?.name || 'User';
+              localStorage.setItem('userName', userName);
+
+              // ✅ Update Menu in HeaderComponent
+              this.menuService.updateMenu(userName);
+
             }
 
             this.isSignInLoading = false;
