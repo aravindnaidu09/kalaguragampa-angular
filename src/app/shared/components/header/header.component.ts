@@ -52,6 +52,7 @@ export class HeaderComponent implements OnInit {
     { label: 'Singapore', value: 'SN' },
     { label: 'UK', value: 'UK' },
     { label: 'USA', value: 'US' },
+    { label: 'Singapore', value: 'sing' }
   ];
 
   // Close dropdown if clicked outside
