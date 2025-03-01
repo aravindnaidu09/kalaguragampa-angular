@@ -7,7 +7,7 @@ import { ProductComponent } from "../product/product.component";
   selector: 'app-view-product',
   imports: [
     CommonModule,
-    ProductComponent
+    // ProductComponent
 ],
   templateUrl: './view-product.component.html',
   styleUrl: './view-product.component.scss'

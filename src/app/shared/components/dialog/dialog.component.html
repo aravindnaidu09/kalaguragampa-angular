@@ -1,5 +1,5 @@
 <div class="dialog-backdrop" *ngIf="isVisible">
-  <div class="dialog-container" @dialogAnimation>
+  <div class="dialog-container" @dialogAnimation *ngIf="!dialogClosing">
     <!-- Dialog Header -->
     <div class="dialog-header">
       <button class="close-button" (click)="close()">×</button>

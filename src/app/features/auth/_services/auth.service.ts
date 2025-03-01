@@ -23,8 +23,6 @@ export class AuthService {
     return this.httpClient.post(url, payload);
   }
 
-
-
   refreshToken(token: string): Observable<any> {
     return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.auth.tokenRefresh}`, { token });
   }

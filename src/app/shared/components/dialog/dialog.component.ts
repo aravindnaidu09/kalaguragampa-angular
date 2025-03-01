@@ -23,7 +23,8 @@ import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/co
       ]),
       // When dialog disappears (leave)
       transition(':leave', [
-        animate('300ms ease-in', style({ opacity: 0, transform: 'translateY(-20%)' })),
+        style({ opacity: 1, transform: 'translateY(0)' }), // Ensure starting state
+        animate('300ms ease-in', style({ opacity: 0, transform: 'translateY(-20%)' }))
       ]),
     ]),
   ],
@@ -34,8 +35,14 @@ export class DialogComponent {
   @Input() contentTemplate?: TemplateRef<any>; // Custom content inside the dialog
   @Output() closeDialog = new EventEmitter<void>(); // Emit event to close the dialog
 
+  dialogClosing: boolean = false;
+
   close(): void {
-    this.isVisible = false;
-    this.closeDialog.emit();
+    this.dialogClosing = true; // ✅ Start closing animation
+    setTimeout(() => {
+      this.isVisible = false;
+      this.dialogClosing = false; // ✅ Reset after animation
+      this.closeDialog.emit();
+    }, 300); // Match this with animation duration (300ms)
   }
 }

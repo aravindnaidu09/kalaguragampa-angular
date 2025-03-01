@@ -7,12 +7,14 @@ import { CommonModule } from '@angular/common';
 import { SignUpComponent } from '../sign-up/sign-up.component';
 import { Store } from '@ngxs/store';
 import { SetToken } from '../../_state/auth.state';
+import { take } from 'rxjs';
+import { MenuService } from '../../../../core/services/menu.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  providers: [OtpService],
+  providers: [OtpService, MenuService, AuthService],
   imports: [
     CommonModule,
     FormsModule,
@@ -47,6 +49,7 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private readonly otpService: OtpService,
     private readonly authService: AuthService,
+    private readonly menuService: MenuService,
     private readonly store: Store
   ) {
     this.loginOtpForm = this.fb.group({
@@ -61,27 +64,12 @@ export class LoginComponent implements OnInit {
       rememberMe: [false]
     });
 
-    this.checkTokenExpiration();
   }
 
   ngOnInit() { }
 
   ngOnDestroy() {
     clearInterval(this.otpInterval);
-  }
-
-  /**
-   * ✅ Check if JWT Token is Expired and Logout
-   */
-  checkTokenExpiration() {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      const decodedToken: any = jwtDecode(token);
-      const expiryTime = decodedToken.exp * 1000;
-      if (expiryTime < Date.now()) {
-        this.authService.logout();
-      }
-    }
   }
 
   onMobileNumberInput(event: any): void {
@@ -183,10 +171,12 @@ export class LoginComponent implements OnInit {
    * ✅ Start 30s Countdown for Resend OTP
    */
   private startOtpCooldown() {
+    if (this.isOtpResendEnabled) return; // ✅ Prevent multiple intervals
+
     this.isOtpResendEnabled = false;
     this.otpCooldown = 30;
 
-    clearInterval(this.otpInterval);
+    clearInterval(this.otpInterval); // ✅ Ensures only one interval runs at a time
     this.otpInterval = setInterval(() => {
       this.otpCooldown--;
       if (this.otpCooldown <= 0) {
@@ -246,8 +236,34 @@ export class LoginComponent implements OnInit {
   */
   onSubmitPassword(): void {
     if (this.loginPasswordForm.valid) {
-      console.log('Logging in with Password:', this.loginPasswordForm.value);
-      alert('Logged in successfully with Password!');
+      this.isSignInLoading = true;
+
+      const mobileOrEmail = this.loginPasswordForm.get('emailOrMobile')?.value;
+      const password = this.loginPasswordForm.get('password')?.value;
+
+      this.authService
+        .login(false, mobileOrEmail, password)
+        .pipe(take(1)) // ✅ Ensures one-time execution
+        .subscribe(
+          (response: any) => {
+            if (response?.access && response?.refresh) {
+              this.store.dispatch(new SetToken(response.access, response.refresh));
+
+              localStorage.setItem('accessToken', response.access);
+              localStorage.setItem('refreshToken', response.refresh);
+
+              const userName = response?.user?.name || 'User'; // Default fallback
+              this.menuService.setLoggedInMenu(userName); // ✅ Update menu with user name
+            }
+
+            this.isSignInLoading = false;
+            this.closeLoginDialog.emit(true);
+          },
+          (error: any) => { // ✅ Add proper error handling
+            console.error('Login Failed:', error);
+            this.isSignInLoading = false;
+          }
+        );
     }
   }
 

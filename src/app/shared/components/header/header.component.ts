@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, OnInit, Signal, ViewChild, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Signal, ViewChild, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from "../../../features/auth/_components/login/login.component";
 import { Router } from '@angular/router';
 import { MenuDropdownComponent, MenuItem } from '../menu-dropdown/menu-dropdown.component';
 import { DialogComponent } from '../dialog/dialog.component';
 import { CartWishlistService } from '../../../core/services/cart-wishlist.service';
+import { MenuService } from '../../../core/services/menu.service';
 
 @Component({
   selector: 'app-header',
@@ -26,7 +27,7 @@ export class HeaderComponent implements OnInit {
 
   isMenuOpen = false; // Menu visibility state
   loginState = false; // Track login state
-  menuItems: MenuItem[] = []; // Dynamic menu items
+  menuItems!: Signal<MenuItem[]>;
 
   selectedLanguage: any = 1;
 
@@ -42,7 +43,6 @@ export class HeaderComponent implements OnInit {
   isLoginDialogVisible = false;
 
   selectedLoginMethod: string = '';
-
 
   countryOptions = [
     { label: 'Australia', value: 'AUS' },
@@ -74,7 +74,8 @@ export class HeaderComponent implements OnInit {
 
   constructor(private readonly router: Router,
     private elementRef: ElementRef,
-    private readonly cartWishlistService: CartWishlistService
+    private readonly cartWishlistService: CartWishlistService,
+    private readonly menuService: MenuService
   ) { }
 
   ngOnInit() {
@@ -85,11 +86,9 @@ export class HeaderComponent implements OnInit {
   }
 
   setMenuItems(): void {
-    this.menuItems = [
-      { label: 'Login with OTP', action: () => this.openDialog('otp') },
-      { label: 'Login with Password', action: () => this.openDialog('password') },
-      { label: 'Help', action: () => console.log('Help clicked') },
-    ];
+    this.menuItems = computed(() => this.menuService.menuItems());
+
+    this.menuService.registerLoginDialogTrigger(this.openDialog.bind(this));
   }
 
   toggleMenu(): void {
@@ -97,7 +96,7 @@ export class HeaderComponent implements OnInit {
   }
 
   onMenuAction(item: MenuItem): void {
-    console.log('Menu item selected:', item.label);
+    console.log('Menu item selected:', item.label, item.action);
   }
 
   openDialog(method: 'otp' | 'password'): void {

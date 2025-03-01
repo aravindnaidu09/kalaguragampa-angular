@@ -12,7 +12,7 @@ import { LoginComponent } from '../login/login.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    LoginComponent
+    // LoginComponent
   ],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss'

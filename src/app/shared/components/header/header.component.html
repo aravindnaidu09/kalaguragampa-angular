@@ -52,7 +52,7 @@
       </div>
 
       <!-- Dropdown Menu -->
-      <app-menu-dropdown *ngIf="isMenuOpen" [menuItems]="menuItems" (menuAction)="onMenuAction($event)"
+      <app-menu-dropdown *ngIf="isMenuOpen" [menuItems]="menuItems()" (menuAction)="onMenuAction($event)"
         aria-label="Account Dropdown Menu"></app-menu-dropdown>
     </div>
 

@@ -4,6 +4,7 @@ import { ProductComponent } from "../product/product.component";
 import { ICategory } from '../../_models/category-model';
 import { ProductService } from '../../_services/product.service';
 import { IProduct } from '../../_models/product-model';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
@@ -27,22 +28,16 @@ export class ProductListComponent implements OnInit {
     this.getCategoryList();
   }
 
-  getCategoryList() {
-    this.productService.getCategories().subscribe((categories: ICategory[]) => {
+  getCategoryList(): void {
+    this.productService.getCategories().pipe(take(1)).subscribe((categories: ICategory[]) => {
       this.categories = categories;
       this.getProductList();
     });
   }
 
-  getProductList(category?: string) {
-    this.productService.getAllProducts(category).subscribe({
-      next: (products) => {
-        console.log('data: ', products);
-        this.productsList.set(products);
-      },
-      error: (error) => {
-        console.error('Error fetching products:', error);
-      }
+  getProductList(category?: string): void {
+    this.productService.getAllProducts(category).pipe(take(1)).subscribe((products: IProduct[]) => {
+      this.productsList.set(products);
     });
   }
 
