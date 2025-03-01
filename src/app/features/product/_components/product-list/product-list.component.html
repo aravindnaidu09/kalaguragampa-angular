@@ -6,9 +6,17 @@
     </div>
 
     <div class="categories">
-      <div *ngFor="let category of categories; let i = index" class="category-item"
-        [ngClass]="{ selected: selectedCategory === i }" (click)="selectCategory(i, category.name)">
+      <!-- ✅ Display First 10 Categories -->
+      <div *ngFor="let category of categories.slice(0, 10); let i = index"
+           class="category-item"
+           [ngClass]="{ selected: selectedCategory === i }"
+           (click)="selectCategory(i, category.name)">
         <span>{{ category.name }}</span>
+      </div>
+
+      <!-- ✅ View All Button -->
+      <div class="category-item view-all" (click)="navigateToProductPage()">
+        <span>View All</span>
       </div>
     </div>
 

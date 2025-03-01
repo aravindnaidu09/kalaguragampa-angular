@@ -19,19 +19,15 @@
     overflow-x: auto;
     padding: 10px;
     justify-content: flex-start;
-    align-items: start;
+    align-items: center;
 
-    /* Style for category items */
+    /* ✅ Style for Category Items */
     .category-item {
       background-color: #fff;
       border-radius: 25px;
-      /* Reduce roundness */
       padding: 7px 10px;
-      /* Reduce padding */
       font-size: 10px;
-      /* Smaller font size */
       font-weight: normal;
-      /* Make text weight normal for more elegance */
       text-align: center;
       white-space: nowrap;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -49,7 +45,20 @@
       }
     }
 
-    /* Horizontal scroll bar styling */
+    /* ✅ Style for View All Button */
+    .view-all {
+      background-color: transparent;
+      border: 1px solid #99663D;
+      color: #99663D;
+      font-weight: bold;
+
+      &:hover {
+        background-color: #99663D;
+        color: white;
+      }
+    }
+
+    /* ✅ Horizontal Scrollbar */
     &::-webkit-scrollbar {
       height: 1px;
     }

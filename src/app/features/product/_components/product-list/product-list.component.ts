@@ -5,6 +5,7 @@ import { ICategory } from '../../_models/category-model';
 import { ProductService } from '../../_services/product.service';
 import { IProduct } from '../../_models/product-model';
 import { take } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-list',
@@ -22,7 +23,9 @@ export class ProductListComponent implements OnInit {
   selectedCategory: number = 0;
 
 
-  constructor(private readonly productService: ProductService) { }
+  constructor(private readonly productService: ProductService,
+    private readonly router: Router
+  ) { }
 
   ngOnInit(): void {
     this.getCategoryList();
@@ -45,5 +48,9 @@ export class ProductListComponent implements OnInit {
     this.selectedCategory = index;
 
     this.getProductList(categoryName);
+  }
+
+  navigateToProductPage() {
+    this.router.navigate(['/detail-view']);
   }
 }

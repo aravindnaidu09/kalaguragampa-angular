@@ -1,0 +1,34 @@
+<div class="sort-filter-bar">
+  <!-- Left Section: Filter Count & Applied Filters -->
+  <div class="filter-summary">
+    <span class="total-items">{{ totalProducts() }} items</span>
+
+    <!-- Applied Filters -->
+    <div class="applied-filters" *ngIf="activeFilters().length > 0">
+      <span *ngFor="let filter of activeFilters(); trackBy: trackByLabel">
+        Term: '{{ filter.label }}' <button (click)="removeFilter(filter)">×</button>
+      </span>
+      <button class="clear-all" (click)="clearAllFilters()">Clear all</button>
+    </div>
+  </div>
+
+  <!-- Right Section: View Toggle & Sorting -->
+  <div class="view-sort">
+    <!-- View Mode Toggle (List/Grid) -->
+    <button class="view-toggle" [class.active]="viewMode() === 'list'" (click)="setViewMode('list')">
+      ☰
+    </button>
+    <button class="view-toggle" [class.active]="viewMode() === 'grid'" (click)="setViewMode('grid')">
+      ⬚
+    </button>
+
+    <!-- Sorting Options -->
+    <div class="sort-options">
+      <button *ngFor="let option of sortOptions; trackBy: trackByLabel"
+        [class.active]="sortBy() === option.value"
+        (click)="setSortBy(option.value)">
+        {{ option.label }}
+      </button>
+    </div>
+  </div>
+</div>

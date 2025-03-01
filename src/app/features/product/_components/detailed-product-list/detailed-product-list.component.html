@@ -1,0 +1,36 @@
+<!-- ✅ Product List (Grid/List View) -->
+<div class="product-container" [class.list-view]="viewMode() === 'list'">
+  <div *ngFor="let product of products(); trackBy: trackById" class="product-card">
+
+    <!-- ✅ Product Image -->
+    <div class="product-image">
+      <img [src]="product.image" [alt]="product.name" />
+    </div>
+
+    <!-- ✅ Product Details -->
+    <div class="product-details">
+      <h3 class="product-name">{{ product.name }}</h3>
+      <p class="product-description">{{ product.shortDescription }}</p>
+
+      <div class="product-meta">
+        <span class="price">${{ product.price }}</span>
+        <span class="rating">⭐ {{ product.rating }}</span>
+      </div>
+
+      <!-- ✅ Add to Cart & Wishlist -->
+      <div class="product-actions">
+        <button class="wishlist-btn" (click)="toggleWishlist(product)">
+          ❤️
+        </button>
+        <button class="cart-btn" (click)="addToCart(product)">
+          🛒 Add to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Loading Skeleton (Shimmer Effect) -->
+<div *ngIf="isLoading()" class="skeleton-container">
+  <div class="skeleton" *ngFor="let i of [1,2,3,4,5,6]"></div>
+</div>

@@ -1,0 +1,47 @@
+<div class="filters-container">
+  <h3>Filter & Refine</h3>
+
+  <!-- 📌 CATEGORY FILTER (Scrollable) -->
+  <div class="filter-section category-section">
+    <h4>Category</h4>
+    <div class="category-list">
+      <label *ngFor="let category of categories">
+        <input
+          type="checkbox"
+          [checked]="selectedCategories().includes(category.id)"
+          (change)="toggleCategory(category.id)" />
+        {{ category.name }} ({{ category.productCount }})
+      </label>
+    </div>
+  </div>
+
+  <!-- 📌 PRICE FILTER (RANGE SLIDER) -->
+  <div class="filter-section">
+    <h4>Price</h4>
+    <input type="range" min="0" max="1000" [(ngModel)]="minPrice">
+    <input type="range" min="0" max="1000" [(ngModel)]="maxPrice">
+    <p>Selected Range: ${{ minPrice() }} - ${{ maxPrice() }}</p>
+  </div>
+
+  <!-- 📌 RATING FILTER -->
+  <div class="filter-section">
+    <h4>Rating</h4>
+    <div class="stars">
+      <span *ngFor="let star of [1, 2, 3, 4, 5]"
+            (click)="setRating(star)"
+            [class.selected]="selectedRating() === star">⭐</span>
+    </div>
+  </div>
+
+  <!-- 📌 SORT BY DATE -->
+  <div class="filter-section">
+    <h4>Sort by Date</h4>
+    <select [(ngModel)]="sortBy">
+      <option value="latest">Latest</option>
+      <option value="oldest">Oldest</option>
+    </select>
+  </div>
+
+  <!-- 📌 RESET BUTTON -->
+  <button class="reset-btn" (click)="resetFilters()">Reset Filters</button>
+</div>

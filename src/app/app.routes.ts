@@ -9,6 +9,7 @@ import { RefundPolicyComponent } from './shared/components/refund-policy/refund-
 import { PrivacyPolicyComponent } from './shared/components/privacy-policy/privacy-policy.component';
 import { ShipmentPolicyComponent } from './shared/components/shipment-policy/shipment-policy.component';
 import { TermsComponent } from './shared/components/terms/terms.component';
+import { ProductsPageComponent } from './features/product/_components/products-page/products-page.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -21,4 +22,5 @@ export const routes: Routes = [
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: 'shipping-policy', component: ShipmentPolicyComponent },
   { path: 'terms-services', component: TermsComponent },
+  { path: 'detail-view', component: ProductsPageComponent }
 ];
