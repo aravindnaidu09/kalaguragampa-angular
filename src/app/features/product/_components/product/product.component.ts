@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, signal, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartWishlistService } from '../../../../core/services/cart-wishlist.service';
 import { IProduct } from '../../_models/product-model';
@@ -19,6 +19,8 @@ export class ProductComponent implements OnChanges {
   @Input() productsList: IProduct[] = [];
   displayedProducts = signal<IProduct[]>([]);
 
+  @ViewChild('productList', { static: false }) productList!: ElementRef;
+
   constructor(private router: Router,
     private readonly cartWishListService: CartWishlistService,
     private readonly productService: ProductService
@@ -35,12 +37,18 @@ export class ProductComponent implements OnChanges {
     // return new Array(this.product.rating).fill(0);
   }
 
-  scrollLeft() {
-    document.querySelector('.product-list-container')?.scrollBy({ left: -250, behavior: 'smooth' });
+  // ✅ Scroll left
+  scrollLeft(): void {
+    if (this.productList) {
+      this.productList.nativeElement.scrollBy({ left: -300, behavior: 'smooth' });
+    }
   }
 
-  scrollRight() {
-    document.querySelector('.product-list-container')?.scrollBy({ left: 250, behavior: 'smooth' });
+  // ✅ Scroll right
+  scrollRight(): void {
+    if (this.productsList) {
+      this.productList.nativeElement.scrollBy({ left: 300, behavior: 'smooth' });
+    }
   }
 
   addToCart() {

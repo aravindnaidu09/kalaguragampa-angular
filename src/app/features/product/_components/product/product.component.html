@@ -1,33 +1,44 @@
 <div class="scroll-container">
 
-  <div class="product-list-container">
+  <!-- Left Scroll Button -->
+  <button class="scroll-button left-scroll" (click)="scrollLeft()">
+    &#10094; <!-- Left arrow -->
+  </button>
+
+  <div class="product-list-container" #productList>
     @for (product of displayedProducts(); ; track product.id) {
-      <div class="product-card">
-        <!-- Wishlist Icon -->
-        <div class="wishlist-icon">
-          <img src="../../../../../assets/images/Wishlist.png" width="22px" height="22px" (click)="addToWishlist(product.id)" />
-        </div>
-
-        <!-- Product Image -->
-        <div class="product-image">
-          <img [src]="product.image" alt="{{ product.name }}" (click)="goToProductDetailsPage(product.name)" />
-        </div>
-
-        <!-- Product Details -->
-        <div class="product-details">
-          <div class="product-header">
-            <h4>{{ product.name }}</h4>
-            <span class="product-price">Rs. {{ product.price }}</span>
-          </div>
-          <p class="product-description" [innerHTML]="product.description | appHtmlParser"></p>
-          <div class="product-rating">
-            <span>⭐⭐⭐⭐⭐</span>
-            <span class="rating-count">({{ product.rating }})</span>
-          </div>
-          <button class="add-to-cart" (click)="addToCart()">Add to Cart</button>
-        </div>
+    <div class="product-card">
+      <!-- Wishlist Icon -->
+      <div class="wishlist-icon">
+        <img src="../../../../../assets/images/Wishlist.png" width="22px" height="22px"
+          (click)="addToWishlist(product.id)" />
       </div>
+
+      <!-- Product Image -->
+      <div class="product-image">
+        <img [src]="product.image" alt="{{ product.name }}" (click)="goToProductDetailsPage(product.name)" />
+      </div>
+
+      <!-- Product Details -->
+      <div class="product-details">
+        <div class="product-header">
+          <h4>{{ product.name }}</h4>
+          <span class="product-price">Rs. {{ product.price }}</span>
+        </div>
+        <p class="product-description" [innerHTML]="product.description | appHtmlParser"></p>
+        <div class="product-rating">
+          <span>⭐⭐⭐⭐⭐</span>
+          <span class="rating-count">({{ product.rating }})</span>
+        </div>
+        <button class="add-to-cart" (click)="addToCart()">Add to Cart</button>
+      </div>
+    </div>
     }
   </div>
+
+  <!-- Right Scroll Button -->
+  <button class="scroll-button right-scroll" (click)="scrollRight()">
+    &#10095; <!-- Right arrow -->
+  </button>
 
 </div>

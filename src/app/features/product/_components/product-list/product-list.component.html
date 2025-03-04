@@ -1,4 +1,5 @@
 <section class="product-list-container">
+
   <!-- Shop by Category Section -->
   <div class="shop-by-category">
     <div class="header">
@@ -7,10 +8,8 @@
 
     <div class="categories">
       <!-- ✅ Display First 10 Categories -->
-      <div *ngFor="let category of categories.slice(0, 10); let i = index"
-           class="category-item"
-           [ngClass]="{ selected: selectedCategory === i }"
-           (click)="selectCategory(i, category.name)">
+      <div *ngFor="let category of categories.slice(0, 10); let i = index" class="category-item"
+        [ngClass]="{ selected: selectedCategory === i }" (click)="selectCategory(i, category.name)">
         <span>{{ category.name }}</span>
       </div>
 

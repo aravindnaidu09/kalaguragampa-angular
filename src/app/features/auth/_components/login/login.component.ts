@@ -215,12 +215,22 @@ export class LoginComponent implements OnInit {
     const mobileNumber = this.loginOtpForm.get('mobileNumber')?.value;
     const otp = this.loginOtpForm.get('otp')?.value;
 
-    this.authService.login(true, mobileNumber, otp).subscribe(
+    this.authService.login(true, mobileNumber, otp)
+    .pipe(take(1)) // ✅ Ensures one-time execution
+    .subscribe(
       (response: any) => {
-        if (response && response.access && response.refresh) {
+        if (response?.access && response?.refresh) {
           this.store.dispatch(new SetToken(response.access, response.refresh));
+
           localStorage.setItem('accessToken', response.access);
           localStorage.setItem('refreshToken', response.refresh);
+
+          const userName = response?.user?.name || 'User';
+          localStorage.setItem('userName', userName);
+
+          // ✅ Update Menu in HeaderComponent
+          this.menuService.updateMenu(userName);
+
         }
         this.isSignInLoading = false;
         this.closeLoginDialog.emit(true);
