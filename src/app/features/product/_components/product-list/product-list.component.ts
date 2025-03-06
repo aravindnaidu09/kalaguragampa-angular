@@ -20,6 +20,11 @@ export class ProductListComponent implements OnInit {
   categories: ICategory[] = [];
   productsList = signal<IProduct[]>([]);
 
+  // ✅ New signals for pagination metadata
+  totalProducts = signal(0); // Total product count
+  nextPage = signal<string | null>(null); // Next page URL
+  previousPage = signal<string | null>(null); // Previous page URL
+
   selectedCategory: number = 0;
 
 
@@ -38,11 +43,22 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  getProductList(category?: string): void {
-    this.productService.getAllProducts(category).pipe(take(1)).subscribe((products: IProduct[]) => {
-      this.productsList.set(products);
-    });
+  getProductList(category?: string, offset: number = 0, limit: number = 50): void {
+    this.productService.getAllProducts(category, undefined, undefined, undefined, undefined, undefined, limit, offset)
+      .pipe(take(1))
+      .subscribe({
+        next: (response) => {
+          this.productsList.set(response.products); // ✅ Update products
+          this.totalProducts.set(response.totalCount); // ✅ Set total product count
+          this.nextPage.set(response.nextPage); // ✅ Set next page URL
+          this.previousPage.set(response.previousPage); // ✅ Set previous page URL
+        },
+        error: (error) => {
+          console.error('Error fetching product list:', error);
+        }
+      });
   }
+
 
   selectCategory(index: number, categoryName: string) {
     this.selectedCategory = index;

@@ -10,9 +10,9 @@
 
     <div class="step-content">
       <ng-container [ngSwitch]="currentStep">
-        <app-shipping-billing *ngSwitchCase="0" (next)="goToNextStep()"></app-shipping-billing>
+        <app-shipping-billing *ngSwitchCase="2" (next)="goToNextStep()"></app-shipping-billing>
         <app-order-summary *ngSwitchCase="1" (next)="goToNextStep()" (prev)="goToPreviousStep()"></app-order-summary>
-        <app-payment *ngSwitchCase="2" (prev)="goToPreviousStep()"></app-payment>
+        <app-payment *ngSwitchCase="0" (prev)="goToPreviousStep()"></app-payment>
       </ng-container>
     </div>
   </div>

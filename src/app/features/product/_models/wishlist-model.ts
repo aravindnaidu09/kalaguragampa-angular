@@ -2,6 +2,9 @@ export interface IWishlist {
   id: number;
   product: number;
   createdAt: Date;
+  name?: string;
+  price?: string;
+  image?: string;
 }
 
 export function deserializeWishlist(data: any[]): IWishlist[] {

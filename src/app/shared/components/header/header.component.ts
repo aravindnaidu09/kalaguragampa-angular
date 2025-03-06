@@ -141,4 +141,12 @@ export class HeaderComponent implements OnInit {
     }
     this.router.navigate(['/cart']);
   }
+
+  goToWishlistPage() {
+    if (!(this.wishlistCount() > 0)) {
+      alert('Add products to your wishlist to view them.');
+      return;
+    }
+    this.router.navigate(['/wishlist']);
+  }
 }

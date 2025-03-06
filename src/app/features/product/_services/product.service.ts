@@ -16,7 +16,7 @@ export class ProductService {
 
   private readonly baseUrl = APP_SETTINGS.apiBaseUrl;
 
-  constructor(private readonly httpClient: HttpClient) {}
+  constructor(private readonly httpClient: HttpClient) { }
 
   /**
    * Fetch all products
@@ -27,10 +27,12 @@ export class ProductService {
     priceMin?: number,
     priceMax?: number,
     sortBy?: string,
-    stockStatus?: string
-  ): Observable<IProduct[]> {
+    stockStatus?: string,
+    limit: number = 50, // ✅ Default limit for pagination
+    offset: number = 0 // ✅ Default offset for pagination
+  ): Observable<{ totalCount: number; nextPage: string | null; previousPage: string | null; products: IProduct[] }> {
 
-    // Building query params dynamically
+    // ✅ Build Query Params Dynamically
     let params = new HttpParams();
     if (category) params = params.set('category', category);
     if (name) params = params.set('name', name);
@@ -38,23 +40,37 @@ export class ProductService {
     if (priceMax !== undefined) params = params.set('price_max', priceMax.toString());
     if (sortBy) params = params.set('sort_by', sortBy);
     if (stockStatus) params = params.set('stock_status', stockStatus);
+    params = params.set('limit', limit.toString()); // ✅ Pagination limit
+    params = params.set('offset', offset.toString()); // ✅ Pagination offset
 
-    return this.httpClient.get<any>(`${this.baseUrl}${PRODUCT_API_URLS.product.product.list}`, { params })
-    .pipe(
-      map((response) => {
-        // Check if `results` key exists (Paginated Response)
-        const products = response?.results ? response.results : response;
-        return deserializeProducts(products);
-      })
-    );
+    return this.httpClient
+      .get<{ statusCode: number; message: string; data: { count: number; next: string | null; previous: string | null; results: any[] } }>(
+        `${this.baseUrl}${PRODUCT_API_URLS.product.product.list}`,
+        { params }
+      )
+      .pipe(
+        map((response) => {
+          if (!response?.data?.results) {
+            throw new Error('Invalid response format');
+          }
+
+          return {
+            totalCount: response.data.count,  // ✅ Total product count for pagination
+            nextPage: response.data.next,     // ✅ Next page URL
+            previousPage: response.data.previous, // ✅ Previous page URL
+            products: deserializeProducts(response.data.results), // ✅ Extract and deserialize products
+          };
+        })
+      );
   }
+
 
   /**
    * Fetch product by ID
    */
   getProductById(productPk: string): Observable<IProduct> {
     return this.httpClient.get<IProduct>(`${this.baseUrl}${PRODUCT_API_URLS.product.product.getById(productPk)}`)
-    .pipe(map((data) => deserializeProduct(data)));;
+      .pipe(map((data) => deserializeProduct(data)));;
   }
 
   /**
@@ -75,7 +91,10 @@ export class ProductService {
    * Fetch all categories
    */
   getCategories(): Observable<any> {
-    return this.httpClient.get(`${this.baseUrl}${PRODUCT_API_URLS.product.categories}`);
+    return this.httpClient.get(`${this.baseUrl}${PRODUCT_API_URLS.product.categories}`)
+      .pipe(
+        map((response: any) => response.data),
+      );;
   }
 
   /**
@@ -104,7 +123,7 @@ export class ProductService {
    */
   getProductPricing(): Observable<IProductPricing> {
     return this.httpClient.post<IProductPricing>(`${this.baseUrl}${PRODUCT_API_URLS.product.pricing}`, {})
-    .pipe(map((data) => deserializeProductPricing(data)));;
+      .pipe(map((data) => deserializeProductPricing(data)));;
   }
 
   /**
@@ -112,7 +131,7 @@ export class ProductService {
    */
   getProductReviews(productId: string): Observable<IProductReview[]> {
     return this.httpClient.get<IProductReview[]>(`${this.baseUrl}${PRODUCT_API_URLS.product.reviews.getByProductId(productId)}`)
-    .pipe(map((reviews: any[]) => reviews.map(deserializeProductReview)));;
+      .pipe(map((reviews: any[]) => reviews.map(deserializeProductReview)));;
   }
 
   /**
@@ -133,9 +152,9 @@ export class ProductService {
     formData.append('is_primary', String(isPrimary));
 
     return this.httpClient.post<IProductImage>(`${this.baseUrl}${PRODUCT_API_URLS.product.uploadImage}`, formData)
-    .pipe(
-      map(response => deserializeProductImage(response))
-    );;
+      .pipe(
+        map(response => deserializeProductImage(response))
+      );;
   }
 
   /**

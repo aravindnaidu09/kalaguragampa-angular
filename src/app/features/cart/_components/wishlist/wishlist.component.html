@@ -1,0 +1,59 @@
+<div class="wishlist-container">
+
+  <!-- ✅ Tabs -->
+  <div class="wishlist-tabs">
+    <div class="tab" [ngClass]="{ active: activeTab() === 'favorites' }" (click)="activeTab.set('favorites')">Your Wishlist</div>
+    <!-- <div class="tab" [ngClass]="{ active: activeTab() === 'collections' }" (click)="activeTab.set('collections')">Your Collections</div> -->
+    <!-- <div class="tab" [ngClass]="{ active: activeTab() === 'feed' }" (click)="activeTab.set('feed')">Follow Feed</div> -->
+  </div>
+
+  <!-- ✅ Sorting & View Toggle -->
+  <div class="wishlist-actions">
+    <div class="sort-container">
+      <label>Sort by:</label>
+      <select [(ngModel)]="selectedSort">
+        <option *ngFor="let option of sortOptions" [value]="option">{{ option }}</option>
+      </select>
+      <button (click)="ascendingOrder.set(!ascendingOrder())">
+        {{ ascendingOrder() ? '↑' : '↓' }}
+      </button>
+    </div>
+
+    <div class="view-toggle">
+      <button (click)="toggleView()" [ngClass]="{ active: gridView() }">🔲</button>
+      <button (click)="toggleView()" [ngClass]="{ active: !gridView() }">📄</button>
+    </div>
+  </div>
+
+  <!-- ✅ Add All to Cart Button -->
+  <button class="add-all-button" (click)="addAllToCart()">🛒 Add All Items to Cart</button>
+
+  <!-- ✅ Product List/Grid -->
+  <div class="wishlist-items" [ngClass]="{ grid: gridView(), list: !gridView() }">
+    @for (product of wishlistItems(); track product.id) {
+      <div class="wishlist-item">
+
+        <!-- ✅ Product Image -->
+        <div class="wishlist-image">
+          <img [src]="product.image" alt="{{ product.name }}" />
+        </div>
+
+        <!-- ✅ Product Details -->
+        <div class="wishlist-details">
+          <h3>{{ product.name }}</h3>
+          <!-- <p class="brand">{{ product.brand }}</p> -->
+          <p class="price">${{ product.price }}</p>
+          <!-- <p class="sales">{{ product.sales }} Sales</p> -->
+        </div>
+
+        <!-- ✅ Actions -->
+        <div class="wishlist-actions">
+          <button class="wishlist-remove" (click)="removeFromWishlist(product.id)">❤️</button>
+          <button class="wishlist-cart" (click)="addToCart(product)">🛒</button>
+        </div>
+
+      </div>
+    }
+  </div>
+
+</div>

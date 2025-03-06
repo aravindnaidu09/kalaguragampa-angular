@@ -57,7 +57,7 @@
     </div>
 
 
-    <div class="action-item">
+    <div class="action-item" (click)="goToWishlistPage()">
       <img class="wishlist-image" src="../../../../assets/images/Wishlist.png" width="20" height="20" />
       <span>Wishlist</span>
       <div class="wishlist-badge" *ngIf="wishlistCount() > 0">{{ wishlistCount() }}</div>
