@@ -7,7 +7,8 @@
     <a href="https://www.youtube.com/c/KalaguraGampa" target="_blank" rel="noopener noreferrer">
       <img src="../../../../assets/images/youtube-48.png" alt="YouTube" />
     </a>
-    <a href="https://x.com/i/flow/login?redirect_after_login=%2FKalagura_gampa" target="_blank" rel="noopener noreferrer">
+    <a href="https://x.com/i/flow/login?redirect_after_login=%2FKalagura_gampa" target="_blank"
+      rel="noopener noreferrer">
       <img src="../../../../assets/images/x-48.png" alt="Twitter" />
     </a>
     <a href="https://www.instagram.com/kalagura_gampa/" target="_blank" rel="noopener noreferrer">
@@ -18,7 +19,7 @@
     <div class="location-dropdown">
       <select [(ngModel)]="selectedCountry">
         @for (item of countryOptions; track item.value) {
-          <option [ngValue]="item.value">{{ item.label }}</option>
+        <option [ngValue]="item.value">{{ item.label }}</option>
         }
       </select>
     </div>
@@ -37,10 +38,42 @@
   </div>
 
   <div class="search-bar">
-    <input type="text" placeholder="Search for products..." />
+    <input type="text" class="search-input" placeholder="Search for products..." [value]="searchQuery()"
+      (input)="onSearchChange($event)" (keydown)="onSearchKeyDown($event)"
+      aria-label="Search for products" />
     <button class="search-button">
       <img src="../../../../assets/images/search.png" width="20" height="20" alt="Search Icon" />
     </button>
+  </div>
+
+  <!-- ✅ Live Search Suggestions -->
+  <div class="search-suggestions" *ngIf="(products$ | async) ?? []!.length > 0; else noResults">
+    <ul>
+      <li *ngFor="let product of products$ | async; let i = index" (click)="goToProductDetails(product)"
+        [ngClass]="{ 'highlighted': i === selectedIndex() }">
+        <img [src]="product.image" alt="{{ product.name }}" class="product-img" />
+        <div class="product-info">
+          <span class="product-name">{{ product.name }}</span>
+          <span class="product-price">₹{{ product.price }}</span>
+        </div>
+      </li>
+      <!-- ✅ 'View All Results' Button -->
+      <li class="view-all" (click)="goToSearchResults()">
+        View All Results for "{{ searchQuery() }}"
+      </li>
+    </ul>
+  </div>
+
+  <!-- ✅ Show 'No Results Found' -->
+  <ng-template #noResults>
+    <div class="no-results">
+      No results found for "{{ searchQuery() }}".
+    </div>
+  </ng-template>
+
+  <!-- ✅ ARIA Live Region for Screen Readers -->
+  <div aria-live="polite" class="sr-only">
+    {{ (products$ | async)?? []!.length > 0 ? 'Search results updated' : 'No results found' }}
   </div>
 
   <div class="header-actions">
@@ -69,7 +102,7 @@
     </div>
   </div>
 
-  <app-dialog  [isVisible]="isLoginDialogVisible" [contentTemplate]="loginTemplate"
+  <app-dialog [isVisible]="isLoginDialogVisible" [contentTemplate]="loginTemplate"
     (closeDialog)="closeLoginDialog(true)"></app-dialog>
 
   <ng-template #loginTemplate>

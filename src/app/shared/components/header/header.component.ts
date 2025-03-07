@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, OnInit, Signal, ViewChild, computed, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Signal, ViewChild, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from "../../../features/auth/_components/login/login.component";
 import { Router } from '@angular/router';
@@ -7,6 +7,10 @@ import { MenuDropdownComponent, MenuItem } from '../menu-dropdown/menu-dropdown.
 import { DialogComponent } from '../dialog/dialog.component';
 import { CartWishlistService } from '../../../core/services/cart-wishlist.service';
 import { MenuService } from '../../../core/services/menu.service';
+import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { SearchProducts, SearchState } from '../../../features/product/_state/search.state';
+import { IProduct } from '../../../features/product/_models/product-model';
 
 @Component({
   selector: 'app-header',
@@ -21,6 +25,8 @@ import { MenuService } from '../../../core/services/menu.service';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnInit {
+
+  private store = inject(Store);
 
   wishlistCount: Signal<number> = signal(0);
   cartlistCount: Signal<number> = signal(0);
@@ -73,17 +79,75 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  // ✅ Signals for state management
+  searchQuery = signal<string>('');
+  selectedIndex = signal<number>(-1);
+  products$: Observable<IProduct[]> = this.store.select(SearchState.products);
+
+
+  totalCount$ = this.store.selectSignal(SearchState.totalCount);
+
+  // ✅ Debounce user input
+  private searchSubject = new Subject<string>();
+
   constructor(private readonly router: Router,
     private elementRef: ElementRef,
     private readonly cartWishlistService: CartWishlistService,
-    private readonly menuService: MenuService
-  ) { }
+    private readonly menuService: MenuService,
+  ) {
+    this.searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(query => {
+      if (query.length >= 2) {
+        this.store.dispatch(new SearchProducts(query));
+      }
+    });
+  }
 
   ngOnInit() {
     this.setMenuItems();
 
     this.wishlistCount = this.cartWishlistService.wishlistCount; // Signal for wishlist
     this.cartlistCount = this.cartWishlistService.cartCount; // Signal for cart
+  }
+
+  // ✅ Handle user input changes
+  onSearchChange(event: Event): void {
+    const inputValue = (event.target as HTMLInputElement).value;
+    this.searchQuery.set(inputValue);
+    this.searchSubject.next(inputValue);
+  }
+
+  // ✅ Keyboard Navigation
+  onSearchKeyDown(event: KeyboardEvent): void {
+    let productList: any[] = [];
+
+    this.products$.subscribe((products) => {
+      productList = products; // ✅ Assign products to a local variable
+    });
+    if (!productList || productList.length === 0) return;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        this.selectedIndex.set((this.selectedIndex() + 1) % productList.length);
+        break;
+      case 'ArrowUp':
+        this.selectedIndex.set(this.selectedIndex() > 0 ? this.selectedIndex() - 1 : productList.length - 1);
+        break;
+      case 'Enter':
+        if (this.selectedIndex() !== -1) {
+          this.goToProductDetails(productList[this.selectedIndex()]);
+        }
+        break;
+    }
+  }
+
+  // ✅ Navigate to product details
+  goToProductDetails(product: IProduct): void {
+    this.router.navigate(['/product', product.id]);
+  }
+
+  // ✅ Navigate to search results page
+  goToSearchResults(): void {
+    this.router.navigate(['/search-results'], { queryParams: { query: this.searchQuery() } });
   }
 
   setMenuItems(): void {

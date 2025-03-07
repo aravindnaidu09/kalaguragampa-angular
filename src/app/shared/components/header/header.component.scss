@@ -21,15 +21,18 @@
         width: 20px;
         height: 20px;
         transition: filter 0.3s ease;
-        filter: grayscale(100%); /* Start with grayscale for a muted effect */
+        filter: grayscale(100%);
+        /* Start with grayscale for a muted effect */
       }
 
       &:hover {
-        transform: scale(1.1); /* Slightly enlarge the icon */
+        transform: scale(1.1);
+        /* Slightly enlarge the icon */
       }
 
       &:hover img {
-        filter: grayscale(0%) brightness(100%) invert(100%); /* Change color to white */
+        filter: grayscale(0%) brightness(100%) invert(100%);
+        /* Change color to white */
       }
     }
   }
@@ -131,6 +134,7 @@
   }
 
   .search-bar {
+    position: relative;
     display: flex;
     align-items: center;
     width: 100%;
@@ -241,6 +245,71 @@
     }
   }
 
+  .search-suggestions {
+    position: absolute;
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    max-height: 250px;
+    overflow-y: auto;
+  }
+
+  .search-suggestions ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .search-suggestions li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .search-suggestions li:hover,
+  .search-suggestions .highlighted {
+    background: #f1f1f1;
+  }
+
+  .product-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+
+  .product-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-name {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .product-price {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .view-all {
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #0073e6;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 10px;
+    color: #888;
+  }
 }
 
 
@@ -250,20 +319,28 @@
 
 .wishlist-badge {
   position: absolute;
-  top: 6px; /* Adjust position for proper placement */
-  right: 80px; /* Move away from the right edge to avoid overlap */
-  background-color: #fbc02d; /* Theme yellow for badge */
-  color: #333; /* Text color inside badge */
+  top: 6px;
+  /* Adjust position for proper placement */
+  right: 80px;
+  /* Move away from the right edge to avoid overlap */
+  background-color: #fbc02d;
+  /* Theme yellow for badge */
+  color: #333;
+  /* Text color inside badge */
   font-size: 10px;
   font-weight: bold;
-  padding: 3px 6px; /* Padding for badge */
-  border-radius: 50%; /* Circular badge */
-  min-width: 18px; /* Minimum size for small counts */
+  padding: 3px 6px;
+  /* Padding for badge */
+  border-radius: 50%;
+  /* Circular badge */
+  min-width: 18px;
+  /* Minimum size for small counts */
   text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for 3D effect */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Optional shadow for 3D effect */
 }
 
 .cart-image {
@@ -272,18 +349,26 @@
 
 .cart-badge {
   position: absolute;
-  top: 5px; /* Adjust position for proper placement */
-  right: 10px; /* Move away from the right edge to avoid overlap */
-  background-color: #fbc02d; /* Theme yellow for badge */
-  color: #333; /* Text color inside badge */
+  top: 5px;
+  /* Adjust position for proper placement */
+  right: 10px;
+  /* Move away from the right edge to avoid overlap */
+  background-color: #fbc02d;
+  /* Theme yellow for badge */
+  color: #333;
+  /* Text color inside badge */
   font-size: 10px;
   font-weight: bold;
-  padding: 3px 6px; /* Padding for badge */
-  border-radius: 50%; /* Circular badge */
-  min-width: 18px; /* Minimum size for small counts */
+  padding: 3px 6px;
+  /* Padding for badge */
+  border-radius: 50%;
+  /* Circular badge */
+  min-width: 18px;
+  /* Minimum size for small counts */
   text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for 3D effect */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Optional shadow for 3D effect */
 }

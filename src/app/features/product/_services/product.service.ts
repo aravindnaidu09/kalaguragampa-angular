@@ -68,8 +68,6 @@ export class ProductService {
       );
   }
 
-
-
   /**
    * Fetch product by ID
    */
