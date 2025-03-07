@@ -12,6 +12,7 @@ import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
 
 import { AuthState } from './features/auth/_state/auth.state';
 import { OtpState } from './features/auth/_state/otp.state';
+import { SearchState } from './features/product/_state/search.state';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,7 +21,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withHashLocation()),
     provideAnimationsAsync(),
     provideHttpClient(),
-    provideStore([AuthState, OtpState, ],
+    provideStore([AuthState, OtpState, SearchState],
       withNgxsReduxDevtoolsPlugin(),
       // withNgxsFormPlugin(),
       withNgxsLoggerPlugin(),
