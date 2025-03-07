@@ -47,7 +47,7 @@
   </div>
 
   <!-- ✅ Live Search Suggestions -->
-  <div class="search-suggestions" *ngIf="(products$ | async) ?? []!.length > 0;">
+  <div class="search-suggestions" *ngIf="showSuggestions() && (products$ | async) ?? []!.length > 0;">
     <ul>
       <li *ngFor="let product of products$ | async; let i = index" (click)="goToProductDetails(product)"
         [ngClass]="{ 'highlighted': i === selectedIndex() }">

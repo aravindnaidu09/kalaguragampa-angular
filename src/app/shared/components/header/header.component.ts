@@ -66,6 +66,7 @@ export class HeaderComponent implements OnInit {
   onClickOutside(event: Event): void {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.isMenuOpen = false;
+      this.showSuggestions.set(false);
     }
   }
 
@@ -83,6 +84,7 @@ export class HeaderComponent implements OnInit {
   searchQuery = signal<string>('');
   selectedIndex = signal<number>(-1);
   products$: Observable<IProduct[]> = this.store.select(SearchState.products);
+  showSuggestions = signal(false); // ✅ Controls visibility of suggestions
 
 
   totalCount$ = this.store.selectSignal(SearchState.totalCount);
@@ -112,6 +114,13 @@ export class HeaderComponent implements OnInit {
   // ✅ Handle user input changes
   onSearchChange(event: Event): void {
     const inputValue = (event.target as HTMLInputElement).value;
+
+    if (inputValue.length > 0) {
+      this.showSuggestions.set(true); // ✅ Show suggestions when input has value
+    } else {
+      this.showSuggestions.set(false); // ✅ Hide suggestions when input is empty
+    }
+
     this.searchQuery.set(inputValue);
     this.searchSubject.next(inputValue);
   }
