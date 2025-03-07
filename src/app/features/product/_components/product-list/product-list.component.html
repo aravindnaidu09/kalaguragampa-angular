@@ -9,7 +9,7 @@
     <div class="categories">
       <!-- ✅ Display First 10 Categories -->
       <div *ngFor="let category of categories.slice(0, 10); let i = index" class="category-item"
-        [ngClass]="{ selected: selectedCategory === i }" (click)="selectCategory(i, category.name)">
+        [ngClass]="{ selected: selectedCategory === i }" (click)="selectCategory(i, category.id)">
         <span>{{ category.name }}</span>
       </div>
 

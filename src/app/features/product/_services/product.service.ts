@@ -8,6 +8,7 @@ import { deserializeProductPricing, IProductPricing } from '../_models/product-p
 import { deserializeProduct, deserializeProducts, IProduct } from '../_models/product-model';
 import { deserializeWishlist, IWishlist } from '../_models/wishlist-model';
 import { deserializeProductImage, IProductImage } from '../_models/upload-image-model';
+import { IProductQueryParams } from '../_models/product-query-model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,34 +20,37 @@ export class ProductService {
   constructor(private readonly httpClient: HttpClient) { }
 
   /**
-   * Fetch all products
-   */
-  getAllProducts(
-    category?: string,
-    name?: string,
-    priceMin?: number,
-    priceMax?: number,
-    sortBy?: string,
-    stockStatus?: string,
-    limit: number = 50, // ✅ Default limit for pagination
-    offset: number = 0 // ✅ Default offset for pagination
-  ): Observable<{ totalCount: number; nextPage: string | null; previousPage: string | null; products: IProduct[] }> {
+ * Fetch all products with dynamic query parameters using rest operator
+ */
+  getAllProducts(params: IProductQueryParams): Observable<{
+    totalCount: number;
+    nextPage: string | null;
+    previousPage: string | null;
+    products: IProduct[]
+  }> {
 
-    // ✅ Build Query Params Dynamically
-    let params = new HttpParams();
-    if (category) params = params.set('category', category);
-    if (name) params = params.set('name', name);
-    if (priceMin !== undefined) params = params.set('price_min', priceMin.toString());
-    if (priceMax !== undefined) params = params.set('price_max', priceMax.toString());
-    if (sortBy) params = params.set('sort_by', sortBy);
-    if (stockStatus) params = params.set('stock_status', stockStatus);
-    params = params.set('limit', limit.toString()); // ✅ Pagination limit
-    params = params.set('offset', offset.toString()); // ✅ Pagination offset
+    let httpParams = new HttpParams();
+
+    // ✅ Dynamically add only defined parameters
+    Object.keys(params).forEach(key => {
+      if (params[key as keyof IProductQueryParams] !== undefined) {
+        httpParams = httpParams.set(key, params[key as keyof IProductQueryParams]!.toString());
+      }
+    });
 
     return this.httpClient
-      .get<{ statusCode: number; message: string; data: { count: number; next: string | null; previous: string | null; results: any[] } }>(
+      .get<{
+        statusCode: number;
+        message: string;
+        data: {
+          count: number;
+          next: string | null;
+          previous: string | null;
+          results: any[]
+        }
+      }>(
         `${this.baseUrl}${PRODUCT_API_URLS.product.product.list}`,
-        { params }
+        { params: httpParams }
       )
       .pipe(
         map((response) => {
@@ -63,6 +67,7 @@ export class ProductService {
         })
       );
   }
+
 
 
   /**

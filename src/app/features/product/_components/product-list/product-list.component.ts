@@ -6,6 +6,7 @@ import { ProductService } from '../../_services/product.service';
 import { IProduct } from '../../_models/product-model';
 import { take } from 'rxjs';
 import { Router } from '@angular/router';
+import { IProductQueryParams } from '../../_models/product-query-model';
 
 @Component({
   selector: 'app-product-list',
@@ -43,12 +44,15 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  getProductList(category?: string, offset: number = 0, limit: number = 50): void {
-    this.productService.getAllProducts(category, undefined, undefined, undefined, undefined, undefined, limit, offset)
+  getProductList(category?: number, offset: number = 0, limit: number = 50): void {
+    const params: IProductQueryParams = {
+      category_id: category
+    }
+    this.productService.getAllProducts(params)
       .pipe(take(1))
       .subscribe({
         next: (response) => {
-          this.productsList.set(response.products); // ✅ Update products
+          this.productsList.set(response.products.slice(0, 15)); // ✅ Update products
           this.totalProducts.set(response.totalCount); // ✅ Set total product count
           this.nextPage.set(response.nextPage); // ✅ Set next page URL
           this.previousPage.set(response.previousPage); // ✅ Set previous page URL
@@ -60,10 +64,10 @@ export class ProductListComponent implements OnInit {
   }
 
 
-  selectCategory(index: number, categoryName: string) {
+  selectCategory(index: number, categoryId: number) {
     this.selectedCategory = index;
 
-    this.getProductList(categoryName);
+    this.getProductList(categoryId);
   }
 
   navigateToProductPage() {

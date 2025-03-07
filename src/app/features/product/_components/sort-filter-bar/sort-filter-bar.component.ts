@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output, signal } from '@angular/core';
 
 interface FilterOption {
@@ -7,7 +8,9 @@ interface FilterOption {
 
 @Component({
   selector: 'app-sort-filter-bar',
-  imports: [],
+  imports: [
+    CommonModule
+  ],
   templateUrl: './sort-filter-bar.component.html',
   styleUrl: './sort-filter-bar.component.scss'
 })
