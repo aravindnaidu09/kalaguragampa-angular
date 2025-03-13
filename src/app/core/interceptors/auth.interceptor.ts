@@ -2,45 +2,70 @@ import { inject } from '@angular/core';
 import type { HttpInterceptorFn } from '@angular/common/http';
 import { HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { Router } from '@angular/router';
-import { AuthState, ClearToken } from '../../features/auth/_state/auth.state';
+import { AuthState, SetToken, ClearToken } from '../../features/auth/_state/auth.state';
 import { ToastService } from '../services/toast.service';
+import { AuthService } from '../../features/auth/_services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
   const store = inject(Store);
   const router = inject(Router);
+  const authService = inject(AuthService);
   const toastService = inject(ToastService);
 
-  // ✅ Retrieve Token Synchronously
-  const token = store.selectSnapshot(AuthState.getAccessToken);
-  console.log('Retrieved Token from Store:', token);
+  // ✅ Retrieve Access Token Synchronously
+  const accessToken = store.selectSnapshot(AuthState.getAccessToken);
+  const refreshToken = store.selectSnapshot(AuthState.getRefreshToken);
 
   let clonedRequest = req;
 
   // ✅ Attach Authorization Header if Token Exists
-  if (token) {
+  if (accessToken) {
     clonedRequest = req.clone({
-      setHeaders: { Authorization: `Bearer ${token}` }
+      setHeaders: { Authorization: `Bearer ${accessToken}` }
     });
-
-    console.log('Request with Token:', clonedRequest);
   }
 
   return next(clonedRequest).pipe(
     catchError((error: HttpErrorResponse) => {
-      let errorMessage = 'An unexpected error occurred';
-
       if (error.status === 401) {
-        errorMessage = error.error.message || 'Session expired. Please log in again.';
+        console.log('🔄 Access Token Expired. Attempting Refresh...');
 
-        // ✅ Prevent infinite loop by checking if already on login page
-        if (router.url !== '/login') {
+        if (!refreshToken) {
+          console.warn('❌ No Refresh Token Available! Redirecting to Login.');
           store.dispatch(new ClearToken());
           router.navigate(['/login']);
+          return throwError(() => new Error('Session expired. Please log in again.'));
         }
-      } else if (error.status === 403) {
+
+        // ✅ Call AuthService to Get a New Access Token
+        return authService.refreshAccessToken().pipe(
+          switchMap((newTokens) => {
+            console.log('✅ New Tokens Received:', newTokens);
+
+            // ✅ Update Tokens in NGXS Store
+            store.dispatch(new SetToken(newTokens.access, newTokens.refresh));
+
+            // ✅ Retry the Original Request with the New Token
+            const updatedRequest = req.clone({
+              setHeaders: { Authorization: `Bearer ${newTokens.access}` }
+            });
+
+            return next(updatedRequest);
+          }),
+          catchError(err => {
+            console.error('❌ Refresh Token Expired. Logging Out.');
+            store.dispatch(new ClearToken());
+            router.navigate(['/login']);
+            return throwError(() => new Error('Session expired. Please log in again.'));
+          })
+        );
+      }
+
+      let errorMessage = 'An unexpected error occurred';
+      if (error.status === 403) {
         errorMessage = 'Access Denied.';
       } else if (error.error?.message) {
         errorMessage = error.error.message;

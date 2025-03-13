@@ -6,6 +6,7 @@ import { IProduct } from '../../_models/product-model';
 import { HtmlParserPipe } from '../../../../core/utils/html-parser.pipe';
 import { ProductService } from '../../_services/product.service';
 import { WishlistStore } from '../../_services/wishliststore';
+import { environment } from '../../../../../environments/environment.dev';
 
 @Component({
   selector: 'app-product',
@@ -95,5 +96,9 @@ export class ProductComponent implements OnChanges {
     } else {
       this.wishlistStore.addToWishlist(product);
     }
+  }
+
+  getImagePath(imagePath?: string): string {
+    return `${environment.apiBaseUrl}${imagePath}`;
   }
 }

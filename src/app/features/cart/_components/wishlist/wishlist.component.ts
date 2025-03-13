@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ProductService } from '../../../product/_services/product.service';
 import { FormsModule } from '@angular/forms';
 import { IWishlist } from '../../../product/_models/wishlist-model';
+import { environment } from '../../../../../environments/environment.dev';
 
 @Component({
   selector: 'app-wishlist',
@@ -70,5 +71,9 @@ export class WishlistComponent {
   changeSorting(sortType: string): void {
     this.selectedSort.set(sortType);
     this.ascendingOrder.set(!this.ascendingOrder());
+  }
+
+  getImagePath(imagePath?: string): string {
+    return `${environment.apiBaseUrl}${imagePath}`;
   }
 }

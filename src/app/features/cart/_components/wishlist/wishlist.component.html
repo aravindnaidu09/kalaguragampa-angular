@@ -35,7 +35,7 @@
 
         <!-- ✅ Product Image -->
         <div class="wishlist-image">
-          <img [src]="product.productDetails.images[0].image" alt="{{ product.productDetails.name }}" />
+          <img [src]="getImagePath(product.productDetails.images[0].image)" alt="{{ product.productDetails.name }}" />
         </div>
 
         <!-- ✅ Product Details -->
@@ -49,7 +49,7 @@
         <!-- ✅ Actions -->
         <div class="wishlist-actions">
           <button class="wishlist-remove" (click)="removeFromWishlist(product.id)">❤️</button>
-          <button class="wishlist-cart" (click)="addToCart(product)">🛒</button>
+          <button class="wishlist-cart" title="Move to Cart" (click)="addToCart(product)">🛒</button>
         </div>
 
       </div>

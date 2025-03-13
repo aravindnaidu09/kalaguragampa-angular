@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { APP_SETTINGS } from '../../../core/constants/app-settings';
 import { AUTH_API_URLS } from '../../../core/constants/auth-api-urls';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, tap } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { Store } from '@ngxs/store';
-import { ClearToken, SetToken } from '../_state/auth.state';
+import { AuthState, ClearToken, SetToken } from '../_state/auth.state';
 
 @Injectable({
   providedIn: 'root'
@@ -25,8 +25,24 @@ export class AuthService {
       .pipe(map(response => response.data));
   }
 
-  refreshToken(token: string): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.auth.tokenRefresh}`, { token });
+  refreshAccessToken(): Observable<{ access: string; refresh: string }> {
+    const refreshToken = this.store.selectSnapshot(AuthState.getRefreshToken);
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token available.'));
+    }
+
+    return this.httpClient.post<{ access: string; refresh: string }>(
+      `${this.baseUrl}/refresh`, { refresh: refreshToken }
+    ).pipe(
+      map(response => {
+        this.store.dispatch(new SetToken(response.access, response.refresh));
+        return response;
+      }),
+      catchError(error => {
+        this.store.dispatch(new ClearToken());
+        return throwError(() => new Error('Refresh token expired, please log in again.'));
+      })
+    );
   }
 
   register(userData: any): Observable<any> {

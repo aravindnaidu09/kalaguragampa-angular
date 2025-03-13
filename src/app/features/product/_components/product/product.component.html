@@ -44,7 +44,7 @@
 
       <!-- Product Image -->
       <div class="product-image">
-        <img [src]="product.images[0].image" alt="{{ product.name }}" (click)="goToProductDetailsPage(product.name)" />
+        <img [src]="getImagePath(product.images[0].image)" alt="{{ product.name }}" (click)="goToProductDetailsPage(product.name)" />
       </div>
 
       <!-- Product Details -->
