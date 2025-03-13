@@ -253,7 +253,7 @@ export class LoginComponent implements OnInit {
 
       this.authService
         .login(false, mobileOrEmail, password)
-        .pipe(take(1)) // ✅ Ensures one-time execution
+        .pipe(take(1))
         .subscribe(
           (response: any) => {
             if (response?.access && response?.refresh) {

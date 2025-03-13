@@ -1,3 +1,4 @@
+import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 
 // ✅ Actions for OTP Handling
@@ -35,6 +36,7 @@ export interface OtpStateModel {
     isCooldownRunning: false,
   }
 })
+@Injectable()
 export class OtpState {
   // ✅ Selectors
   @Selector()

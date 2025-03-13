@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { APP_SETTINGS } from '../../../core/constants/app-settings';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -16,6 +16,7 @@ import { IProductQueryParams } from '../_models/product-query-model';
 export class ProductService {
 
   private readonly baseUrl = APP_SETTINGS.apiBaseUrl;
+  wishlistCount = signal<number>(0);
 
   constructor(private readonly httpClient: HttpClient) { }
 
@@ -166,7 +167,7 @@ export class ProductService {
   getWishlist(): Observable<IWishlist[]> {
     return this.httpClient
       .get<IWishlist[]>(`${this.baseUrl}${PRODUCT_API_URLS.product.wishlist.get}`)
-      .pipe(map((data) => deserializeWishlist(data)));
+      .pipe(map((data: any) => deserializeWishlist(data.data)));
   }
 
   /**
@@ -181,6 +182,16 @@ export class ProductService {
    */
   removeFromWishlist(productId: string): Observable<any> {
     return this.httpClient.delete(`${this.baseUrl}${PRODUCT_API_URLS.product.wishlist.remove(productId)}`);
+  }
+
+  /**
+   * Method to get the items length in wishlist
+   */
+  fetchWishlistCount(): void {
+    this.httpClient.get<{ count: number }>(`${this.baseUrl}${PRODUCT_API_URLS.product.wishlist.get}`)
+      .subscribe((response: any) => {
+        this.wishlistCount.set(response.data.length);
+      });
   }
 
 }

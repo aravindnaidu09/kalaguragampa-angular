@@ -1,3 +1,4 @@
+import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 
 export interface AuthStateModel {
@@ -17,10 +18,11 @@ export class ClearToken {
 @State<AuthStateModel>({
   name: 'auth',
   defaults: {
-    accessToken: localStorage.getItem('accessToken') || null,
-    refreshToken: localStorage.getItem('refreshToken') || null
+    accessToken: null,
+    refreshToken: null
   }
 })
+@Injectable()
 export class AuthState {
   @Selector()
   static getAccessToken(state: AuthStateModel): string | null {

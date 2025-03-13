@@ -6,17 +6,45 @@
   </button>
 
   <div class="product-list-container" #productList>
-    @for (product of displayedProducts(); ; track product.id) {
+    <!-- Skeleton Loader -->
+    @if (isLoading()) {
+    @for (_ of [1, 2, 3, 4, 5]; track _) {
+    <div class="product-card skeleton">
+      <div class="wishlist-icon">
+        <div class="skeleton-box" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+      </div>
+      <div class="product-image">
+        <div class="skeleton-box" style="width: 100%; height: 150px;"></div>
+      </div>
+      <div class="product-details">
+        <div class="product-header">
+          <div class="skeleton-box" style="width: 60%; height: 20px;"></div>
+          <div class="skeleton-box" style="width: 30%; height: 20px;"></div>
+        </div>
+        <div class="skeleton-box" style="width: 100%; height: 40px;"></div>
+        <div class="product-rating">
+          <div class="skeleton-box" style="width: 80px; height: 15px;"></div>
+        </div>
+        <div class="skeleton-box add-to-cart-skeleton"></div>
+      </div>
+    </div>
+    }
+    }
+
+    <!-- Product List -->
+    @for (product of displayedProducts(); track product.id) {
     <div class="product-card">
       <!-- Wishlist Icon -->
       <div class="wishlist-icon">
-        <img src="../../../../../assets/images/Wishlist.png" width="22px" height="22px"
-          (click)="addToWishlist(product.id)" />
+        <span (click)="addToWishlist(product)">
+          <span *ngIf="isInWishlist(product.id); else notInWishlist">❤️</span>
+          <ng-template #notInWishlist>🤍</ng-template>
+        </span>
       </div>
 
       <!-- Product Image -->
       <div class="product-image">
-        <img [src]="product.image" alt="{{ product.name }}" (click)="goToProductDetailsPage(product.name)" />
+        <img [src]="product.images[0].image" alt="{{ product.name }}" (click)="goToProductDetailsPage(product.name)" />
       </div>
 
       <!-- Product Details -->
@@ -35,6 +63,7 @@
     </div>
     }
   </div>
+
 
   <!-- Right Scroll Button -->
   <button class="scroll-button right-scroll" (click)="scrollRight()">

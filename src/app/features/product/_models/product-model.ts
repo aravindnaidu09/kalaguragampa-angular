@@ -1,3 +1,5 @@
+import { Images } from "./images-model";
+
 export interface IProduct {
   id: string;
   name: string;
@@ -13,6 +15,7 @@ export interface IProduct {
   image: string;
   price: string;
   rating: string;
+  images: Images[];
 }
 
 export function deserializeProducts(data: any[]): IProduct[] {
@@ -30,7 +33,8 @@ export function deserializeProducts(data: any[]): IProduct[] {
     stockStatus: product.stock_status,
     image: product.image,
     price: product.price,
-    rating: product.rating
+    rating: product.rating,
+    images: product.images
   }));
 }
 
@@ -50,6 +54,7 @@ export function deserializeProduct(data: any): IProduct {
     stockStatus: data.stock_status,
     image: data.image,
     price: data.price,
-    rating: data.rating
+    rating: data.rating,
+    images: data.images
   };
 }

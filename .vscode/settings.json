@@ -67,6 +67,7 @@
         "treeselect",
         "treetable",
         "Usha",
-        "virtualscroller"
+        "virtualscroller",
+        "wishliststore"
     ]
 }

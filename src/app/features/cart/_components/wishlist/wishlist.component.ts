@@ -41,6 +41,7 @@ export class WishlistComponent {
   loadWishlist(): void {
     this.wishlistService.getWishlist().subscribe((products: IWishlist[]) => {
       this.wishlistItems.set(products);
+      console.log(products);
     });
   }
 

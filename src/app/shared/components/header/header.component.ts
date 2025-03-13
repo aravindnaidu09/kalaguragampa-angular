@@ -11,6 +11,7 @@ import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { SearchProducts, SearchState } from '../../../features/product/_state/search.state';
 import { IProduct } from '../../../features/product/_models/product-model';
+import { ProductService } from '../../../features/product/_services/product.service';
 
 @Component({
   selector: 'app-header',
@@ -22,13 +23,18 @@ import { IProduct } from '../../../features/product/_models/product-model';
     DialogComponent,
   ],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrl: './header.component.scss',
+  providers: [
+    ProductService,
+    CartWishlistService
+  ]
 })
 export class HeaderComponent implements OnInit {
 
   private store = inject(Store);
+  private service = inject(ProductService);
 
-  wishlistCount: Signal<number> = signal(0);
+  wishlistCount = this.service.wishlistCount;
   cartlistCount: Signal<number> = signal(0);
 
   isMenuOpen = false; // Menu visibility state
@@ -89,6 +95,7 @@ export class HeaderComponent implements OnInit {
 
   totalCount$ = this.store.selectSignal(SearchState.totalCount);
 
+
   // ✅ Debounce user input
   private searchSubject = new Subject<string>();
 
@@ -107,7 +114,8 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     this.setMenuItems();
 
-    this.wishlistCount = this.cartWishlistService.wishlistCount; // Signal for wishlist
+    this.service.fetchWishlistCount();
+
     this.cartlistCount = this.cartWishlistService.cartCount; // Signal for cart
   }
 

@@ -1,6 +1,6 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withHashLocation } from '@angular/router';
-import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -14,6 +14,8 @@ import { AuthState } from './features/auth/_state/auth.state';
 import { OtpState } from './features/auth/_state/otp.state';
 import { SearchState } from './features/product/_state/search.state';
 
+
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -26,7 +28,10 @@ export const appConfig: ApplicationConfig = {
       // withNgxsFormPlugin(),
       withNgxsLoggerPlugin(),
       withNgxsStoragePlugin({
-        keys: '*'
+        keys: [
+          'auth.accessToken', // ✅ Store only accessToken
+          'auth.refreshToken' // ✅ Store only refreshToken
+        ]
       })
     ),
   ]

@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { APP_SETTINGS } from '../../../core/constants/app-settings';
 import { AUTH_API_URLS } from '../../../core/constants/auth-api-urls';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { Store } from '@ngxs/store';
-import { ClearToken } from '../_state/auth.state';
+import { ClearToken, SetToken } from '../_state/auth.state';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,9 @@ export class AuthService {
   login(isOtpLogin: boolean, username: string, credential: string): Observable<any> {
     const url = `${this.baseUrl}${AUTH_API_URLS.auth.login}`;
     const payload = isOtpLogin ? { username, otp: credential } : { username, password: credential };
-    return this.httpClient.post(url, payload);
+    return this.httpClient
+      .post<{ statusCode: number; message: string; data: { access: string; refresh: string } }>(url, payload)
+      .pipe(map(response => response.data));
   }
 
   refreshToken(token: string): Observable<any> {
