@@ -25,7 +25,7 @@ function getApiBaseUrl(): string {
   const env = getEnvironment();
 
   const apiUrls = {
-    development: 'http://45.149.205.253:8000',  // Dev API
+    development: 'https://45.149.205.253:2025',  // Dev API
     test: 'https://test-api.example.com',        // Test API
     production: 'https://45.149.205.253:2025'       // Production API
   };
