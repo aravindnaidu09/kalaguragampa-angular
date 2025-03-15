@@ -51,10 +51,12 @@
       <!-- Product Details -->
       <div class="product-details">
         <div class="product-header">
-          <h4>{{ product.name }}</h4>
-          <span class="product-price">Rs. {{ product.price }}</span>
+          <h4 [title]="product.name" (click)="goToProductDetailsPage(product.name)">{{ product.name }}</h4>
         </div>
-        <p class="product-description" [innerHTML]="product.description | appHtmlParser"></p>
+        <p class="product-description" [innerHTML]="product.description | appHtmlParser" (click)="goToProductDetailsPage(product.name)"></p>
+
+        <div class="product-price">Rs. {{ product.price }}</div>
+
         <div class="product-rating">
           <span>⭐⭐⭐⭐⭐</span>
           <span class="rating-count">({{ product.rating }})</span>

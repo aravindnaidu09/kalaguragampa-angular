@@ -51,7 +51,7 @@
     <ul>
       <li *ngFor="let product of products$ | async; let i = index" (click)="goToProductDetails(product)"
         [ngClass]="{ 'highlighted': i === selectedIndex() }">
-        <img [src]="product.image" alt="{{ product.name }}" class="product-img" />
+        <img [src]="getImagePath(product.images[0].image)" alt="{{ product.name }}" class="product-img" (error)="onImageError($event)" />
         <div class="product-info">
           <span class="product-name">{{ product.name }}</span>
           <span class="product-price">₹{{ product.price }}</span>

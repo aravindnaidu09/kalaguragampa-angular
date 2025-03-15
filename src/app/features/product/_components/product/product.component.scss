@@ -78,17 +78,17 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 10px;
+      width: 100%;
 
       h4 {
         font-size: 1.2rem;
         font-weight: bold;
         color: #333;
         cursor: pointer;
-      }
-
-      .product-price {
-        font-size: 0.8rem;
-        color: #333;
+        white-space: nowrap; // ✅ Prevent text from wrapping to a new line
+        overflow: hidden; // ✅ Hide the overflowing text
+        text-overflow: ellipsis; // ✅ Add ellipsis to indicate truncated text
+        max-width: 90%; // ✅ Ensure it does not take the full width
       }
     }
 
@@ -96,12 +96,18 @@
       font-size: 0.7rem;
       color: #666;
       margin-bottom: 15px;
+      cursor: pointer;
     }
 
     .product-rating {
       display: flex;
       align-items: center;
       margin-bottom: 15px;
+
+      .product-price {
+        font-size: 0.8rem;
+        color: #333;
+      }
 
       .rating-count {
         margin-left: 8px;
@@ -128,33 +134,44 @@
   }
 }
 
-/* Scroll Buttons */
+/* ✅ Scroll Button Styles */
 .scroll-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.8);
+  /* ✅ Subtle transparency */
   border: none;
   cursor: pointer;
   padding: 10px;
   font-size: 18px;
   z-index: 10;
   border-radius: 50%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease-in-out;
-
-  &:hover {
-    background-color: #f7a500;
-    color: white;
-  }
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  /* ✅ Soft shadow */
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
 }
 
+/* ✅ Hover Effect */
+.scroll-button:hover {
+  background-color: rgba(247, 165, 0, 0.9);
+  /* ✅ Warm golden highlight */
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* ✅ Left & Right Button Positions */
 .left-scroll {
-  left: 10px;
+  left: 5px;
 }
 
 .right-scroll {
-  right: 10px;
+  right: 5px;
 }
 
 /* Skeleton Loader Animation */

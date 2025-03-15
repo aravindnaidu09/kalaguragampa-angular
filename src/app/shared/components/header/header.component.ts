@@ -12,6 +12,7 @@ import { Store } from '@ngxs/store';
 import { SearchProducts, SearchState } from '../../../features/product/_state/search.state';
 import { IProduct } from '../../../features/product/_models/product-model';
 import { ProductService } from '../../../features/product/_services/product.service';
+import { environment } from '../../../../environments/environment.dev';
 
 @Component({
   selector: 'app-header',
@@ -124,21 +125,24 @@ export class HeaderComponent implements OnInit {
     this.searchSubject.next(inputValue);
   }
 
-  // ✅ Keyboard Navigation
+  // ✅ Keyboard Navigation with Scrolling
   onSearchKeyDown(event: KeyboardEvent): void {
     let productList: any[] = [];
 
     this.products$.subscribe((products) => {
       productList = products; // ✅ Assign products to a local variable
     });
+
     if (!productList || productList.length === 0) return;
 
     switch (event.key) {
       case 'ArrowDown':
         this.selectedIndex.set((this.selectedIndex() + 1) % productList.length);
+        this.scrollToSelectedItem();
         break;
       case 'ArrowUp':
         this.selectedIndex.set(this.selectedIndex() > 0 ? this.selectedIndex() - 1 : productList.length - 1);
+        this.scrollToSelectedItem();
         break;
       case 'Enter':
         if (this.selectedIndex() !== -1) {
@@ -148,14 +152,38 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  // ✅ Scroll the selected item into view
+  scrollToSelectedItem(): void {
+    setTimeout(() => {
+      const productElements = document.querySelectorAll('.product-info');
+      const selectedElement = productElements[this.selectedIndex()] as HTMLElement;
+
+      if (selectedElement) {
+        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 100);
+  }
+
   // ✅ Navigate to product details
   goToProductDetails(product: IProduct): void {
+    this.showSuggestions.set(false);
     this.router.navigate(['/product', product.id]);
   }
 
   // ✅ Navigate to search results page
   goToSearchResults(): void {
     this.router.navigate(['/search-results'], { queryParams: { query: this.searchQuery() } });
+  }
+
+  getImagePath(imagePath?: string): string {
+    if (!imagePath || imagePath.trim() === '' || imagePath === 'null' || imagePath === 'undefined') {
+      return `${environment.apiBaseUrl}/media/KG_LOGO.png`;
+    }
+    return `${environment.apiBaseUrl}${imagePath}`;
+  }
+
+  onImageError(event: Event): void {
+    (event.target as HTMLImageElement).src = `${environment.apiBaseUrl}/media/KG_LOGO.png`;
   }
 
   setMenuItems(): void {
