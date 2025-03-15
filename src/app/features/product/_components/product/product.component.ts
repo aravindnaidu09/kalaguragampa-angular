@@ -105,6 +105,13 @@ export class ProductComponent implements OnChanges {
   }
 
   getImagePath(imagePath?: string): string {
+    if (!imagePath || imagePath.trim() === '' || imagePath === 'null' || imagePath === 'undefined') {
+      return `${environment.apiBaseUrl}/media/KG_LOGO.png`;
+    }
     return `${environment.apiBaseUrl}${imagePath}`;
+  }
+
+  onImageError(event: Event): void {
+    (event.target as HTMLImageElement).src = `${environment.apiBaseUrl}/media/KG_LOGO.png`;
   }
 }

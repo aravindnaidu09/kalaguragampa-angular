@@ -56,7 +56,6 @@ export class HeaderComponent implements OnInit {
     { label: 'Canada', value: 'CAN' },
     { label: 'Europe', value: 'EUR' },
     { label: 'India', value: 'IN' },
-    { label: 'Singapore', value: 'SN' },
     { label: 'UK', value: 'UK' },
     { label: 'USA', value: 'US' },
     { label: 'Singapore', value: 'sing' }
