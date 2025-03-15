@@ -1,19 +1,22 @@
 .product-container {
   display: flex;
+  flex-wrap: wrap;
   padding: 20px;
   gap: 40px;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .product-image img {
   width: 100%;
-  height: auto;
   max-width: 400px;
+  height: auto;
+  border-radius: 10px;
 }
 
 .thumbnail-container {
   display: flex;
   gap: 10px;
+  margin-top: 10px;
 }
 
 .thumbnail-container img {
@@ -22,6 +25,7 @@
   object-fit: cover;
   border: 2px solid #ccc;
   cursor: pointer;
+  transition: border-color 0.3s ease-in-out;
 }
 
 .thumbnail-container img:hover {
@@ -29,21 +33,7 @@
 }
 
 .product-details {
-  flex: 1;
   max-width: 500px;
-}
-
-.product-details h1 {
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.product-description {
-  color: #666;
-}
-
-.product-rating {
-  margin-top: 10px;
 }
 
 .product-price span {
@@ -51,88 +41,35 @@
   font-size: 1.5rem;
 }
 
-.financing {
-  color: #555;
-}
-
-.color-selector {
-  display: flex;
-  gap: 10px;
-  margin: 10px 0;
-}
-
-.color {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  cursor: pointer;
-}
-
-.color.red {
-  background-color: red;
-}
-
-.color.green {
-  background-color: green;
-}
-
-.color.black {
-  background-color: black;
-}
-
 .product-quantity-stock-info-wrapper {
   display: flex;
-  flex-direction: row;
-  gap: 10px
+  gap: 15px;
+  align-items: center;
+  margin-top: 10px;
 }
 
 .product-quantity {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
   align-items: center;
   background-color: #F6F6F6;
   border-radius: 5px;
-}
-
-.product-quantity input {
-  width: 50px;
-  text-align: center;
   padding: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
 }
 
 .quantity-btn {
   background: transparent;
   color: #99663D;
   border: none;
-  padding: 5px;
   cursor: pointer;
-  // border-radius: 10px;
   font-size: 16px;
-}
-
-.stock-info {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
+  padding: 5px;
 }
 
 .stock-count {
   color: #f77f00;
   font-weight: bold;
-  font-size: 16px;
-  margin-right: 5px;
 }
-
-.stock-info p {
-  margin: 0;
-  font-size: 14px;
-  color: #333;
-}
-
 
 .product-actions {
   display: flex;
@@ -142,77 +79,208 @@
 
 .buy-now-btn,
 .add-to-cart-btn {
-  width: 20%;
-  padding: 10px;
-  font-size: .8rem;
+  width: 48%;
+  padding: 12px;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
   border: none;
   transition: 0.3s ease;
-  border-radius: 20px;
+  border-radius: 25px;
 }
 
 .buy-now-btn {
   background-color: #99663D;
   color: white;
-  // border
 }
 
 .add-to-cart-btn {
+  background-color: #28a745;
   color: white;
 }
 
-.buy-now-btn:hover,
-.add-to-cart-btn:hover {
-  opacity: 0.9;
-}
-
-.delivery-info {
-  margin-top: 20px;
-  color: #555;
-}
-
-.delivery-info a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.horizontal-scroll-container {
-  display: flex;
-  overflow-x: auto;
-  white-space: nowrap;
-  padding: 10px;
-
-  &::-webkit-scrollbar {
-    height: 8px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 10px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: #999;
-  }
-}
-
-.scrollable-content {
+/* ✅ Skeleton Loader */
+.skeleton {
   display: flex;
   gap: 20px;
-  /* Space between items */
+  animation: skeleton-loading 1.5s infinite alternate;
 }
 
-.product-item {
-  flex: 0 0 auto;
-  width: 200px;
-  height: auto;
-  margin-right: 20px;
-  /* Optional: additional spacing if needed */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  /* Optional: add a shadow */
+.skeleton-box {
+  background: #e0e0e0;
+  border-radius: 10px;
+}
+
+.skeleton-image {
+  width: 400px;
+  height: 300px;
+}
+
+.skeleton-text {
+  width: 100%;
+  height: 20px;
+}
+
+.reviews-container {
+  margin-top: 40px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  animation: slide-in 0.5s ease-in-out;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ✅ Review Cards */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.review-card {
+  padding: 15px;
   border-radius: 8px;
-  /* Optional: rounded corners */
-  background-color: #fff;
-  /* Optional: background color */
+  background: #f8f8f8;
+  animation: fade-in 0.5s ease-in-out;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.review-user-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.review-rating {
+  margin-top: 5px;
+  font-size: 1.2rem;
+}
+
+.review-date {
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.review-text {
+  margin-top: 10px;
+  color: #555;
+  font-size: 1rem;
+}
+
+/* ✅ No Reviews */
+.no-reviews {
+  text-align: center;
+  font-size: 1rem;
+  color: #777;
+  padding: 10px;
+}
+
+/* ✅ Write a Review Form */
+.write-review {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  animation: fade-in 0.7s ease-in-out;
+}
+
+.write-review h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.write-review textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.rating-input {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.rating-input label {
+  font-weight: bold;
+}
+
+.rating-input span {
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.rating-input .filled {
+  color: #f7a500;
+}
+
+/* ✅ Submit Button */
+.write-review button {
+  margin-top: 10px;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  background: #99663D;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s ease-in-out;
+}
+
+.write-review button:hover {
+  background: #6d4c2d;
+}
+
+/* ✅ Animations */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+@keyframes skeleton-loading {
+  0% {
+    opacity: 0.6;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }

@@ -76,7 +76,7 @@ export class ProductComponent implements OnChanges {
     console.log('Added to Wishlist');
     this.cartWishListService.updateWishlistCount(1);
 
-    this.productService.addToWishlist(product.id).subscribe((data: any) => {
+    this.productService.addToWishlist(product.id!).subscribe((data: any) => {
       console.log('wishlist-data: ', data);
       this.toggleWishlist(product);
     }, error => {
@@ -85,8 +85,8 @@ export class ProductComponent implements OnChanges {
 
   }
 
-  goToProductDetailsPage(name: string) {
-    this.router.navigate([`/product/${name}`]);
+  goToProductDetailsPage(name: string, id: number) {
+    this.router.navigate([`/product/${name}/${id}`]);
   }
 
   // ✅ Check if product is in wishlist
@@ -96,7 +96,7 @@ export class ProductComponent implements OnChanges {
 
   // ✅ Toggle Wishlist (Add/Remove)
   toggleWishlist(product: IProduct): void {
-    if (this.isInWishlist(product.id)) {
+    if (this.isInWishlist(product.id!)) {
       this.wishlistStore.removeFromWishlist(product.id);
       console.log(`Removed from Wishlist: ${product.name}`);
     } else {

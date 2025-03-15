@@ -1,81 +1,100 @@
-<div class="product-container">
+<div class="product-container" *ngIf="!isLoading(); else loading">
+  <!-- ✅ Product Image -->
   <div class="product-image">
-    <img src="assets/images/Henna-2_2nd.jpg" alt="Henna" />
-    <div class="thumbnail-container">
-      <img src="assets/images/Henna-2_2nd.jpg" alt="Henna" />
-      <img src="assets/images/Henna-2_2nd.jpg" alt="Henna" />
-      <img src="assets/images/Henna-2_2nd.jpg" alt="Henna" />
-      <!-- Add more thumbnails as needed -->
+    <img [src]="getImagePath(product()?.images![0]?.image)" [alt]="product()?.name" (error)="onImageError($event)" />
+
+    <!-- ✅ Product Thumbnail Images -->
+    <div class="thumbnail-container" *ngIf="product()?.images!.length > 1">
+      <img *ngFor="let image of product()?.images" [src]="getImagePath(image.image)" [alt]="product()?.name"
+        (error)="onImageError($event)" />
     </div>
   </div>
 
+  <!-- ✅ Product Details -->
   <div class="product-details">
-    <h2>Henna Powder</h2>
-    <h1 style="font-size: 14px;">Mehandi Powder | 500 Grams</h1>
+    <h2>{{ product()?.name }}</h2>
 
-    <p class="product-description">Kalagura Gampa Henna Powder|Mehandi Powder| comes in a 500 grams pack of 100% natural
-      and pure form of Henna Leaves only. This Henna powder gives the much needed care for hair, gives natural brown/red
-      color. All this without Chemicals, PPD, and Parabens.
-    </p>
+    <div class="product-price">
+      <span>Rs. {{ product()?.price }}</span>
+    </div>
 
-    <p>
-      Benefits of Henna:
-    </p>
-    <ul>
-      <li>
-        Henna powder is a Natural product
-
-      </li>
-      <li>
-        It acts as a conditioner
-
-      </li>
-      <li>
-        Gives natural colour dark red/brown
-      </li>
-    </ul>
     <div class="product-rating">
       <span>⭐⭐⭐⭐⭐</span>
       <span>(10)</span>
     </div>
-    <div class="product-price">
-      <span>330.00</span>
-    </div>
-    <!-- <p class="financing">Suggested payments with 6 months special financing</p> -->
 
+    <!-- ✅ Quantity Selector & Stock Info -->
     <div class="product-quantity-stock-info-wrapper">
       <div class="product-quantity">
-        <button class="quantity-btn">-</button>
-        <label>{{ quantity }}</label>
-        <button class="quantity-btn">+</button>
+        <button class="quantity-btn" (click)="decreaseQuantity()">-</button>
+        <label>{{ quantity() }}</label>
+        <button class="quantity-btn" (click)="increaseQuantity()">+</button>
       </div>
 
       <div class="stock-info">
-        <p>Only <span class="stock-count">12 Items Left</span>! Don’t miss it</p>
+        <p><span class="stock-count">{{ product()?.maxQuantity }} Items Left</span></p>
       </div>
     </div>
 
+    <!-- ✅ Add to Cart & Buy Now Buttons -->
     <div class="product-actions">
       <button class="buy-now-btn" (click)="goToCheckoutPage()">Buy Now</button>
-      <button class="buy-now-btn" (click)="addToCart()">Add to Cart</button>
+      <button class="add-to-cart-btn" (click)="addToCart()">Add to Cart</button>
     </div>
-
-    <!-- <div class="delivery-info">
-      <p>Free Delivery <span>Enter your Postal code for Delivery Availability</span></p>
-      <p>Return Delivery <span>Free 30days Delivery Returns. <a href="#">Details</a></span></p>
-    </div> -->
   </div>
-</div>
 
-<div class="similar-products">
-  <div class="header">
-    <h3 class="mx-2">Similar Products</h3>
-  </div>
-  <!-- <div class="horizontal-scroll-container">
-    <div class="scrollable-content">
-      <div *ngFor="let item of items" class="product-item">
-        <app-product></app-product>
+
+  <!-- ✅ Product Reviews Section -->
+  <div class="reviews-container">
+    <h3 class="section-title">Customer Reviews</h3>
+
+    <!-- ✅ Reviews List -->
+    <div class="reviews-list" *ngIf="reviews.length > 0; else noReviews">
+      <div *ngFor="let review of reviews()" class="review-card animate-fade-in">
+        <div class="review-header">
+          <img [src]="review.userImage" alt="User" class="review-user-img" />
+          <div>
+            <h4>{{ review.userName }}</h4>
+            <p class="review-date">{{ review.date }}</p>
+          </div>
+        </div>
+
+        <div class="review-rating">
+          <span *ngFor="let star of getStars(review.rating)">⭐</span>
+        </div>
+
+        <p class="review-text">{{ review.comment }}</p>
       </div>
     </div>
-  </div> -->
+
+    <!-- ✅ No Reviews Template -->
+    <ng-template #noReviews>
+      <p class="no-reviews">No reviews yet. Be the first to review this product!</p>
+    </ng-template>
+
+    <!-- ✅ Write a Review Form -->
+    <div class="write-review">
+      <h3>Write a Review</h3>
+      <textarea [(ngModel)]="newReview().comment" placeholder="Share your thoughts..." rows="4"></textarea>
+
+      <div class="rating-input">
+        <label>Rating:</label>
+        <span *ngFor="let star of [1,2,3,4,5]" (click)="setRating(star)">
+          <span [class.filled]="newReview().rating >= star">⭐</span>
+        </span>
+      </div>
+
+      <button (click)="submitReview()">Submit Review</button>
+    </div>
+  </div>
+
 </div>
+
+<!-- ✅ Skeleton Loader for Product -->
+<ng-template #loading>
+  <div class="skeleton product-container">
+    <div class="skeleton-box skeleton-image"></div>
+    <div class="skeleton-box skeleton-text"></div>
+    <div class="skeleton-box skeleton-text"></div>
+  </div>
+</ng-template>

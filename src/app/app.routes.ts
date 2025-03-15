@@ -16,7 +16,7 @@ import { UserSettingsComponent } from './features/settings/_components/user-sett
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'product/:productname', component: ViewProductComponent },
+  { path: 'product/:productname/:id', component: ViewProductComponent },
   { path: 'checkout', component: CheckoutDetailsComponent },
   { path: 'payment', component: PaymentComponent },
   { path: 'cart', component: CartDetailsComponent },

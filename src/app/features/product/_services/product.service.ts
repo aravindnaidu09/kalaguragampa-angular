@@ -74,7 +74,7 @@ export class ProductService {
    */
   getProductById(productPk: string): Observable<IProduct> {
     return this.httpClient.get<IProduct>(`${this.baseUrl}${PRODUCT_API_URLS.product.product.getById(productPk)}`)
-      .pipe(map((data) => deserializeProduct(data)));;
+      .pipe(map((response: any) => deserializeProduct(response.data)));;
   }
 
   /**

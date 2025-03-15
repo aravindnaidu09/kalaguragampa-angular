@@ -37,23 +37,23 @@
       <!-- Wishlist Icon -->
       <div class="wishlist-icon">
         <span (click)="addToWishlist(product)">
-          <span *ngIf="isInWishlist(product.id); else notInWishlist">❤️</span>
+          <span *ngIf="isInWishlist(product.id!); else notInWishlist">❤️</span>
           <ng-template #notInWishlist>🤍</ng-template>
         </span>
       </div>
 
       <!-- Product Image -->
       <div class="product-image">
-        <img [src]="getImagePath(product.images[0].image)" alt="{{ product.name }}" (error)="onImageError($event)"
-          (click)="goToProductDetailsPage(product.name)" />
+        <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" (error)="onImageError($event)"
+          (click)="goToProductDetailsPage(product.name!, product.id!)" />
       </div>
 
       <!-- Product Details -->
       <div class="product-details">
         <div class="product-header">
-          <h4 [title]="product.name" (click)="goToProductDetailsPage(product.name)">{{ product.name }}</h4>
+          <h4 [title]="product.name" (click)="goToProductDetailsPage(product.name!, product.id!)">{{ product.name }}</h4>
         </div>
-        <p class="product-description" [innerHTML]="product.description | appHtmlParser" (click)="goToProductDetailsPage(product.name)"></p>
+        <p class="product-description" [innerHTML]="product.description! | appHtmlParser" (click)="goToProductDetailsPage(product.name!, product.id!)"></p>
 
         <div class="product-price">Rs. {{ product.price }}</div>
 
@@ -61,7 +61,7 @@
           <span>⭐⭐⭐⭐⭐</span>
           <span class="rating-count">({{ product.rating }})</span>
         </div>
-        <button class="add-to-cart" (click)="addToCart(product.id)">Add to Cart</button>
+        <button class="add-to-cart" (click)="addToCart(product.id!)">Add to Cart</button>
       </div>
     </div>
     }

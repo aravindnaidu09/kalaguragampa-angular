@@ -1,21 +1,21 @@
 import { Images } from "./images-model";
 
 export interface IProduct {
-  id: number;
-  name: string;
-  sku: string;
-  category: number;
-  description: string;
-  shortDescription: string;
-  weight: number;
-  minQuantity: number;
-  maxQuantity: number;
-  barcode: string;
-  stockStatus: string;
-  image: string;
-  price: string;
-  rating: string;
-  images: Images[];
+  id?: number;
+  name?: string;
+  sku?: string;
+  category?: number;
+  description?: string;
+  shortDescription?: string;
+  weight?: number;
+  minQuantity?: number;
+  maxQuantity?: number;
+  barcode?: string;
+  stockStatus?: string;
+  image?: string;
+  price?: string;
+  rating?: string;
+  images?: Images[];
 }
 
 export function deserializeProducts(data: any[]): IProduct[] {
