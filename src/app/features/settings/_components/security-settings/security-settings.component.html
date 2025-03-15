@@ -1,0 +1,50 @@
+<div class="security-settings">
+  <h2>Security Settings</h2>
+
+  <!-- ✅ Change Password Form -->
+  <div class="security-section">
+    <h3>Change Password</h3>
+    <form [formGroup]="changePasswordForm" (ngSubmit)="changePassword()">
+      <label>Current Password</label>
+      <input type="password" formControlName="currentPassword" />
+
+      <label>New Password</label>
+      <input type="password" formControlName="newPassword" />
+
+      <label>Confirm New Password</label>
+      <input type="password" formControlName="confirmPassword" />
+
+      <button type="submit">Change Password</button>
+    </form>
+  </div>
+
+  <!-- ✅ Reset Password Form -->
+  <div class="security-section">
+    <h3>Reset Password</h3>
+    <form [formGroup]="resetPasswordForm" (ngSubmit)="resetPassword()">
+      <label>Email</label>
+      <input type="email" formControlName="email" />
+
+      <button type="submit">Send Reset Link</button>
+    </form>
+  </div>
+
+  <!-- ✅ Enable 2FA -->
+  <div class="security-section">
+    <h3>Two-Factor Authentication</h3>
+    <label>
+      <input type="checkbox" [checked]="enable2FA()" (change)="toggle2FA()" />
+      Enable Two-Factor Authentication (2FA)
+    </label>
+  </div>
+
+  <!-- ✅ Recent Login Activity -->
+  <div class="security-section">
+    <h3>Recent Login Activity</h3>
+    <ul>
+      <li *ngFor="let login of recentLogins()">
+        {{ login.date }} - {{ login.location }} ({{ login.device }})
+      </li>
+    </ul>
+  </div>
+</div>

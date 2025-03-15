@@ -1,0 +1,56 @@
+<div class="order-history">
+  <h2>Your Orders <span class="order-count">{{ orders.length }}</span></h2>
+
+  <!-- ✅ Tabs for Filtering Orders -->
+  <div class="tabs">
+    <button [class.active]="selectedStatus === 'all'" (click)="setStatus('all')">Orders</button>
+    <button [class.active]="selectedStatus === 'Pending'" (click)="setStatus('Pending')">Not Yet Shipped</button>
+    <button [class.active]="selectedStatus === 'Canceled'" (click)="setStatus('Canceled')">Cancelled Orders</button>
+
+    <select [(ngModel)]="selectedDateRange" (change)="filterByDate()">
+      <option value="past3months">Past 3 Months</option>
+      <option value="past6months">Past 6 Months</option>
+      <option value="pastYear">Past Year</option>
+    </select>
+  </div>
+
+  <!-- ✅ Order Cards -->
+  <div class="order-card" *ngFor="let order of paginatedOrders">
+    <div class="order-summary">
+      <p><strong>Order placed:</strong> {{ order.date }}</p>
+      <p><strong>Total:</strong> ₹{{ order.total }}</p>
+      <p><strong>Ship to:</strong> {{ order.shipTo }}</p>
+      <p><strong>Order #:</strong> {{ order.id }} -
+        <a href="#" (click)="viewOrderDetails(order)">View order details</a> |
+        <a href="#" (click)="viewInvoice(order)">View invoice</a>
+      </p>
+    </div>
+
+    <!-- ✅ Order Item Details -->
+    <div class="order-items">
+      <p><strong>Delivered {{ order.deliveryDate }}</strong></p>
+      <div class="item" *ngFor="let item of order.items">
+        <img [src]="item.image" alt="Product Image" class="product-image" />
+        <div class="item-info">
+          <p>{{ item.productName }}</p>
+          <p>₹{{ item.price }} | Qty: {{ item.quantity }}</p>
+          <p><a href="#">Return or replace item</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Order Actions -->
+    <div class="order-actions">
+      <button class="buy-again" (click)="buyAgain(order)">Buy it again</button>
+      <button class="track-order" (click)="trackOrder(order)">Track package</button>
+      <button class="view-item">View your item</button>
+    </div>
+  </div>
+
+  <!-- ✅ Pagination -->
+  <div class="pagination">
+    <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+    <span>Page {{ currentPage }}</span>
+    <button (click)="nextPage()" [disabled]="(currentPage * pageSize) >= filteredOrders.length">Next</button>
+  </div>
+</div>

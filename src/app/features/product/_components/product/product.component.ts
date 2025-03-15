@@ -7,6 +7,7 @@ import { HtmlParserPipe } from '../../../../core/utils/html-parser.pipe';
 import { ProductService } from '../../_services/product.service';
 import { WishlistStore } from '../../_services/wishliststore';
 import { environment } from '../../../../../environments/environment.dev';
+import { CartService } from '../../../cart/_services/cart.service';
 
 @Component({
   selector: 'app-product',
@@ -28,7 +29,8 @@ export class ProductComponent implements OnChanges {
 
   constructor(private router: Router,
     private readonly cartWishListService: CartWishlistService,
-    private readonly productService: ProductService
+    private readonly productService: ProductService,
+    private readonly cartService: CartService
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -60,10 +62,14 @@ export class ProductComponent implements OnChanges {
     }
   }
 
-  addToCart() {
-    console.log('Added to Cart');
+  addToCart(productId: number) {
     // this.router.navigate(['/cart']);
     this.cartWishListService.updateCartCount(1);
+    this.cartService.addToCart(productId).subscribe((result: any) => {
+      console.log('cart-response: ', result);
+    }, (error: any) => {
+
+    })
   }
 
   addToWishlist(product: IProduct) {
@@ -84,7 +90,7 @@ export class ProductComponent implements OnChanges {
   }
 
   // ✅ Check if product is in wishlist
-  isInWishlist(productId: string): boolean {
+  isInWishlist(productId: number): boolean {
     return this.wishlistStore.wishlist().some(w => w.id === productId);
   }
 

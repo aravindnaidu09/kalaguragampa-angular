@@ -1,0 +1,36 @@
+<div class="payment-methods">
+  <h2>Manage Payment Methods</h2>
+
+  <!-- ✅ Add Payment Button -->
+  <button class="add-payment" (click)="isAdding = !isAdding">
+    {{ isAdding ? 'Cancel' : 'Add New Payment Method' }}
+  </button>
+
+  <!-- ✅ Add Payment Form -->
+  <form *ngIf="isAdding" [formGroup]="paymentForm" (ngSubmit)="addPaymentMethod()">
+    <label>Card Number</label>
+    <input type="text" formControlName="cardNumber" placeholder="Enter 16-digit card number" />
+
+    <label>Expiry Date (MM/YY)</label>
+    <input type="text" formControlName="expiry" placeholder="MM/YY" />
+
+    <label>Cardholder Name</label>
+    <input type="text" formControlName="cardHolder" />
+
+    <label>
+      <input type="checkbox" formControlName="isDefault" />
+      Set as Default Payment Method
+    </label>
+
+    <button type="submit">Add Payment Method</button>
+  </form>
+
+  <!-- ✅ Payment Method List -->
+  <div *ngFor="let payment of paymentMethods" class="payment-card" [ngClass]="{ 'default': payment.isDefault }">
+    <p><strong>{{ payment.cardType }} ending in {{ payment.last4Digits }}</strong></p>
+    <p>Expires {{ payment.expiry }}</p>
+
+    <button class="delete" (click)="deletePayment(payment.id)">Delete</button>
+    <button *ngIf="!payment.isDefault" class="default-btn" (click)="setDefaultPayment(payment.id)">Set as Default</button>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<div class="address-management">
+  <h2>Manage Addresses</h2>
+
+  <!-- ✅ Address Form -->
+  <form [formGroup]="addressForm" (ngSubmit)="saveAddress()">
+    <label>Full Name</label>
+    <input type="text" formControlName="fullName" />
+
+    <label>Phone</label>
+    <input type="text" formControlName="phone" />
+
+    <label>Street</label>
+    <input type="text" formControlName="street" />
+
+    <label>Address Line 2 (Optional)</label>
+    <input type="text" formControlName="street2" />
+
+    <label>City</label>
+    <input type="text" formControlName="city" />
+
+    <label>State</label>
+    <input type="text" formControlName="state" />
+
+    <label>ZIP Code</label>
+    <input type="text" formControlName="pincode" />
+
+    <label>Country</label>
+    <input type="text" formControlName="country" readonly />
+
+    <label>
+      <input type="checkbox" formControlName="isDefault" />
+      Set as Default Address
+    </label>
+
+    <button type="submit">{{ isEditing ? 'Update Address' : 'Add Address' }}</button>
+    <button type="button" (click)="resetForm()">Cancel</button>
+  </form>
+
+  <!-- ✅ Address List -->
+  <div *ngFor="let address of addresses" class="address-card" [ngClass]="{ 'default': address.isDefault }">
+    <p><strong>{{ address.fullName }}</strong></p>
+    <p>{{ address.street }}, {{ address.street2 }}, {{ address.city }}, {{ address.state }}, {{ address.pincode }}</p>
+    <p>{{ address.country }}</p>
+    <p>{{ address.phone }}</p>
+
+    <button class="edit" (click)="editAddress(address)">Edit</button>
+    <button class="delete" (click)="deleteAddress(address.id!)">Delete</button>
+    <button *ngIf="!address.isDefault" class="default-btn" (click)="setDefaultAddress(address.id!)">Set as Default</button>
+  </div>
+</div>

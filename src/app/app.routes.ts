@@ -11,6 +11,7 @@ import { ShipmentPolicyComponent } from './shared/components/shipment-policy/shi
 import { TermsComponent } from './shared/components/terms/terms.component';
 import { ProductsPageComponent } from './features/product/_components/products-page/products-page.component';
 import { WishlistComponent } from './features/cart/_components/wishlist/wishlist.component';
+import { UserSettingsComponent } from './features/settings/_components/user-settings/user-settings.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -24,5 +25,6 @@ export const routes: Routes = [
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: 'shipping-policy', component: ShipmentPolicyComponent },
   { path: 'terms-services', component: TermsComponent },
-  { path: 'detail-view', component: ProductsPageComponent }
+  { path: 'detail-view', component: ProductsPageComponent },
+  { path: 'settings', component: UserSettingsComponent }
 ];

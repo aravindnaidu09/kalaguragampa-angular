@@ -173,14 +173,14 @@ export class ProductService {
   /**
    * Add a product to wishlist
    */
-  addToWishlist(productId: string): Observable<any> {
+  addToWishlist(productId: number): Observable<any> {
     return this.httpClient.post(`${this.baseUrl}${PRODUCT_API_URLS.product.wishlist.add(productId)}`, {});
   }
 
   /**
    * Remove a product from wishlist
    */
-  removeFromWishlist(productId: string): Observable<any> {
+  removeFromWishlist(productId: number): Observable<any> {
     return this.httpClient.delete(`${this.baseUrl}${PRODUCT_API_URLS.product.wishlist.remove(productId)}`);
   }
 

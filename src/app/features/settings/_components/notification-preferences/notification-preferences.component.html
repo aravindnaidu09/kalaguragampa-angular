@@ -1,0 +1,40 @@
+<div class="notification-preferences">
+  <h2>Notification Preferences</h2>
+
+  <div class="notification-option">
+    <label>
+      <input type="checkbox" [checked]="settings().email" (change)="toggleSetting('email')" />
+      Receive Email Notifications
+    </label>
+  </div>
+
+  <div class="notification-option">
+    <label>
+      <input type="checkbox" [checked]="settings().sms" (change)="toggleSetting('sms')" />
+      Receive SMS Notifications
+    </label>
+  </div>
+
+  <div class="notification-option">
+    <label>
+      <input type="checkbox" [checked]="settings().push" (change)="toggleSetting('push')" />
+      Receive Push Notifications
+    </label>
+  </div>
+
+  <div class="notification-option">
+    <label>
+      <input type="checkbox" [checked]="settings().orderUpdates" (change)="toggleSetting('orderUpdates')" />
+      Order Updates
+    </label>
+  </div>
+
+  <div class="notification-option">
+    <label>
+      <input type="checkbox" [checked]="settings().promotional" (change)="toggleSetting('promotional')" />
+      Promotional Offers
+    </label>
+  </div>
+
+  <button class="save-btn" (click)="saveSettings()">Save Preferences</button>
+</div>

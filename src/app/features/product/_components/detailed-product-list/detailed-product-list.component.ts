@@ -68,7 +68,7 @@ export class DetailedProductListComponent {
   /**
    * ✅ TrackBy for Performance
    */
-  trackById(index: number, product: IProduct): string {
+  trackById(index: number, product: IProduct): number {
     return product.id;
   }
 }

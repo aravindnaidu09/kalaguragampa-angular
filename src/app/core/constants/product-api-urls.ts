@@ -21,8 +21,8 @@ export const PRODUCT_API_URLS = {
     uploadImage: '/products/api/v1/upload-image/',
     wishlist: {
       get: '/products/api/v1/wishlist/',
-      add: (productId: string) => `/products/api/v1/wishlist/${productId}/`,
-      remove: (productId: string) => `/products/api/v1/wishlist/${productId}/`,
+      add: (productId: number) => `/products/api/v1/wishlist/${productId}/`,
+      remove: (productId: number) => `/products/api/v1/wishlist/${productId}/`,
     },
   },
 }

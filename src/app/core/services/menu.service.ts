@@ -1,5 +1,6 @@
 import { Injectable, Signal, signal } from '@angular/core';
 import { MenuItem } from '../../shared/components/menu-dropdown/menu-dropdown.component';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ export class MenuService {
   private menuItemsSignal = signal<MenuItem[]>([]);
   private loginDialogTrigger: ((method: 'otp' | 'password') => void) | null = null;
 
-  constructor() {
+  constructor(private router: Router) {
     this.updateMenu(); // Initialize menu based on stored login state
   }
 
@@ -36,7 +37,7 @@ export class MenuService {
         { label: `👤Hi, ${username}`, disabled: true },
         { label: 'Dashboard', action: () => console.log('Navigate to Dashboard') },
         { label: 'Profile', action: () => console.log('Navigate to Profile') },
-        { label: 'Settings', action: () => console.log('Navigate to Settings') },
+        { label: 'Settings', action: () => this.router.navigate(['/settings']) },
         { label: 'Logout', action: () => this.logout() }
       ]);
     } else {

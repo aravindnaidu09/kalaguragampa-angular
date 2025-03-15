@@ -42,18 +42,13 @@ export class HeaderComponent implements OnInit {
   menuItems!: Signal<MenuItem[]>;
 
   selectedLanguage: any = 1;
-
   selectedCountry: string = 'IN';
   isDropdownOpen = false;
 
   selectedMenuItem: any;
-
   isAccountDropdownOpen: boolean = false;
-
   dialogVisible: boolean = false;
-
   isLoginDialogVisible = false;
-
   selectedLoginMethod: string = '';
 
   countryOptions = [
@@ -92,7 +87,6 @@ export class HeaderComponent implements OnInit {
   products$: Observable<IProduct[]> = this.store.select(SearchState.products);
   showSuggestions = signal(false); // ✅ Controls visibility of suggestions
 
-
   totalCount$ = this.store.selectSignal(SearchState.totalCount);
 
 
@@ -113,9 +107,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.setMenuItems();
-
     this.service.fetchWishlistCount();
-
     this.cartlistCount = this.cartWishlistService.cartCount; // Signal for cart
   }
 

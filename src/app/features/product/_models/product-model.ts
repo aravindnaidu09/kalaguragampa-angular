@@ -1,7 +1,7 @@
 import { Images } from "./images-model";
 
 export interface IProduct {
-  id: string;
+  id: number;
   name: string;
   sku: string;
   category: number;

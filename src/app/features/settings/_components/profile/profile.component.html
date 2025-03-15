@@ -1,0 +1,21 @@
+<div class="profile-settings">
+  <h2>Profile Settings</h2>
+
+  <div class="profile-image">
+    <img [src]="profileImageUrl" alt="Profile Picture" />
+    <input type="file" (change)="onFileChange($event)" accept="image/*" />
+  </div>
+
+  <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+    <label>Name</label>
+    <input type="text" formControlName="name" placeholder="Enter your name" />
+
+    <label>Email</label>
+    <input type="email" formControlName="email" placeholder="Enter your email" />
+
+    <label>Phone</label>
+    <input type="text" formControlName="phone" placeholder="Enter your phone number" />
+
+    <button type="submit" [disabled]="profileForm.invalid">Save Changes</button>
+  </form>
+</div>

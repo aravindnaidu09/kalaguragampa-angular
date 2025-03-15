@@ -16,8 +16,8 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
   const toastService = inject(ToastService);
 
   // ✅ Retrieve Access Token Synchronously
-  const accessToken = store.selectSnapshot(AuthState.getAccessToken);
-  const refreshToken = store.selectSnapshot(AuthState.getRefreshToken);
+  const accessToken = store.selectSnapshot(AuthState.getAccessToken) ? store.selectSnapshot(AuthState.getAccessToken) : localStorage.getItem('accessToken')!;
+  const refreshToken = store.selectSnapshot(AuthState.getRefreshToken) ? store.selectSnapshot(AuthState.getRefreshToken) : localStorage.getItem('refreshToken')!;
 
   let clonedRequest = req;
 
@@ -30,13 +30,14 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
 
   return next(clonedRequest).pipe(
     catchError((error: HttpErrorResponse) => {
+      console.log('error-message: ', error)
       if (error.status === 401) {
         console.log('🔄 Access Token Expired. Attempting Refresh...');
 
         if (!refreshToken) {
           console.warn('❌ No Refresh Token Available! Redirecting to Login.');
           store.dispatch(new ClearToken());
-          router.navigate(['/login']);
+          // router.navigate(['/login']);
           return throwError(() => new Error('Session expired. Please log in again.'));
         }
 
@@ -58,7 +59,7 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
           catchError(err => {
             console.error('❌ Refresh Token Expired. Logging Out.');
             store.dispatch(new ClearToken());
-            router.navigate(['/login']);
+            // router.navigate(['/login']);
             return throwError(() => new Error('Session expired. Please log in again.'));
           })
         );

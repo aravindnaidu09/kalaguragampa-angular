@@ -26,13 +26,15 @@ export class AuthService {
   }
 
   refreshAccessToken(): Observable<{ access: string; refresh: string }> {
-    const refreshToken = this.store.selectSnapshot(AuthState.getRefreshToken);
+    let refreshToken = this.store.selectSnapshot(AuthState.getRefreshToken);
     if (!refreshToken) {
-      return throwError(() => new Error('No refresh token available.'));
+      // return throwError(() => new Error('No refresh token available.'));
+      refreshToken = localStorage.getItem('refreshToken')!;
+      console.log('refreshToken', refreshToken);
     }
 
     return this.httpClient.post<{ access: string; refresh: string }>(
-      `${this.baseUrl}/refresh`, { refresh: refreshToken }
+      `${this.baseUrl}/${AUTH_API_URLS.auth.tokenRefresh}`, { refresh: refreshToken }
     ).pipe(
       map(response => {
         this.store.dispatch(new SetToken(response.access, response.refresh));
