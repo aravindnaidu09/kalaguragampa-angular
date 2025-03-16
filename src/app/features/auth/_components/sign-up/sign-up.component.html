@@ -2,7 +2,7 @@
   <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="register-form">
 
     <!-- Back to Login -->
-    <p class="back-to-login" (click)="goBackToLogin()">← Back to Login</p>
+    <span class="back-to-login" (click)="goBackToLogin()">← Back to Login</span>
 
     <!-- Mobile Number Verification -->
     <div class="form-group" *ngIf="!isMobileVerified">
@@ -161,6 +161,4 @@
   </form>
 </ng-container>
 
-<!-- <ng-template #loginTemplate>
-  <app-login></app-login>
-</ng-template> -->
+

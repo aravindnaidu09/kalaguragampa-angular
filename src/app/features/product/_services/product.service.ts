@@ -9,6 +9,7 @@ import { deserializeProduct, deserializeProducts, IProduct } from '../_models/pr
 import { deserializeWishlist, IWishlist } from '../_models/wishlist-model';
 import { deserializeProductImage, IProductImage } from '../_models/upload-image-model';
 import { IProductQueryParams } from '../_models/product-query-model';
+import { AuthService } from '../../auth/_services/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,14 @@ export class ProductService {
   private readonly baseUrl = APP_SETTINGS.apiBaseUrl;
   wishlistCount = signal<number>(0);
 
-  constructor(private readonly httpClient: HttpClient) { }
+  constructor(private readonly httpClient: HttpClient,
+    private readonly authService: AuthService
+  ) { }
+
+  /** ✅ Check if user is authenticated */
+  isUserLoggedIn(): boolean {
+    return this.authService.isAuthenticated();
+  }
 
   /**
  * Fetch all products with dynamic query parameters using rest operator

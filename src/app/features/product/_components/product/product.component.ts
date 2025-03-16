@@ -9,6 +9,8 @@ import { WishlistStore } from '../../_services/wishliststore';
 import { environment } from '../../../../../environments/environment.dev';
 import { CartService } from '../../../cart/_services/cart.service';
 import { debounceTime, Subject } from 'rxjs';
+import { AuthService } from '../../../auth/_services/auth.service';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-product',
@@ -18,7 +20,15 @@ import { debounceTime, Subject } from 'rxjs';
     HtmlParserPipe
   ],
   templateUrl: './product.component.html',
-  styleUrl: './product.component.scss'
+  styleUrl: './product.component.scss',
+  providers: [
+    CartWishlistService,
+    ProductService,
+    WishlistStore,
+    AuthService,
+    CartService,
+    ToastService
+  ]
 })
 export class ProductComponent implements OnChanges {
   @Input() productsList: IProduct[] = [];
@@ -35,13 +45,20 @@ export class ProductComponent implements OnChanges {
     private readonly router: Router,
     private readonly cartWishListService: CartWishlistService,
     private readonly productService: ProductService,
-    private readonly cartService: CartService
+    private readonly cartService: CartService,
+    private readonly authService: AuthService,
+    private readonly toastService: ToastService
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['productsList']?.currentValue) {
       this.displayedProducts.set(this.productsList);
     }
+  }
+
+  /** ✅ Check if user is authenticated */
+  isUserLoggedIn(): boolean {
+    return this.authService.isAuthenticated();
   }
 
   // ✅ Scroll Left (With Debounce)
@@ -67,13 +84,28 @@ export class ProductComponent implements OnChanges {
 
   /** ✅ Add to Wishlist */
   addToWishlist(product: IProduct) {
-    console.log('Added to Wishlist');
-    this.cartWishListService.updateWishlistCount(1);
-    this.toggleWishlist(product);
+    if (!this.isUserLoggedIn()) {
+      this.toastService.showError('Please log in to add items to your wishlist.');
+      return;
+    }
+
+    const isWishlisted = this.isInWishlist(product.id!);
 
     this.productService.addToWishlist(product.id!).subscribe({
-      next: (data) => console.log('Wishlist Updated:', data),
-      error: (err) => console.error('Wishlist Error:', err)
+      next: () => {
+        if (isWishlisted) {
+          this.wishlistStore.removeFromWishlist(product.id);
+          this.cartWishListService.updateWishlistCount(-1);
+          this.toastService.showSuccess('Removed from Wishlist');
+        } else {
+          this.wishlistStore.addToWishlist(product);
+          this.cartWishListService.updateWishlistCount(1);
+          this.toastService.showSuccess('Added to Wishlist');
+        }
+      },
+      error: () => {
+        this.toastService.showError('Failed to update wishlist. Please try again.');
+      }
     });
   }
 

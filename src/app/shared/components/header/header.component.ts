@@ -13,6 +13,7 @@ import { SearchProducts, SearchState } from '../../../features/product/_state/se
 import { IProduct } from '../../../features/product/_models/product-model';
 import { ProductService } from '../../../features/product/_services/product.service';
 import { environment } from '../../../../environments/environment.dev';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-header',
@@ -97,6 +98,7 @@ export class HeaderComponent implements OnInit {
     private elementRef: ElementRef,
     private readonly cartWishlistService: CartWishlistService,
     private readonly menuService: MenuService,
+    private readonly toastService: ToastService
   ) {
     this.searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(query => {
       if (query.length >= 2) {
@@ -235,18 +237,24 @@ export class HeaderComponent implements OnInit {
   }
 
   goToCartPage() {
+    this.checkMenuDropdownIsOpen();
     if (!(this.cartlistCount() > 0)) {
-      alert('Add products to your cart to view them.');
+      this.toastService.showError('Add products to your cart to view them.');
       return;
     }
     this.router.navigate(['/cart']);
   }
 
   goToWishlistPage() {
+    this.checkMenuDropdownIsOpen();
     if (!(this.wishlistCount() > 0)) {
-      alert('Add products to your wishlist to view them.');
+      this.toastService.showError('Add products to your wishlist to view them.');
       return;
     }
     this.router.navigate(['/wishlist']);
+  }
+
+  checkMenuDropdownIsOpen() {
+    this.isMenuOpen = false;
   }
 }

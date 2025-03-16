@@ -1,59 +1,59 @@
 <div class="wishlist-container">
-
-  <!-- ✅ Tabs -->
-  <div class="wishlist-tabs">
-    <div class="tab" [ngClass]="{ active: activeTab() === 'favorites' }" (click)="activeTab.set('favorites')">Your Wishlist</div>
-    <!-- <div class="tab" [ngClass]="{ active: activeTab() === 'collections' }" (click)="activeTab.set('collections')">Your Collections</div> -->
-    <!-- <div class="tab" [ngClass]="{ active: activeTab() === 'feed' }" (click)="activeTab.set('feed')">Follow Feed</div> -->
+  <!-- ✅ Wishlist Header -->
+  <div class="wishlist-header">
+    <h2>Your Wishlist</h2>
+    <button class="clear-wishlist-btn" (click)="clearWishlist()">🗑️ Clear All</button>
   </div>
 
-  <!-- ✅ Sorting & View Toggle -->
-  <div class="wishlist-actions">
-    <div class="sort-container">
-      <label>Sort by:</label>
-      <select [(ngModel)]="selectedSort">
-        <option *ngFor="let option of sortOptions" [value]="option">{{ option }}</option>
-      </select>
-      <button (click)="ascendingOrder.set(!ascendingOrder())">
-        {{ ascendingOrder() ? '↑' : '↓' }}
-      </button>
+  <!-- ✅ Skeleton Loader -->
+  <div *ngIf="isLoading()" class="wishlist-skeleton-container">
+    <div *ngFor="let _ of [1,2,3,4,5]" class="wishlist-skeleton-card">
+      <div class="skeleton-image"></div>
+      <div class="skeleton-text"></div>
+      <div class="skeleton-text small"></div>
+      <div class="skeleton-footer">
+        <div class="skeleton-btn"></div>
+        <div class="skeleton-btn"></div>
+      </div>
     </div>
+  </div>
 
-    <div class="view-toggle">
-      <button (click)="toggleView()" [ngClass]="{ active: gridView() }">🔲</button>
-      <button (click)="toggleView()" [ngClass]="{ active: !gridView() }">📄</button>
+  <!-- ✅ Wishlist Product Grid/List -->
+  <div class="wishlist-items" [ngClass]="{ grid: gridView(), list: !gridView() }">
+    <div *ngFor="let product of wishlistItems(); trackBy: trackById" class="wishlist-card">
+
+      <!-- ✅ Card Header (Image) -->
+      <div class="wishlist-card-header" (click)="goToProduct(product)">
+        <img [src]="getImagePath(product.productDetails.images![0].image)" alt="{{ product.productDetails.name }}"
+          loading="lazy" (error)="onImageError($event)" [title]="product.productDetails.name" />
+      </div>
+
+      <!-- ✅ Card Body (Details) -->
+      <div class="wishlist-card-body">
+        <h3 [title]="product.productDetails.name" (click)="goToProduct(product)">
+          {{ product.productDetails.name | slice:0:30 }}<span
+            *ngIf="product.productDetails.name!.length > 30">...</span>
+        </h3>
+        <p class="wishlist-price">₹{{ product.productDetails.price }}</p>
+      </div>
+
+      <!-- ✅ Actions -->
+      <div class="wishlist-card-footer">
+        <button class="wishlist-remove" title="Remove" (click)="removeFromWishlist(product.id)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="red"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6L18 20H6L5 6"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+            <path d="M9 6V3h6v3"></path>
+          </svg>
+        </button>
+        <button class="wishlist-cart" title="Move to Cart" (click)="addToCart(product)">🛒</button>
+      </div>
     </div>
   </div>
 
   <!-- ✅ Add All to Cart Button -->
   <button class="add-all-button" (click)="addAllToCart()">🛒 Add All Items to Cart</button>
-
-  <!-- ✅ Product List/Grid -->
-  <div class="wishlist-items" [ngClass]="{ grid: gridView(), list: !gridView() }">
-    @for (product of wishlistItems(); track product.id) {
-      <div class="wishlist-item">
-
-        <!-- ✅ Product Image -->
-        <div class="wishlist-image">
-          <img [src]="getImagePath(product.productDetails.images![0].image)" alt="{{ product.productDetails.name }}" />
-        </div>
-
-        <!-- ✅ Product Details -->
-        <div class="wishlist-details">
-          <h3>{{ product.productDetails.name }}</h3>
-          <!-- <p class="brand">{{ product.brand }}</p> -->
-          <p class="price">${{ product.productDetails.price }}</p>
-          <!-- <p class="sales">{{ product.sales }} Sales</p> -->
-        </div>
-
-        <!-- ✅ Actions -->
-        <div class="wishlist-actions">
-          <button class="wishlist-remove" (click)="removeFromWishlist(product.id)">❤️</button>
-          <button class="wishlist-cart" title="Move to Cart" (click)="addToCart(product)">🛒</button>
-        </div>
-
-      </div>
-    }
-  </div>
-
 </div>

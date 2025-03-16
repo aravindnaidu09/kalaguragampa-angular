@@ -70,6 +70,11 @@ export class AuthService {
     return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.user.passwordReset}`, { email });
   }
 
+  /** ✅ Check if the user is authenticated */
+  isAuthenticated(): boolean {
+    const token = this.store.selectSnapshot(AuthState.getAccessToken) || this.getAccessToken();
+    return token !== null && token !== undefined && token.trim() !== '';
+  }
 
   getAccessToken(): string | null {
     return localStorage.getItem('accessToken');

@@ -39,7 +39,7 @@
 
   <div class="search-bar">
     <input type="text" class="search-input" placeholder="Search for products..." [value]="searchQuery()"
-      (input)="onSearchChange($event)" (keydown)="onSearchKeyDown($event)"
+      (input)="onSearchChange($event)" (keydown)="onSearchKeyDown($event)" (click)="checkMenuDropdownIsOpen()"
       aria-label="Search for products" />
     <button class="search-button">
       <img src="../../../../assets/images/search.png" width="20" height="20" alt="Search Icon" />
