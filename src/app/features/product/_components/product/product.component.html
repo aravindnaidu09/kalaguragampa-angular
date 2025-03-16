@@ -1,40 +1,17 @@
 <div class="scroll-container">
 
-  <!-- Left Scroll Button -->
+  <!-- ✅ Left Scroll Button -->
   <button class="scroll-button left-scroll" (click)="scrollLeft()">
-    &#10094; <!-- Left arrow -->
+    &#10094;
   </button>
 
   <div class="product-list-container" #productList>
-    <!-- Skeleton Loader -->
-    @if (isLoading()) {
-    @for (_ of [1, 2, 3, 4, 5]; track _) {
-    <div class="product-card skeleton">
-      <div class="wishlist-icon">
-        <div class="skeleton-box" style="width: 20px; height: 20px; border-radius: 50%;"></div>
-      </div>
-      <div class="product-image">
-        <div class="skeleton-box" style="width: 100%; height: 150px;"></div>
-      </div>
-      <div class="product-details">
-        <div class="product-header">
-          <div class="skeleton-box" style="width: 60%; height: 20px;"></div>
-          <div class="skeleton-box" style="width: 30%; height: 20px;"></div>
-        </div>
-        <div class="skeleton-box" style="width: 100%; height: 40px;"></div>
-        <div class="product-rating">
-          <div class="skeleton-box" style="width: 80px; height: 15px;"></div>
-        </div>
-        <div class="skeleton-box add-to-cart-skeleton"></div>
-      </div>
-    </div>
-    }
-    }
 
-    <!-- Product List -->
+    <!-- ✅ Product List -->
     @for (product of displayedProducts(); track product.id) {
     <div class="product-card">
-      <!-- Wishlist Icon -->
+
+      <!-- ✅ Wishlist Icon -->
       <div class="wishlist-icon">
         <span (click)="addToWishlist(product)">
           <span *ngIf="isInWishlist(product.id!); else notInWishlist">❤️</span>
@@ -42,35 +19,39 @@
         </span>
       </div>
 
-      <!-- Product Image -->
+      <!-- ✅ Product Image -->
       <div class="product-image">
-        <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" (error)="onImageError($event)"
-          (click)="goToProductDetailsPage(product.name!, product.id!)" />
+        <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" loading="lazy"
+          (error)="onImageError($event)" (click)="goToProductDetailsPage(product.name!, product.id!)" />
       </div>
 
-      <!-- Product Details -->
+      <!-- ✅ Product Details -->
       <div class="product-details">
         <div class="product-header">
-          <h4 [title]="product.name" (click)="goToProductDetailsPage(product.name!, product.id!)">{{ product.name }}</h4>
+          <h4 [title]="product.name" (click)="goToProductDetailsPage(product.name!, product.id!)">
+            {{ product.name }}
+          </h4>
         </div>
-        <p class="product-description" [innerHTML]="product.description! | appHtmlParser" (click)="goToProductDetailsPage(product.name!, product.id!)"></p>
 
-        <div class="product-price">Rs. {{ product.price }}</div>
+        <p class="product-description" [innerHTML]="product.description! | appHtmlParser"
+          (click)="goToProductDetailsPage(product.name!, product.id!)">
+        </p>
+
+        <div class="product-price">₹{{ product.price }}</div>
 
         <div class="product-rating">
-          <span>⭐⭐⭐⭐⭐</span>
-          <span class="rating-count">({{ product.rating }})</span>
+          ⭐⭐⭐⭐⭐ ({{ product.rating }})
         </div>
+
         <button class="add-to-cart" (click)="addToCart(product.id!)">Add to Cart</button>
       </div>
     </div>
     }
   </div>
 
-
-  <!-- Right Scroll Button -->
+  <!-- ✅ Right Scroll Button -->
   <button class="scroll-button right-scroll" (click)="scrollRight()">
-    &#10095; <!-- Right arrow -->
+    &#10095;
   </button>
 
 </div>

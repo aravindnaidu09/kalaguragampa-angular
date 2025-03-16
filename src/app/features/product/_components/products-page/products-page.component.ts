@@ -30,9 +30,9 @@ export class ProductsPageComponent {
   nextPage = signal<string | null>(null); // Next page URL
   previousPage = signal<string | null>(null); // Previous page URL
 
-  /** ✅ Signal for storing updated query params */
   // ✅ Reactive Signal for product filters
   filtersChanged = signal<IProductQueryParams>({});
+
   // ✅ Filters Signal
   filters = signal<IProductQueryParams>({});
 

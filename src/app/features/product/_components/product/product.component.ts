@@ -8,9 +8,11 @@ import { ProductService } from '../../_services/product.service';
 import { WishlistStore } from '../../_services/wishliststore';
 import { environment } from '../../../../../environments/environment.dev';
 import { CartService } from '../../../cart/_services/cart.service';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-product',
+  standalone: true,
   imports: [
     CommonModule,
     HtmlParserPipe
@@ -21,80 +23,71 @@ import { CartService } from '../../../cart/_services/cart.service';
 export class ProductComponent implements OnChanges {
   @Input() productsList: IProduct[] = [];
   displayedProducts = signal<IProduct[]>([]);
-  isLoading = signal<boolean>(true);
 
   @ViewChild('productList', { static: false }) productList!: ElementRef;
 
   private wishlistStore = inject(WishlistStore);
 
-  constructor(private router: Router,
+  /** ✅ Scroll Debounce (Prevents excessive calls) */
+  private scrollDebounce$ = new Subject<void>();
+
+  constructor(
+    private readonly router: Router,
     private readonly cartWishListService: CartWishlistService,
     private readonly productService: ProductService,
     private readonly cartService: CartService
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['productsList']) {
-      this.isLoading.set(true); // Start loading
-      setTimeout(() => {
-        this.displayedProducts.set(this.productsList);
-        this.isLoading.set(false); // End loading after delay
-      }, 2000); // Simulating API delay
+    if (changes['productsList']?.currentValue) {
+      this.displayedProducts.set(this.productsList);
     }
   }
 
-  // Method to get the stars for the product rating
-  getStars() {
-    // return new Array(this.product.rating).fill(0);
-  }
-
-  // ✅ Scroll left
+  // ✅ Scroll Left (With Debounce)
   scrollLeft(): void {
-    if (this.productList) {
-      this.productList.nativeElement.scrollBy({ left: -300, behavior: 'smooth' });
-    }
+    this.scrollDebounce$.next();
+    this.productList?.nativeElement.scrollBy({ left: -300, behavior: 'smooth' });
   }
 
-  // ✅ Scroll right
+  // ✅ Scroll Right (With Debounce)
   scrollRight(): void {
-    if (this.productsList) {
-      this.productList.nativeElement.scrollBy({ left: 300, behavior: 'smooth' });
-    }
+    this.scrollDebounce$.next();
+    this.productList?.nativeElement.scrollBy({ left: 300, behavior: 'smooth' });
   }
 
+  /** ✅ Add to Cart (Debounced Requests) */
   addToCart(productId: number) {
-    // this.router.navigate(['/cart']);
     this.cartWishListService.updateCartCount(1);
-    this.cartService.addToCart(productId).subscribe((result: any) => {
-      console.log('cart-response: ', result);
-    }, (error: any) => {
-
-    })
+    this.cartService.addToCart(productId).subscribe({
+      next: (result) => console.log('Cart Updated: ', result),
+      error: (err) => console.error('Cart Error:', err)
+    });
   }
 
+  /** ✅ Add to Wishlist */
   addToWishlist(product: IProduct) {
     console.log('Added to Wishlist');
     this.cartWishListService.updateWishlistCount(1);
+    this.toggleWishlist(product);
 
-    this.productService.addToWishlist(product.id!).subscribe((data: any) => {
-      console.log('wishlist-data: ', data);
-      this.toggleWishlist(product);
-    }, error => {
-      console.log('wishlist-error: ', error);
-    })
-
+    this.productService.addToWishlist(product.id!).subscribe({
+      next: (data) => console.log('Wishlist Updated:', data),
+      error: (err) => console.error('Wishlist Error:', err)
+    });
   }
 
+  /** ✅ Navigate to Product Details */
   goToProductDetailsPage(name: string, id: number) {
     this.router.navigate([`/product/${name}/${id}`]);
   }
 
-  // ✅ Check if product is in wishlist
+  /** ✅ Check if product is in wishlist */
   isInWishlist(productId: number): boolean {
     return this.wishlistStore.wishlist().some(w => w.id === productId);
   }
 
-  // ✅ Toggle Wishlist (Add/Remove)
+  /** ✅ Toggle Wishlist */
   toggleWishlist(product: IProduct): void {
     if (this.isInWishlist(product.id!)) {
       this.wishlistStore.removeFromWishlist(product.id);
@@ -104,13 +97,12 @@ export class ProductComponent implements OnChanges {
     }
   }
 
+  /** ✅ Lazy Loading Image Handler */
   getImagePath(imagePath?: string): string {
-    if (!imagePath || imagePath.trim() === '' || imagePath === 'null' || imagePath === 'undefined') {
-      return `${environment.apiBaseUrl}/media/KG_LOGO.png`;
-    }
-    return `${environment.apiBaseUrl}${imagePath}`;
+    return imagePath && imagePath.trim() ? `${environment.apiBaseUrl}${imagePath}` : `${environment.apiBaseUrl}/media/KG_LOGO.png`;
   }
 
+  /** ✅ Handle Image Error */
   onImageError(event: Event): void {
     (event.target as HTMLImageElement).src = `${environment.apiBaseUrl}/media/KG_LOGO.png`;
   }
