@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { IProductQueryParams } from '../../_models/product-query-model';
 
 interface FilterOption {
@@ -16,12 +16,13 @@ interface FilterOption {
   styleUrl: './sort-filter-bar.component.scss'
 })
 export class SortFilterBarComponent {
+  // ✅ Signals for UI State
+  @Input() totalProducts = signal<number>(0);
+
   @Output() filterChanged = new EventEmitter<IProductQueryParams>();
   @Output() viewChanged = new EventEmitter<'list' | 'grid'>();
   @Output() clearFilters = new EventEmitter<void>();
 
-  // ✅ Signals for UI State
-  totalProducts = signal<number>(0);
   viewMode = signal<'list' | 'grid'>('grid');
   sortBy = signal<string>('best-match');
   activeFilters = signal<FilterOption[]>([]);
@@ -37,7 +38,7 @@ export class SortFilterBarComponent {
   ];
 
   ngOnInit(): void {
-    this.totalProducts.set(483); // Simulated API call
+    // this.totalProducts.set(483); // Simulated API call
   }
 
   /**
@@ -49,11 +50,27 @@ export class SortFilterBarComponent {
   }
 
   /**
-   * ✅ Set Sorting Option
-   */
+  * ✅ Set Sorting Option & Emit Filter
+  */
   setSortBy(option: string) {
-    this.sortBy.set(option);
-    // this.filterChanged.emit(option);
+    if (this.sortBy() !== option) {
+      this.sortBy.set(option);
+      this.emitFilterChanges();
+    }
+  }
+
+  /**
+   * ✅ Add or Remove a Filter Option
+   */
+  toggleFilter(filter: FilterOption) {
+    const filters = this.activeFilters();
+    const exists = filters.some(f => f.value === filter.value);
+
+    this.activeFilters.set(
+      exists ? filters.filter(f => f.value !== filter.value) : [...filters, filter]
+    );
+
+    this.emitFilterChanges();
   }
 
   /**
@@ -61,18 +78,38 @@ export class SortFilterBarComponent {
    */
   removeFilter(filter: FilterOption) {
     this.activeFilters.set(this.activeFilters().filter(f => f.value !== filter.value));
+    this.emitFilterChanges();
   }
 
   /**
    * ✅ Clear All Filters
    */
   clearAllFilters() {
-    this.activeFilters.set([]);
-    this.clearFilters.emit();
+    if (this.activeFilters().length > 0) {
+      this.activeFilters.set([]);
+      this.sortBy.set('best-match'); // Reset Sort Option
+      this.clearFilters.emit();
+    }
   }
 
   /**
-   * ✅ TrackBy for Performance
+   * ✅ Emit Filter Changes to Parent
+   */
+  private emitFilterChanges() {
+    const filters: IProductQueryParams = {
+      sort_by: this.sortBy(),
+    };
+
+    // ✅ Apply Selected Filters
+    if (this.activeFilters().length > 0) {
+      filters.category = this.activeFilters().map(f => f.value).join(',');
+    }
+
+    this.filterChanged.emit(filters);
+  }
+
+  /**
+   * ✅ TrackBy for Performance Optimization
    */
   trackByLabel(index: number, item: FilterOption): string {
     return item.value;

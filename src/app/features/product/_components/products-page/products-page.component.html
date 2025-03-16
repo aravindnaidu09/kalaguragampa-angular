@@ -9,13 +9,24 @@
   <section class="product-section">
 
     <!-- ✅ Sort & Filter Bar -->
-    <app-sort-filter-bar
-      (viewChanged)="changeViewMode($event)"
+    <app-sort-filter-bar [totalProducts]="totalProducts" (filterChanged)="applyFilters($event)"
       (clearFilters)="resetFilters()">
     </app-sort-filter-bar>
 
-    <!-- ✅ Product List -->
-    <app-detailed-product-list [queryParams]="productParams()"></app-detailed-product-list>
+    <!-- ✅ Loading Skeleton (Shimmer Effect) -->
+    <div *ngIf="isLoading()" class="skeleton-container">
+      <div class="skeleton" *ngFor="let i of [1,2,3,4,5,6]"></div>
+    </div>
 
+
+    <!-- ✅ Product List -->
+    <app-detailed-product-list *ngIf="!isLoading()" [products]="products"></app-detailed-product-list>
+
+
+    <div class="pagination-controls">
+      <button (click)="changePage(currentPage() - 1)" [disabled]="currentPage() === 1">« Prev</button>
+      <span>Page {{ currentPage() }} of {{ totalPages() }}</span>
+      <button (click)="changePage(currentPage() + 1)" [disabled]="currentPage() >= totalPages()">Next »</button>
+    </div>
   </section>
 </div>

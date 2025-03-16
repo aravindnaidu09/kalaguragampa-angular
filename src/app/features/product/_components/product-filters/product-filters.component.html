@@ -8,8 +8,7 @@
     <h4>📂 Category</h4>
     <div class="category-list">
       <label *ngFor="let category of categories" class="category-item">
-        <input type="checkbox" [checked]="selectedCategory() === category.id"
-          (change)="toggleCategory(category.id)" />
+        <input type="checkbox" [checked]="selectedCategory() === category.id" (change)="toggleCategory(category.id)" />
         <span class="category-name">{{ category.name }}</span>
         <span class="product-count">({{ category.productCount }})</span>
       </label>
@@ -20,9 +19,11 @@
   <div class="filter-section">
     <h4>💰 Price (₹)</h4>
     <div class="price-inputs">
-      <input type="number" min="0" max="100000" [(ngModel)]="minPrice" placeholder="Min ₹">
+      <input type="number" min="0" max="100000" [ngModel]="minPrice()" (ngModelChange)="onPriceChange('min', $event)"
+        placeholder="Min ₹">
       <span class="price-divider">-</span>
-      <input type="number" min="0" max="100000" [(ngModel)]="maxPrice" placeholder="Max ₹">
+      <input type="number" min="0" max="100000" [ngModel]="maxPrice()" (ngModelChange)="onPriceChange('max', $event)"
+        placeholder="Max ₹">
     </div>
     <!-- <p class="price-range">Selected Range: <strong>₹{{ minPrice() }} - ₹{{ maxPrice() }}</strong></p> -->
   </div>

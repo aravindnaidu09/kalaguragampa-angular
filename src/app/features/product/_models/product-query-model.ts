@@ -9,4 +9,5 @@ export interface IProductQueryParams {
   price_max?: number;       // Maximum price filter
   sort_by?: string;         // Sorting options (price, name)
   stock_status?: string;    // Availability filter
+  rating?: number;          // Rating filter
 }

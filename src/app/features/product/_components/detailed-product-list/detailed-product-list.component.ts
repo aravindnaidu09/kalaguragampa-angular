@@ -17,9 +17,9 @@ import { environment } from '../../../../../environments/environment.dev';
 export class DetailedProductListComponent implements OnInit, OnChanges {
   @Input() queryParams: IProductQueryParams = {};
   // ✅ Signals for State Management
-  products = signal<IProduct[]>([]);
+  @Input() products = signal<IProduct[]>([]);
   isLoading = signal<boolean>(true);
-  viewMode = signal<'list' | 'grid'>('grid');
+  // viewMode = signal<'list' | 'grid'>('grid');
 
   // ✅ New signals for pagination metadata
   totalProducts = signal(0); // Total product count
@@ -29,34 +29,13 @@ export class DetailedProductListComponent implements OnInit, OnChanges {
   constructor(private readonly productService: ProductService) { }
 
   ngOnInit(): void {
-    this.fetchProducts();
+    // this.fetchProducts();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['queryParams']) {
-      this.fetchProducts();
+      // this.fetchProducts();
     }
-  }
-
-  /**
-   * ✅ Fetch Products
-   */
-  fetchProducts(): void {
-    this.isLoading.set(true);
-    // const params: IProductQueryParams = {};
-    this.productService.getAllProducts(this.queryParams).subscribe({
-      next: (response: any) => {
-        this.products.set(response.products); // ✅ Update products
-        this.totalProducts.set(response.totalCount); // ✅ Set total product count
-        this.nextPage.set(response.nextPage); // ✅ Set next page URL
-        this.previousPage.set(response.previousPage);
-        this.isLoading.set(false);
-      },
-      error: (error: any) => {
-        console.error('Error fetching products:', error);
-        this.isLoading.set(false);
-      }
-    });
   }
 
   /**

@@ -122,22 +122,4 @@
   }
 }
 
-/* ✅ Loading Skeleton */
-.skeleton-container {
-  display: grid;
-  gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  padding: 10px;
-}
 
-.skeleton {
-  height: 240px;
-  border-radius: 10px;
-  background: linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%);
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200px; }
-  100% { background-position: 200px; }
-}
