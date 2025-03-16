@@ -1,67 +1,165 @@
 .filters-container {
-  width: 250px;
-  padding: 15px;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  width: 280px;
+  padding: 20px;
+  // border-radius: 12px;
+  // background: #ffffff;
+  // box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center; /* ✅ Centers text */
+}
+
+/* 📌 Section Headers */
+.filter-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
 }
 
 .filter-section {
-  margin-bottom: 15px;
-
+  margin-bottom: 20px;
+  text-align: left;
   h4 {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-
-  label {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
-    cursor: pointer;
-
-    input {
-      margin-right: 10px;
-    }
+    gap: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 12px;
   }
 }
 
-/** 📌 Scrollable Category List */
+/* 📌 Category Checkbox List */
 .category-section {
-  height: 200px;
+  height: 220px;
   overflow-y: auto;
-  padding-right: 10px;
+  padding: 10px;
   border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #f9f9f9;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
   border-radius: 5px;
 }
 
-/** 📌 Scrollbar Customization */
-.category-section::-webkit-scrollbar {
-  width: 5px;
+.category-item:hover {
+  background: #e0e0e0;
 }
 
-.category-section::-webkit-scrollbar-thumb {
-  background: #aaa;
-  border-radius: 5px;
+.category-item input {
+  margin-right: 8px;
 }
 
+.category-name {
+  flex-grow: 1;
+  font-size: 14px;
+}
+
+.product-count {
+  font-size: 12px;
+  color: #666;
+}
+
+/* 📌 Price Filter (Input Fields) */
+.price-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.price-inputs input {
+  width: 90px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.price-divider {
+  font-size: 18px;
+  font-weight: bold;
+  color: #444;
+}
+
+.price-range {
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+  margin-top: 5px;
+}
+
+/* 📌 Rating Stars */
 .stars {
   display: flex;
   gap: 5px;
   cursor: pointer;
-
-  .selected {
-    color: gold;
-  }
+  justify-content: center;
 }
 
+.stars span {
+  font-size: 22px;
+  transition: transform 0.2s;
+}
+
+.stars span.selected {
+  color: #f7a500;
+  transform: scale(1.2);
+}
+
+/* 📌 Sort Dropdown */
+.sort-dropdown {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f7f7f7;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.sort-dropdown:hover {
+  background: #eaeaea;
+}
+
+/* 📌 Reset Button */
 .reset-btn {
   width: 100%;
-  padding: 10px;
-  background: red;
+  padding: 12px;
+  font-size: 14px;
+  background: linear-gradient(to right, #ff4d4d, #ff6666);
   color: white;
   border: none;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 8px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.reset-btn:hover {
+  background: linear-gradient(to right, #e60000, #ff3333);
+  transform: scale(1.05);
+}
+
+/* 📌 Custom Scrollbar */
+.category-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.category-section::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 10px;
+}
+
+.category-section::-webkit-scrollbar-track {
+  background: #f0f0f0;
 }

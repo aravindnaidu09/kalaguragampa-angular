@@ -1,42 +1,45 @@
 <div class="filters-container">
-  <h3>Filter & Refine</h3>
+  <h3 class="filter-title">
+    🛍️ Filter & Refine
+  </h3>
 
-  <!-- 📌 CATEGORY FILTER (Scrollable) -->
+  <!-- 📌 CATEGORY FILTER -->
   <div class="filter-section category-section">
-    <h4>Category</h4>
+    <h4>📂 Category</h4>
     <div class="category-list">
-      <label *ngFor="let category of categories">
-        <input
-          type="checkbox"
-          [checked]="selectedCategories().includes(category.id)"
+      <label *ngFor="let category of categories" class="category-item">
+        <input type="checkbox" [checked]="selectedCategory() === category.id"
           (change)="toggleCategory(category.id)" />
-        {{ category.name }} ({{ category.productCount }})
+        <span class="category-name">{{ category.name }}</span>
+        <span class="product-count">({{ category.productCount }})</span>
       </label>
     </div>
   </div>
 
-  <!-- 📌 PRICE FILTER (RANGE SLIDER) -->
+  <!-- 📌 PRICE FILTER (₹ Input Fields) -->
   <div class="filter-section">
-    <h4>Price</h4>
-    <input type="range" min="0" max="1000" [(ngModel)]="minPrice">
-    <input type="range" min="0" max="1000" [(ngModel)]="maxPrice">
-    <p>Selected Range: ${{ minPrice() }} - ${{ maxPrice() }}</p>
+    <h4>💰 Price (₹)</h4>
+    <div class="price-inputs">
+      <input type="number" min="0" max="100000" [(ngModel)]="minPrice" placeholder="Min ₹">
+      <span class="price-divider">-</span>
+      <input type="number" min="0" max="100000" [(ngModel)]="maxPrice" placeholder="Max ₹">
+    </div>
+    <!-- <p class="price-range">Selected Range: <strong>₹{{ minPrice() }} - ₹{{ maxPrice() }}</strong></p> -->
   </div>
 
   <!-- 📌 RATING FILTER -->
   <div class="filter-section">
-    <h4>Rating</h4>
+    <h4>⭐ Rating</h4>
     <div class="stars">
-      <span *ngFor="let star of [1, 2, 3, 4, 5]"
-            (click)="setRating(star)"
-            [class.selected]="selectedRating() === star">⭐</span>
+      <span *ngFor="let star of [1, 2, 3, 4, 5]" (click)="setRating(star)"
+        [class.selected]="selectedRating() === star">⭐</span>
     </div>
   </div>
 
   <!-- 📌 SORT BY DATE -->
   <div class="filter-section">
-    <h4>Sort by Date</h4>
-    <select [(ngModel)]="sortBy">
+    <h4>📅 Sort by Date</h4>
+    <select [(ngModel)]="sortBy" class="sort-dropdown">
       <option value="latest">Latest</option>
       <option value="oldest">Oldest</option>
     </select>

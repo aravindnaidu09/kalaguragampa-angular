@@ -2,7 +2,7 @@
 
   <!-- ✅ Left Sidebar (Product Filters) -->
   <aside class="filter-section">
-    <app-product-filters></app-product-filters>
+    <app-product-filters (filtersChanged)="updateFilters($event)"></app-product-filters>
   </aside>
 
   <!-- ✅ Right Section (Sort Filter + Product List) -->
@@ -10,13 +10,12 @@
 
     <!-- ✅ Sort & Filter Bar -->
     <app-sort-filter-bar
-      (filterChanged)="applySort($event)"
       (viewChanged)="changeViewMode($event)"
       (clearFilters)="resetFilters()">
     </app-sort-filter-bar>
 
     <!-- ✅ Product List -->
-    <app-detailed-product-list></app-detailed-product-list>
+    <app-detailed-product-list [queryParams]="productParams()"></app-detailed-product-list>
 
   </section>
 </div>

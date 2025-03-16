@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { IProductQueryParams } from '../../_models/product-query-model';
 
 interface FilterOption {
   label: string;
@@ -15,7 +16,7 @@ interface FilterOption {
   styleUrl: './sort-filter-bar.component.scss'
 })
 export class SortFilterBarComponent {
-  @Output() filterChanged = new EventEmitter<string>();
+  @Output() filterChanged = new EventEmitter<IProductQueryParams>();
   @Output() viewChanged = new EventEmitter<'list' | 'grid'>();
   @Output() clearFilters = new EventEmitter<void>();
 
@@ -27,7 +28,6 @@ export class SortFilterBarComponent {
 
   // ✅ Sorting Options
   sortOptions: FilterOption[] = [
-    { label: 'Best match', value: 'best-match' },
     { label: 'Best sellers', value: 'best-sellers' },
     { label: 'Newest', value: 'newest' },
     { label: 'Best rated', value: 'best-rated' },
@@ -53,7 +53,7 @@ export class SortFilterBarComponent {
    */
   setSortBy(option: string) {
     this.sortBy.set(option);
-    this.filterChanged.emit(option);
+    // this.filterChanged.emit(option);
   }
 
   /**

@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, signal, SimpleChanges } from '@angular/core';
 import { IProduct } from '../../_models/product-model';
 import { ProductService } from '../../_services/product.service';
 import { SortFilterBarComponent } from '../sort-filter-bar/sort-filter-bar.component';
 import { IProductQueryParams } from '../../_models/product-query-model';
+import { environment } from '../../../../../environments/environment.dev';
 
 @Component({
   selector: 'app-detailed-product-list',
@@ -13,7 +14,8 @@ import { IProductQueryParams } from '../../_models/product-query-model';
   templateUrl: './detailed-product-list.component.html',
   styleUrl: './detailed-product-list.component.scss'
 })
-export class DetailedProductListComponent {
+export class DetailedProductListComponent implements OnInit, OnChanges {
+  @Input() queryParams: IProductQueryParams = {};
   // ✅ Signals for State Management
   products = signal<IProduct[]>([]);
   isLoading = signal<boolean>(true);
@@ -30,13 +32,19 @@ export class DetailedProductListComponent {
     this.fetchProducts();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['queryParams']) {
+      this.fetchProducts();
+    }
+  }
+
   /**
    * ✅ Fetch Products
    */
   fetchProducts(): void {
     this.isLoading.set(true);
-    const params: IProductQueryParams = {};
-    this.productService.getAllProducts(params).subscribe({
+    // const params: IProductQueryParams = {};
+    this.productService.getAllProducts(this.queryParams).subscribe({
       next: (response: any) => {
         this.products.set(response.products); // ✅ Update products
         this.totalProducts.set(response.totalCount); // ✅ Set total product count
@@ -70,5 +78,16 @@ export class DetailedProductListComponent {
    */
   trackById(index: number, product: IProduct): number {
     return product.id!;
+  }
+
+  getImagePath(imagePath?: string): string {
+    if (!imagePath || imagePath.trim() === '' || imagePath === 'null' || imagePath === 'undefined') {
+      return `${environment.apiBaseUrl}/media/KG_LOGO.png`;
+    }
+    return `${environment.apiBaseUrl}${imagePath}`;
+  }
+
+  onImageError(event: Event): void {
+    (event.target as HTMLImageElement).src = `${environment.apiBaseUrl}/media/KG_LOGO.png`;
   }
 }
