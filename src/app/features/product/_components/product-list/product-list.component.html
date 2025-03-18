@@ -46,7 +46,7 @@
       }
       }
 
-      <app-product *ngIf="!isLoading()" [productsList]="productsList()"></app-product>
+      <app-product *ngIf="!isLoading()" [productsList]="productsList()" (wishlistUpdated)="updatedWishlistCount($event)"></app-product>
     </div>
 
   </div>

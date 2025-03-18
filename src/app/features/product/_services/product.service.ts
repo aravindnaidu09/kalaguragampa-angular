@@ -192,14 +192,6 @@ export class ProductService {
     return this.httpClient.delete(`${this.baseUrl}${PRODUCT_API_URLS.product.wishlist.remove(productId)}`);
   }
 
-  /**
-   * Method to get the items length in wishlist
-   */
-  fetchWishlistCount(): void {
-    this.httpClient.get<{ count: number }>(`${this.baseUrl}${PRODUCT_API_URLS.product.wishlist.get}`)
-      .subscribe((response: any) => {
-        this.wishlistCount.set(response.data.length);
-      });
-  }
+
 
 }

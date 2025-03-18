@@ -1,6 +1,9 @@
 import { Injectable, Signal, signal } from '@angular/core';
 import { MenuItem } from '../../shared/components/menu-dropdown/menu-dropdown.component';
 import { Router } from '@angular/router';
+import { Store } from '@ngxs/store';
+import { ClearCart } from '../../features/cart/_state/cart.state';
+import { ClearWishlist } from '../../features/cart/_state/wishlist.state';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +12,9 @@ export class MenuService {
   private menuItemsSignal = signal<MenuItem[]>([]);
   private loginDialogTrigger: ((method: 'otp' | 'password') => void) | null = null;
 
-  constructor(private router: Router) {
+  constructor(private router: Router,
+    private readonly store: Store
+  ) {
     this.updateMenu(); // Initialize menu based on stored login state
   }
 
@@ -74,8 +79,14 @@ export class MenuService {
    * ✅ Handle Logout
    */
   private logout(): void {
-    console.log('🔓 Logging out...');
-    localStorage.removeItem('userName'); // Clear stored user data
+    localStorage.clear();
     this.updateMenu(); // Reset menu to default
+    this.clearCartAndWishlist();
+  }
+
+  clearCartAndWishlist(): void {
+    // ✅ Clear Cart & Wishlist (reset badges)
+    this.store.dispatch(new ClearCart());
+    this.store.dispatch(new ClearWishlist());
   }
 }

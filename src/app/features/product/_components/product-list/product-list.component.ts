@@ -7,6 +7,7 @@ import { IProduct } from '../../_models/product-model';
 import { debounceTime, Subject, take } from 'rxjs';
 import { Router } from '@angular/router';
 import { IProductQueryParams } from '../../_models/product-query-model';
+import { CartWishlistService } from '../../../cart/_services/cart-wishlist.service';
 
 @Component({
   selector: 'app-product-list',
@@ -40,7 +41,8 @@ export class ProductListComponent implements OnInit {
 
   constructor(
     private readonly productService: ProductService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly cartWishlistService: CartWishlistService
   ) {
     /** ✅ Apply Debounce on Category Selection */
     this.categorySelection$.pipe(debounceTime(300)).subscribe(categoryId => {
@@ -123,5 +125,10 @@ export class ProductListComponent implements OnInit {
   /** ✅ Navigate to Product Details */
   navigateToProductPage(): void {
     this.router.navigate(['/detail-view']);
+  }
+
+  updatedWishlistCount(event: boolean) {
+    this.cartWishlistService.fetchWishlistCount();
+    this.cartWishlistService.updateCartCount(1);
   }
 }

@@ -9,7 +9,7 @@ import { environment } from '../../../../../environments/environment.dev';
 import { Router } from '@angular/router';
 import { ToastService } from '../../../../core/services/toast.service';
 import { CartItem } from '../../_models/cart-item-model';
-import { CartWishlistService } from '../../../../core/services/cart-wishlist.service';
+import { CartWishlistService } from '../../_services/cart-wishlist.service';
 
 @Component({
   selector: 'app-wishlist',
@@ -56,7 +56,7 @@ export class WishlistComponent {
       next: (products: IWishlist[]) => {
         this.wishlistItems.set(products);
         this.isLoading.set(false);
-        this.toastService.showSuccess('Wishlist loaded successfully');
+        // this.toastService.showSuccess('Wishlist loaded successfully');
       },
       error: () => {
         this.isLoading.set(false);

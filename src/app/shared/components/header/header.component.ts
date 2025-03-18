@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, OnInit, Signal, ViewChild, computed, inject, signal } from '@angular/core';
+import { Component, DoCheck, ElementRef, HostListener, OnInit, Signal, ViewChild, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from "../../../features/auth/_components/login/login.component";
 import { Router } from '@angular/router';
 import { MenuDropdownComponent, MenuItem } from '../menu-dropdown/menu-dropdown.component';
 import { DialogComponent } from '../dialog/dialog.component';
-import { CartWishlistService } from '../../../core/services/cart-wishlist.service';
+import { CartWishlistService } from '../../../features/cart/_services/cart-wishlist.service';
 import { MenuService } from '../../../core/services/menu.service';
 import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import { Store } from '@ngxs/store';
@@ -31,12 +31,12 @@ import { ToastService } from '../../../core/services/toast.service';
     CartWishlistService
   ]
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, DoCheck {
 
   private store = inject(Store);
-  private service = inject(ProductService);
+  private cartWishlistService = inject(CartWishlistService);
 
-  wishlistCount = this.service.wishlistCount;
+  wishlistCount = 0;
   cartlistCount: Signal<number> = signal(0);
 
   isMenuOpen = false; // Menu visibility state
@@ -96,7 +96,6 @@ export class HeaderComponent implements OnInit {
 
   constructor(private readonly router: Router,
     private elementRef: ElementRef,
-    private readonly cartWishlistService: CartWishlistService,
     private readonly menuService: MenuService,
     private readonly toastService: ToastService
   ) {
@@ -109,8 +108,16 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.setMenuItems();
-    this.service.fetchWishlistCount();
-    this.cartlistCount = this.cartWishlistService.cartCount; // Signal for cart
+    this.cartWishlistService.fetchWishlistCount();
+
+    // this.cartlistCount = this.cartWishlistService.cartCount; // Signal for cart
+  }
+
+  ngDoCheck() {
+    this.cartWishlistService.wishlistCount$.subscribe(count => {
+      console.log('checking-count: ', count);
+      this.wishlistCount = count;
+    });
   }
 
   // ✅ Handle user input changes
@@ -213,6 +220,14 @@ export class HeaderComponent implements OnInit {
 
   onMenuAction(item: MenuItem): void {
     console.log('Menu item selected:', item.label, item.action);
+
+    // if (item.action() === 'logout') {
+    //   this.menuService.updateMenu('');
+    //   this.store.dispatch(new SetToken('', ''));
+    //   localStorage.removeItem('accessToken');
+    //   localStorage.removeItem('refreshToken');
+    //   localStorage.removeItem('userName');
+    // }
   }
 
   openDialog(method: 'otp' | 'password'): void {
@@ -226,6 +241,10 @@ export class HeaderComponent implements OnInit {
 
   closeLoginDialog(event: any) {
     this.isLoginDialogVisible = !event;
+    const storedUserName = localStorage.getItem('userName');
+    if (storedUserName) {
+      this.menuService.updateMenu('');
+    }
   }
 
   onSelectionChange(value: any): void {
@@ -247,7 +266,7 @@ export class HeaderComponent implements OnInit {
 
   goToWishlistPage() {
     this.checkMenuDropdownIsOpen();
-    if (!(this.wishlistCount() > 0)) {
+    if (!(this.wishlistCount > 0)) {
       this.toastService.showError('Add products to your wishlist to view them.');
       return;
     }

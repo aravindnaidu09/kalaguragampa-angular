@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, inject, Input, OnChanges, signal, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, inject, Input, OnChanges, OnInit, Output, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { CartWishlistService } from '../../../../core/services/cart-wishlist.service';
+import { CartWishlistService } from '../../../cart/_services/cart-wishlist.service';
 import { IProduct } from '../../_models/product-model';
 import { HtmlParserPipe } from '../../../../core/utils/html-parser.pipe';
 import { ProductService } from '../../_services/product.service';
@@ -32,6 +32,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 })
 export class ProductComponent implements OnChanges {
   @Input() productsList: IProduct[] = [];
+  @Output() wishlistUpdated = new EventEmitter<boolean>(false);
   displayedProducts = signal<IProduct[]>([]);
 
   @ViewChild('productList', { static: false }) productList!: ElementRef;
@@ -41,6 +42,8 @@ export class ProductComponent implements OnChanges {
   /** ✅ Scroll Debounce (Prevents excessive calls) */
   private scrollDebounce$ = new Subject<void>();
 
+  wishlistCount = 0;
+
   constructor(
     private readonly router: Router,
     private readonly cartWishListService: CartWishlistService,
@@ -48,7 +51,11 @@ export class ProductComponent implements OnChanges {
     private readonly cartService: CartService,
     private readonly authService: AuthService,
     private readonly toastService: ToastService
-  ) { }
+  ) {
+    this.cartWishListService.wishlistCount$.subscribe(count => {
+      this.wishlistCount = count;
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['productsList']?.currentValue) {
@@ -82,7 +89,7 @@ export class ProductComponent implements OnChanges {
     });
   }
 
-  /** ✅ Add to Wishlist */
+  /** ✅ Add or Remove from Wishlist (Optimistic UI Update) */
   addToWishlist(product: IProduct) {
     if (!this.isUserLoggedIn()) {
       this.toastService.showError('Please log in to add items to your wishlist.');
@@ -91,23 +98,43 @@ export class ProductComponent implements OnChanges {
 
     const isWishlisted = this.isInWishlist(product.id!);
 
+    // ✅ Optimistically update UI before API response
+    if (isWishlisted) {
+      this.wishlistStore.removeFromWishlist(product.id);
+      this.cartWishListService.updateWishlistCount(-1);
+    } else {
+      this.wishlistStore.addToWishlist(product);
+    }
+
+    // ✅ Make API Call
     this.productService.addToWishlist(product.id!).subscribe({
       next: () => {
         if (isWishlisted) {
-          this.wishlistStore.removeFromWishlist(product.id);
-          this.cartWishListService.updateWishlistCount(-1);
           this.toastService.showSuccess('Removed from Wishlist');
         } else {
-          this.wishlistStore.addToWishlist(product);
-          this.cartWishListService.updateWishlistCount(1);
           this.toastService.showSuccess('Added to Wishlist');
+          this.cartWishListService.updateWishlistCount(1);
         }
+
+        this.wishlistUpdated.emit(true);
       },
       error: () => {
+        // ❌ Rollback UI Update in case of failure
+        if (isWishlisted) {
+          this.wishlistStore.addToWishlist(product);
+          this.cartWishListService.updateWishlistCount(1);
+
+        } else {
+          this.wishlistStore.removeFromWishlist(product.id);
+          this.cartWishListService.updateWishlistCount(-1);
+
+        }
+
         this.toastService.showError('Failed to update wishlist. Please try again.');
       }
     });
   }
+
 
   /** ✅ Navigate to Product Details */
   goToProductDetailsPage(name: string, id: number) {
