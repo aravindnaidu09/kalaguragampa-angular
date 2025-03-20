@@ -15,7 +15,6 @@ import { OtpState } from './features/auth/_state/otp.state';
 import { SearchState } from './features/product/_state/search.state';
 
 
-
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),

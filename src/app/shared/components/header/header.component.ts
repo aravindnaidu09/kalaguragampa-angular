@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, DoCheck, ElementRef, HostListener, OnInit, Signal, ViewChild, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DoCheck, ElementRef, HostListener, Input, OnChanges, OnInit, Signal, SimpleChanges, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from "../../../features/auth/_components/login/login.component";
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MenuDropdownComponent, MenuItem } from '../menu-dropdown/menu-dropdown.component';
 import { DialogComponent } from '../dialog/dialog.component';
 import { CartWishlistService } from '../../../features/cart/_services/cart-wishlist.service';
@@ -29,15 +29,15 @@ import { ToastService } from '../../../core/services/toast.service';
   providers: [
     ProductService,
     CartWishlistService
-  ]
+  ],
 })
-export class HeaderComponent implements OnInit, DoCheck {
+export class HeaderComponent implements OnInit {
 
   private store = inject(Store);
   private cartWishlistService = inject(CartWishlistService);
 
-  wishlistCount = 0;
-  cartlistCount: Signal<number> = signal(0);
+  wishlistCount: Signal<number> = signal<number>(0);
+  cartlistCount: Signal<number> = signal<number>(0);
 
   isMenuOpen = false; // Menu visibility state
   loginState = false; // Track login state
@@ -97,27 +97,21 @@ export class HeaderComponent implements OnInit, DoCheck {
   constructor(private readonly router: Router,
     private elementRef: ElementRef,
     private readonly menuService: MenuService,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly cdr: ChangeDetectorRef
   ) {
     this.searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(query => {
       if (query.length >= 2) {
         this.store.dispatch(new SearchProducts(query));
       }
     });
+
   }
 
   ngOnInit() {
     this.setMenuItems();
-    this.cartWishlistService.fetchWishlistCount();
-
-    // this.cartlistCount = this.cartWishlistService.cartCount; // Signal for cart
-  }
-
-  ngDoCheck() {
-    this.cartWishlistService.wishlistCount$.subscribe(count => {
-      console.log('checking-count: ', count);
-      this.wishlistCount = count;
-    });
+    this.wishlistCount = this.cartWishlistService.wishlistCount;
+    console.log('Wishlist Count:', this.wishlistCount());
   }
 
   // ✅ Handle user input changes
@@ -176,7 +170,7 @@ export class HeaderComponent implements OnInit, DoCheck {
   // ✅ Navigate to product details
   goToProductDetails(product: IProduct): void {
     this.showSuggestions.set(false);
-    this.router.navigate(['/product', product.id]);
+    this.router.navigate([`/product/${product.name}/${product.id}`]);
   }
 
   // ✅ Navigate to search results page
@@ -266,7 +260,7 @@ export class HeaderComponent implements OnInit, DoCheck {
 
   goToWishlistPage() {
     this.checkMenuDropdownIsOpen();
-    if (!(this.wishlistCount > 0)) {
+    if (!(this.wishlistCount() > 0)) {
       this.toastService.showError('Add products to your wishlist to view them.');
       return;
     }

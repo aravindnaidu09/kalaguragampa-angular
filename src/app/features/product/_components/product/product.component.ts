@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, inject, Input, OnChanges, OnInit, Output, signal, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, inject, Input, OnChanges, OnInit, Output, Signal, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartWishlistService } from '../../../cart/_services/cart-wishlist.service';
 import { IProduct } from '../../_models/product-model';
@@ -27,7 +27,8 @@ import { ToastService } from '../../../../core/services/toast.service';
     WishlistStore,
     AuthService,
     CartService,
-    ToastService
+    ToastService,
+    WishlistStore
   ]
 })
 export class ProductComponent implements OnChanges {
@@ -37,12 +38,10 @@ export class ProductComponent implements OnChanges {
 
   @ViewChild('productList', { static: false }) productList!: ElementRef;
 
-  private wishlistStore = inject(WishlistStore);
+  // private wishlistStore = inject(WishlistStore);
 
   /** ✅ Scroll Debounce (Prevents excessive calls) */
   private scrollDebounce$ = new Subject<void>();
-
-  wishlistCount = 0;
 
   constructor(
     private readonly router: Router,
@@ -50,12 +49,9 @@ export class ProductComponent implements OnChanges {
     private readonly productService: ProductService,
     private readonly cartService: CartService,
     private readonly authService: AuthService,
-    private readonly toastService: ToastService
-  ) {
-    this.cartWishListService.wishlistCount$.subscribe(count => {
-      this.wishlistCount = count;
-    });
-  }
+    private readonly toastService: ToastService,
+    private readonly wishlistStore: WishlistStore
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['productsList']?.currentValue) {
@@ -91,6 +87,7 @@ export class ProductComponent implements OnChanges {
 
   /** ✅ Add or Remove from Wishlist (Optimistic UI Update) */
   addToWishlist(product: IProduct) {
+
     if (!this.isUserLoggedIn()) {
       this.toastService.showError('Please log in to add items to your wishlist.');
       return;
@@ -100,36 +97,40 @@ export class ProductComponent implements OnChanges {
 
     // ✅ Optimistically update UI before API response
     if (isWishlisted) {
-      this.wishlistStore.removeFromWishlist(product.id);
-      this.cartWishListService.updateWishlistCount(-1);
-    } else {
-      this.wishlistStore.addToWishlist(product);
+      this.removeFromWishlist(product.id!);
+      return;
     }
 
     // ✅ Make API Call
     this.productService.addToWishlist(product.id!).subscribe({
       next: () => {
-        if (isWishlisted) {
-          this.toastService.showSuccess('Removed from Wishlist');
-        } else {
-          this.toastService.showSuccess('Added to Wishlist');
-          this.cartWishListService.updateWishlistCount(1);
-        }
-
+        this.wishlistStore.addToWishlist(product);
+        this.toastService.showSuccess('Added to Wishlist');
+        this.cartWishListService.updateWishlistCount(1);
         this.wishlistUpdated.emit(true);
       },
       error: () => {
-        // ❌ Rollback UI Update in case of failure
         if (isWishlisted) {
           this.wishlistStore.addToWishlist(product);
           this.cartWishListService.updateWishlistCount(1);
-
-        } else {
-          this.wishlistStore.removeFromWishlist(product.id);
-          this.cartWishListService.updateWishlistCount(-1);
-
         }
 
+        this.toastService.showError('Failed to update wishlist. Please try again.');
+      }
+    });
+  }
+
+
+  // Method to remove the wishlist item
+  removeFromWishlist(productId: number) {
+    // ✅ Make API Call
+    this.productService.removeFromWishlist(productId!).subscribe({
+      next: () => {
+        this.toastService.showSuccess('Removed from Wishlist');
+        this.wishlistStore.removeFromWishlist(productId);
+        this.cartWishListService.updateWishlistCount(-1);
+      },
+      error: () => {
         this.toastService.showError('Failed to update wishlist. Please try again.');
       }
     });

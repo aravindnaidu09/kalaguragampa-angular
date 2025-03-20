@@ -128,7 +128,7 @@ export class ProductListComponent implements OnInit {
   }
 
   updatedWishlistCount(event: boolean) {
-    this.cartWishlistService.fetchWishlistCount();
+    // this.cartWishlistService.fetchWishlistCount();
     this.cartWishlistService.updateCartCount(1);
   }
 }

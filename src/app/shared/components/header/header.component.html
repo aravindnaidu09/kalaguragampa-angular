@@ -77,7 +77,7 @@
     <div class="action-item" (click)="goToWishlistPage()">
       <img class="wishlist-image" src="../../../../assets/images/Wishlist.png" width="20" height="20" />
       <span>Wishlist</span>
-      <div class="wishlist-badge" *ngIf="wishlistCount > 0">{{ wishlistCount }}</div>
+      <div class="wishlist-badge" *ngIf="wishlistCount() > 0">{{ wishlistCount() }}</div>
     </div>
     <div class="action-item" (click)="goToCartPage()">
       <img class="cart-image" src="../../../../assets/images/cart-48.png" width="20" height="20" />

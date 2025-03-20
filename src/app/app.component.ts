@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { FooterComponent } from "./shared/components/footer/footer.component";
 import { DashboardComponent } from "./shared/components/dashboard/dashboard.component";
 import { HttpClient } from '@angular/common/http';
+import { CartWishlistService } from './features/cart/_services/cart-wishlist.service';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,6 @@ import { HttpClient } from '@angular/common/http';
     RouterOutlet,
     HeaderComponent,
     FooterComponent,
-    // DashboardComponent
 ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

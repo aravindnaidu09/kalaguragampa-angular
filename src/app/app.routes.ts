@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './shared/components/dashboard/dashboard.component';
-import { ProductComponent } from './features/product/_components/product/product.component';
 import { ViewProductComponent } from './features/product/_components/view-product/view-product.component';
 import { CheckoutDetailsComponent } from './features/checkout/_components/checkout-details/checkout-details.component';
 import { PaymentComponent } from './features/checkout/_components/payment/payment.component';

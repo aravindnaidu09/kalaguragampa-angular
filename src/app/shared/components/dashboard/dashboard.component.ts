@@ -5,7 +5,10 @@ import { HeroSectionComponent } from "../hero-section/hero-section.component";
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ProductListComponent, HeroSectionComponent],
+  imports: [
+    ProductListComponent,
+    HeroSectionComponent
+  ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
