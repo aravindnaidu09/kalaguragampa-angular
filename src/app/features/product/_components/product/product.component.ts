@@ -11,6 +11,10 @@ import { CartService } from '../../../cart/_services/cart.service';
 import { debounceTime, Subject } from 'rxjs';
 import { AuthService } from '../../../auth/_services/auth.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { Store } from '@ngxs/store';
+import { IWishlist } from '../../_models/wishlist-model';
+import { WishlistFacade } from '../../../cart/_state/wishlist.facade';
+// import { AddToWishlist, RemoveFromWishlist } from '../../../cart/_state/wishlist.state';
 
 @Component({
   selector: 'app-product',
@@ -32,6 +36,8 @@ import { ToastService } from '../../../../core/services/toast.service';
   ]
 })
 export class ProductComponent implements OnChanges {
+  private store = inject(Store);
+
   @Input() productsList: IProduct[] = [];
   @Output() wishlistUpdated = new EventEmitter<boolean>(false);
   displayedProducts = signal<IProduct[]>([]);
@@ -50,8 +56,9 @@ export class ProductComponent implements OnChanges {
     private readonly cartService: CartService,
     private readonly authService: AuthService,
     private readonly toastService: ToastService,
-    private readonly wishlistStore: WishlistStore
-  ) {}
+    private readonly wishlistStore: WishlistStore,
+    private readonly wishlistFacade: WishlistFacade
+  ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['productsList']?.currentValue) {
@@ -87,7 +94,6 @@ export class ProductComponent implements OnChanges {
 
   /** ✅ Add or Remove from Wishlist (Optimistic UI Update) */
   addToWishlist(product: IProduct) {
-
     if (!this.isUserLoggedIn()) {
       this.toastService.showError('Please log in to add items to your wishlist.');
       return;
@@ -95,46 +101,29 @@ export class ProductComponent implements OnChanges {
 
     const isWishlisted = this.isInWishlist(product.id!);
 
-    // ✅ Optimistically update UI before API response
     if (isWishlisted) {
-      this.removeFromWishlist(product.id!);
-      return;
+      this.wishlistFacade.remove(product.id!);
+    } else {
+      const wishlistItem: IWishlist = {
+        id: product.id!,
+        productDetails: product
+      };
+      this.wishlistFacade.add(product.id!);
     }
-
-    // ✅ Make API Call
-    this.productService.addToWishlist(product.id!).subscribe({
-      next: () => {
-        this.wishlistStore.addToWishlist(product);
-        this.toastService.showSuccess('Added to Wishlist');
-        this.cartWishListService.updateWishlistCount(1);
-        this.wishlistUpdated.emit(true);
-      },
-      error: () => {
-        if (isWishlisted) {
-          this.wishlistStore.addToWishlist(product);
-          this.cartWishListService.updateWishlistCount(1);
-        }
-
-        this.toastService.showError('Failed to update wishlist. Please try again.');
-      }
-    });
   }
+
 
 
   // Method to remove the wishlist item
   removeFromWishlist(productId: number) {
-    // ✅ Make API Call
-    this.productService.removeFromWishlist(productId!).subscribe({
-      next: () => {
-        this.toastService.showSuccess('Removed from Wishlist');
-        this.wishlistStore.removeFromWishlist(productId);
-        this.cartWishListService.updateWishlistCount(-1);
-      },
-      error: () => {
-        this.toastService.showError('Failed to update wishlist. Please try again.');
-      }
-    });
+    if (!this.isUserLoggedIn()) {
+      this.toastService.showError('Please log in to remove items from your wishlist.');
+      return;
+    }
+
+    this.wishlistFacade.remove(productId);
   }
+
 
 
   /** ✅ Navigate to Product Details */

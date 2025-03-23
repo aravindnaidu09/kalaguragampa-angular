@@ -13,6 +13,7 @@ import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
 import { AuthState } from './features/auth/_state/auth.state';
 import { OtpState } from './features/auth/_state/otp.state';
 import { SearchState } from './features/product/_state/search.state';
+import { WishlistState } from './features/cart/_state/wishlist.state';
 
 
 export const appConfig: ApplicationConfig = {
@@ -22,16 +23,17 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withHashLocation()),
     provideAnimationsAsync(),
     provideHttpClient(),
-    provideStore([AuthState, OtpState, SearchState],
+    provideStore([AuthState, OtpState, SearchState, WishlistState],
       withNgxsReduxDevtoolsPlugin(),
       // withNgxsFormPlugin(),
       withNgxsLoggerPlugin(),
       withNgxsStoragePlugin({
         keys: [
           'auth.accessToken', // ✅ Store only accessToken
-          'auth.refreshToken' // ✅ Store only refreshToken
+          'auth.refreshToken' // ✅ Store only refreshToken,
+
         ]
-      })
+      }),
     ),
   ]
 };

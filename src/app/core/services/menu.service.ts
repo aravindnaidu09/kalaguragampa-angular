@@ -3,7 +3,7 @@ import { MenuItem } from '../../shared/components/menu-dropdown/menu-dropdown.co
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { ClearCart } from '../../features/cart/_state/cart.state';
-import { ClearWishlist } from '../../features/cart/_state/wishlist.state';
+import { ClearToken } from '../../features/auth/_state/auth.state';
 
 @Injectable({
   providedIn: 'root'
@@ -82,11 +82,16 @@ export class MenuService {
     localStorage.clear();
     this.updateMenu(); // Reset menu to default
     this.clearCartAndWishlist();
+    this.removeTokens();
   }
 
   clearCartAndWishlist(): void {
     // ✅ Clear Cart & Wishlist (reset badges)
     this.store.dispatch(new ClearCart());
-    this.store.dispatch(new ClearWishlist());
+    // this.store.dispatch(new ClearWishlist());
+  }
+
+  removeTokens() {
+    this.store.dispatch(new ClearToken());
   }
 }

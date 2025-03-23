@@ -25,6 +25,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   @Input() isVisible: boolean = false;
   @Output() closeLoginDialog = new EventEmitter<boolean>();
   @Output() isRegisterClicked = new EventEmitter<boolean>();
+  @Output() isLoginSuccess = new EventEmitter<boolean>(false);
 
 
   loginOtpForm!: FormGroup;
@@ -234,9 +235,11 @@ export class SigninComponent implements OnInit, OnDestroy {
           }
           this.isSignInLoading = false;
           this.closeLoginDialog.emit(true);
+          this.isLoginSuccess.emit(true);
         },
         () => {
           this.isSignInLoading = false;
+          this.isLoginSuccess.emit(false);
         }
       );
   }
@@ -272,10 +275,12 @@ export class SigninComponent implements OnInit, OnDestroy {
 
             this.isSignInLoading = false;
             this.closeLoginDialog.emit(true);
+            this.isLoginSuccess.emit(true);
           },
           (error: any) => { // ✅ Add proper error handling
             console.error('Login Failed:', error);
             this.isSignInLoading = false;
+            this.isLoginSuccess.emit(false);
           }
         );
     }

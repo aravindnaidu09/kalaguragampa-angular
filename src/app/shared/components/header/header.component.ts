@@ -14,6 +14,7 @@ import { IProduct } from '../../../features/product/_models/product-model';
 import { ProductService } from '../../../features/product/_services/product.service';
 import { environment } from '../../../../environments/environment.dev';
 import { ToastService } from '../../../core/services/toast.service';
+import { WishlistState } from '../../../features/cart/_state/wishlist.state';
 
 @Component({
   selector: 'app-header',
@@ -35,9 +36,9 @@ export class HeaderComponent implements OnInit {
 
   private store = inject(Store);
   private cartWishlistService = inject(CartWishlistService);
-
-  wishlistCount: Signal<number> = signal<number>(0);
+  wishlistCount: any
   cartlistCount: Signal<number> = signal<number>(0);
+  wCount: number = 0;
 
   isMenuOpen = false; // Menu visibility state
   loginState = false; // Track login state
@@ -110,8 +111,17 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.setMenuItems();
-    this.wishlistCount = this.cartWishlistService.wishlistCount;
-    console.log('Wishlist Count:', this.wishlistCount());
+    this.fetchWishlistCount();
+  }
+
+  fetchWishlistCount() {
+    // this.store.dispatch(n)
+    this.wishlistCount = this.store.select(WishlistState.getWishlistCount);
+
+    this.wishlistCount.subscribe((count: any) => {
+      console.log('Wishlist count updated in header:', count);
+      this.wCount = count;
+    });
   }
 
   // ✅ Handle user input changes
@@ -199,6 +209,8 @@ export class HeaderComponent implements OnInit {
     }
 
     this.menuService.registerLoginDialogTrigger(this.openDialog.bind(this));
+
+    // this.menuService.
   }
 
   /**
@@ -209,24 +221,26 @@ export class HeaderComponent implements OnInit {
   }
 
   toggleMenu(): void {
+    const userName = localStorage.getItem('userName');
+    if (userName) {
+      this.refreshMenu(userName);
+    }
     this.isMenuOpen = !this.isMenuOpen;
   }
 
   onMenuAction(item: MenuItem): void {
     console.log('Menu item selected:', item.label, item.action);
-
-    // if (item.action() === 'logout') {
-    //   this.menuService.updateMenu('');
-    //   this.store.dispatch(new SetToken('', ''));
-    //   localStorage.removeItem('accessToken');
-    //   localStorage.removeItem('refreshToken');
-    //   localStorage.removeItem('userName');
-    // }
   }
 
   openDialog(method: 'otp' | 'password'): void {
     this.selectedLoginMethod = method;
     this.isLoginDialogVisible = true;
+  }
+
+  refreshHeaderState(event: any) {
+    if (event) {
+      // this.get
+    }
   }
 
   toggleLoginDialog() {
@@ -260,7 +274,7 @@ export class HeaderComponent implements OnInit {
 
   goToWishlistPage() {
     this.checkMenuDropdownIsOpen();
-    if (!(this.wishlistCount() > 0)) {
+    if (!(this.wCount > 0)) {
       this.toastService.showError('Add products to your wishlist to view them.');
       return;
     }
