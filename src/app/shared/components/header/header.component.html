@@ -88,7 +88,7 @@
     <div class="action-item" (click)="goToCartPage()">
       <img class="cart-image" src="../../../../assets/images/cart-48.png" width="20" height="20" />
       <span>Cart</span>
-      <div class="cart-badge" *ngIf="cartlistCount() > 0">{{ cartlistCount() }}</div>
+      <div class="cart-badge" *ngIf="cartFacade.countSignal() > 0">{{ cartFacade.countSignal() }}</div>
     </div>
   </div>
 

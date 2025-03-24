@@ -2,8 +2,10 @@ import { Injectable, Signal, signal } from '@angular/core';
 import { MenuItem } from '../../shared/components/menu-dropdown/menu-dropdown.component';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { ClearCart } from '../../features/cart/_state/cart.state';
 import { ClearToken } from '../../features/auth/_state/auth.state';
+import { WishlistFacade } from '../../features/cart/_state/wishlist.facade';
+import { ToastService } from './toast.service';
+import { ClearCart } from '../../features/cart/_state/cart.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +15,9 @@ export class MenuService {
   private loginDialogTrigger: ((method: 'otp' | 'password') => void) | null = null;
 
   constructor(private router: Router,
-    private readonly store: Store
+    private readonly store: Store,
+    private readonly wishlistFacade: WishlistFacade,
+    private readonly toastService: ToastService
   ) {
     this.updateMenu(); // Initialize menu based on stored login state
   }
@@ -86,7 +90,9 @@ export class MenuService {
   clearCartAndWishlist(): void {
     // ✅ Clear Cart & Wishlist (reset badges)
     this.store.dispatch(new ClearCart());
-    // this.store.dispatch(new ClearWishlist());
+    this.wishlistFacade.clear();
+
+    this.toastService.showSuccess('Logged Out successful!')
   }
 
   removeTokens() {

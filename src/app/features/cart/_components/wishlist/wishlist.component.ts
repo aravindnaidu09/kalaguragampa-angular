@@ -54,7 +54,6 @@ export class WishlistComponent {
       next: (products: IWishlist[]) => {
         this.wishlistItems.set(products);
         this.isLoading.set(false);
-        // this.toastService.showSuccess('Wishlist loaded successfully');
       },
       error: () => {
         this.isLoading.set(false);
@@ -151,5 +150,9 @@ export class WishlistComponent {
   /** ✅ TrackBy for Performance */
   trackById(index: number, item: IWishlist): number {
     return item.id;
+  }
+
+  goToHomePage() {
+    this.router.navigate(['/'])
   }
 }

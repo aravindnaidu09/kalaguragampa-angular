@@ -16,6 +16,7 @@ import { ToastService } from '../../../core/services/toast.service';
 import { WishlistState } from '../../../features/cart/_state/wishlist.state';
 import { WishlistFacade } from '../../../features/cart/_state/wishlist.facade';
 import { AuthService } from '../../../features/auth/_services/auth.service';
+import { CartFacade } from '../../../features/cart/_state/cart.facade';
 
 @Component({
   selector: 'app-header',
@@ -101,7 +102,8 @@ export class HeaderComponent implements OnInit {
     private readonly menuService: MenuService,
     private readonly toastService: ToastService,
     private readonly authService: AuthService,
-    private readonly wishlistFacade: WishlistFacade
+    private readonly wishlistFacade: WishlistFacade,
+    readonly cartFacade: CartFacade,
   ) {
     this.searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(query => {
       if (query.length >= 2) {
@@ -114,11 +116,18 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     this.setMenuItems();
     this.fetchWishlistCount();
+    this.fetchCartCount();
   }
 
   fetchWishlistCount() {
     if (this.authService.isAuthenticated()) {
       this.wishlistFacade.fetch();
+    }
+  }
+
+  fetchCartCount() {
+    if (this.authService.isAuthenticated()) {
+      this.cartFacade.loadCart();
     }
   }
 
@@ -265,7 +274,7 @@ export class HeaderComponent implements OnInit {
 
   goToCartPage() {
     this.checkMenuDropdownIsOpen();
-    if (!(this.cartlistCount() > 0)) {
+    if (!(this.cartFacade.countSignal() > 0)) {
       this.toastService.showError('Add products to your cart to view them.');
       return;
     }

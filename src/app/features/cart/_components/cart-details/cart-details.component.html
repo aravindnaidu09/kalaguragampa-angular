@@ -1,26 +1,26 @@
-<div class="cart-container">
+<div class="cart-container" *ngIf="cartSignal(); else emptyCart">
   <!-- Cart Items Section -->
   <div class="cart-items">
-    <h2>From Saved Addresses</h2>
-    <div class="cart-item">
+    <h2>Your Shopping Cart</h2>
+
+    <div class="cart-item" *ngFor="let item of cartSignal()?.items ?? []">
       <div class="product-details">
-        <img [src]="cartItems[0].imageUrl" alt="{{ cartItems[0].name }}" class="product-image" />
+        <img [src]="getImagePath(item.product?.images![0].image)" alt="{{ item.product?.name }}" class="product-image" (error)="onImageError($event)" />
         <div>
-          <h3>{{ cartItems[0].name }}</h3>
-          <!-- <p>Seller: BTPLD <span class="assured-icon">✔ Assured</span></p> -->
-          <p class="original-price">{{ cartItems[0].price | currency:'INR' }}</p>
-          <!-- <p class="discounted-price">{{ cartItems[0].price | currency:'INR' }}</p> -->
-          <!-- <p class="offer-text">8% Off | 1 offer applied</p> -->
+          <h3 (click)="goToProductPage(item.product?.name!, item.product?.id!)">{{ item.product?.name }}</h3>
+          <p class="original-price">{{ item.product?.price | currency:'INR' }}</p>
         </div>
       </div>
+
       <div class="quantity-actions">
-        <button class="increment-decrement-buttons" (click)="updateQuantity(cartItems[0], 'decrement')">-</button>
-        <input type="number" [value]="cartItems[0].quantity" readonly />
-        <button class="increment-decrement-buttons" (click)="updateQuantity(cartItems[0], 'increment')">+</button>
+        <button class="increment-decrement-buttons" (click)="updateQuantity(item, 'decrement')">−</button>
+        <!-- <input type="number" [value]="item.quantity || 1" readonly /> -->
+        <button class="increment-decrement-buttons" (click)="updateQuantity(item, 'increment')">+</button>
       </div>
+
       <div class="action-links">
         <button class="save-for-later">Save for Later</button>
-        <button class="remove" (click)="removeItem(cartItems[0].id)">Remove</button>
+        <button class="remove" (click)="removeItem(item.id!)">Remove</button>
       </div>
     </div>
   </div>
@@ -31,27 +31,43 @@
     <hr />
 
     <div class="summary-item">
-      <p>Price (1 item):</p>
-      <p>{{ 330 | currency:'INR' }}</p>
+      <p>Price ({{ cartSignal()?.items?.length }} items):</p>
+      <p>{{ cartSignal()?.cartTotal || 0 | currency:'INR' }}</p>
     </div>
+
     <div class="summary-item">
       <p>Discount:</p>
-      <!-- <p>-{{ 12000 | currency:'INR' }}</p> -->
+      <p>-{{ cartSignal()?.discountAmount || 0 | currency:'INR' }}</p>
     </div>
+
     <div class="summary-item">
-      <p>Total GST:</p>
-      <!-- <p>-{{ 100 | currency:'INR' }}</p> -->
+      <p>GST:</p>
+      <p>{{ cartSignal()?.taxAmount || 0 | currency:'INR' }}</p>
     </div>
+
     <div class="summary-item">
       <p>Delivery Charges:</p>
-      <!-- <p>Free</p> -->
+      <p class="green-text">
+        {{ cartSignal()?.shippingAmount === '0' ? 'Free' : (cartSignal()?.shippingAmount | currency:'INR') }}
+      </p>
     </div>
+
     <hr />
+
     <div class="total-amount">
       <p>Total Amount:</p>
-      <p>{{ grandTotal | currency:'INR' }}</p>
+      <p>{{ cartSignal()?.totalAmount || 0 | currency:'INR' }}</p>
     </div>
-    <p class="savings-text">You will save ₹ on this order</p>
+
+    <p class="savings-text">You will save ₹{{ estimatedSavingsSignal() }} on this order</p>
+
     <button class="checkout-btn" (click)="goToCheckoutPage()">Place Order</button>
   </div>
 </div>
+
+<ng-template #emptyCart>
+  <div class="empty-cart-message">
+    <h3>Your cart is empty 🛒</h3>
+    <p>Browse products and add them to your cart!</p>
+  </div>
+</ng-template>

@@ -6,13 +6,14 @@ import { IProduct } from '../../_models/product-model';
 import { environment } from '../../../../../environments/environment.dev';
 import { HtmlParserPipe } from "../../../../core/utils/html-parser.pipe";
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../../../core/services/toast.service';
+import { CartFacade } from '../../../cart/_state/cart.facade';
 
 @Component({
   selector: 'app-view-product',
   standalone: true,
   imports: [
     CommonModule,
-    HtmlParserPipe,
     FormsModule
   ],
   templateUrl: './view-product.component.html',
@@ -22,11 +23,15 @@ export class ViewProductComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private productService = inject(ProductService);
+  private toastService = inject(ToastService);
+  private cartFacade = inject(CartFacade);
 
   product = signal<IProduct | null>(null); // ✅ Reactive Signal for Product Data
   quantity = signal<number>(1); // ✅ Default Quantity
   isLoading = signal<boolean>(true); // ✅ Loading State for Skeleton
   errorMessage = signal<string | null>(null); // ✅ Error State
+
+  imageIndex: number = 0;
 
   reviews = signal([
     {
@@ -76,6 +81,8 @@ export class ViewProductComponent implements OnInit {
   increaseQuantity(): void {
     if (this.quantity() < (this.product()?.maxQuantity || 1)) {
       this.quantity.update((q) => q + 1);
+    } else {
+      this.toastService.showWarning('Limit Reached!')
     }
   }
 
@@ -88,8 +95,13 @@ export class ViewProductComponent implements OnInit {
 
   // ✅ Add to Cart Function
   addToCart(): void {
-    console.log('Product added to cart:', this.product());
-    this.router.navigate(['/cart']);
+    if (this.product()?.maxQuantity && this.quantity() > this.product()?.maxQuantity!) {
+      this.toastService.showError(`You can only purchase up to ${this.product()?.maxQuantity} units.`);
+      return;
+    }
+
+    // ✅ All good, dispatch add to cart
+    this.cartFacade.addToCart(this.product()?.id!, this.quantity());
   }
 
   // ✅ Navigate to Checkout
@@ -133,5 +145,9 @@ export class ViewProductComponent implements OnInit {
 
     this.reviews.update((reviews) => [newReview, ...reviews]); // Add review at top
     this.newReview.set({ comment: '', rating: 0 }); // Reset form
+  }
+
+  showClickedSpecificImage(index: number) {
+    this.imageIndex = index;
   }
 }

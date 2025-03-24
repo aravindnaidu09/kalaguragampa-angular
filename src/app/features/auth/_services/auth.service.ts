@@ -65,7 +65,7 @@ export class AuthService {
     return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.user.changePassword}`, data);
   }
 
-  resetPassword(email: string): Observable<any> {
+  forgotPassword(email: string): Observable<any> {
     return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.user.passwordReset}`, { email });
   }
 

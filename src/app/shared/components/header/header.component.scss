@@ -120,7 +120,7 @@
     /* Reduced gap between logo and text */
 
     img {
-      height: 35px;
+      height: 40px;
       /* Slightly smaller logo size */
     }
 
@@ -363,7 +363,7 @@
 
 .cart-badge {
   position: absolute;
-  top: 5px;
+  top: 6px;
   /* Adjust position for proper placement */
   right: 10px;
   /* Move away from the right edge to avoid overlap */
@@ -371,7 +371,7 @@
   /* Theme yellow for badge */
   color: #333;
   /* Text color inside badge */
-  font-size: 10px;
+  font-size: 8px;
   font-weight: bold;
   padding: 3px 6px;
   /* Padding for badge */

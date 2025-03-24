@@ -1,77 +1,127 @@
-import { State, Action, StateContext, Selector } from '@ngxs/store';
+import { catchError, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { ToastService } from '../../../core/services/toast.service';
 import { Injectable } from '@angular/core';
-import { CartItem } from '../../cart/_models/cart-item-model';
+import { Selector, Action, StateContext, State } from '@ngxs/store';
+import { CartResponseItem } from '../_models/cart-item-model';
+import { CartService } from '../_services/cart.service';
+import { LoadCart, ClearCart, AddToCart, UpdateCartItem, RemoveCartItem } from './cart.actions';
 
-// ✅ Actions
-export class AddToCart {
-  static readonly type = '[Cart] Add Item';
-  constructor(public payload: CartItem) {}
-}
-
-export class RemoveFromCart {
-  static readonly type = '[Cart] Remove Item';
-  constructor(public productId: number) {}
-}
-
-export class ClearCart {
-  static readonly type = '[Cart] Clear Cart';
-}
-
-// ✅ Cart State Model
 export interface CartStateModel {
-  cartItems: CartItem[];
-  totalItems: number;
+  cart: CartResponseItem | null;
+  loading: boolean;
 }
 
-// ✅ Initial State
 @State<CartStateModel>({
   name: 'cart',
   defaults: {
-    cartItems: [],
-    totalItems: 0
+    cart: null,
+    loading: false
   }
 })
 @Injectable()
 export class CartState {
+  constructor(
+    private cartService: CartService,
+    private toast: ToastService
+  ) {}
 
-  // ✅ Selector to get cart items
   @Selector()
-  static getCart(state: CartStateModel) {
-    return state.cartItems;
+  static cart(state: CartStateModel): CartResponseItem | null {
+    return state.cart;
   }
 
-  // ✅ Selector to get cart count (for badge updates)
   @Selector()
-  static getCartCount(state: CartStateModel) {
-    return state.totalItems;
+  static loading(state: CartStateModel): boolean {
+    return state.loading;
   }
 
-  // ✅ Add to Cart
-  @Action(AddToCart)
-  addToCart({ getState, patchState }: StateContext<CartStateModel>, { payload }: AddToCart) {
-    const state = getState();
-    patchState({
-      cartItems: [...state.cartItems, payload],
-      totalItems: state.totalItems + payload.quantity
-    });
+  @Action(LoadCart)
+  loadCart(ctx: StateContext<CartStateModel>) {
+    ctx.patchState({ loading: true });
+
+    return this.cartService.getCart().pipe(
+      tap((res) => {
+        if (res?.data) {
+          ctx.patchState({ cart: res.data });
+        } else {
+          this.toast.showError('Cart data is empty or malformed.');
+        }
+        ctx.patchState({ loading: false });
+      }),
+      catchError((err) => {
+        this.toast.showError('Failed to load cart.');
+        ctx.patchState({ loading: false });
+        return of(err);
+      })
+    );
   }
 
-  // ✅ Remove from Cart
-  @Action(RemoveFromCart)
-  removeFromCart({ getState, patchState }: StateContext<CartStateModel>, { productId }: RemoveFromCart) {
-    const state = getState();
-    patchState({
-      cartItems: state.cartItems.filter(item => item.product_id !== productId),
-      totalItems: Math.max(0, state.totalItems - 1) // Decrease count safely
-    });
-  }
-
-  // ✅ Clear Cart (Logout or Manual)
   @Action(ClearCart)
-  clearCart({ setState }: StateContext<CartStateModel>) {
-    setState({
-      cartItems: [],
-      totalItems: 0
-    });
+  clearCart(ctx: StateContext<CartStateModel>) {
+    return this.cartService.clearCart().pipe(
+      tap(() => {
+        ctx.patchState({ cart: null });
+        this.toast.showSuccess('Cart cleared successfully.');
+      }),
+      catchError((err) => {
+        this.toast.showError('Failed to clear cart.');
+        return of(err);
+      })
+    );
+  }
+
+  @Action(AddToCart)
+  addToCart(ctx: StateContext<CartStateModel>, action: AddToCart) {
+    return this.cartService.addToCart(action.productId, action.quantity).pipe(
+      tap((res) => {
+        if (res?.data) {
+          ctx.patchState({ cart: res.data });
+          this.toast.showSuccess('Product added to cart.');
+        } else {
+          this.toast.showError('Failed to add product to cart.');
+        }
+      }),
+      catchError((err) => {
+        this.toast.showError('Error adding to cart.');
+        return of(err);
+      })
+    );
+  }
+
+  @Action(UpdateCartItem)
+  updateCartItem(ctx: StateContext<CartStateModel>, action: UpdateCartItem) {
+    return this.cartService.updateCartItem(action.id, action.item).pipe(
+      tap((res) => {
+        if (res?.data) {
+          ctx.patchState({ cart: res.data });
+          this.toast.showSuccess('Cart item updated.');
+        } else {
+          this.toast.showError('Failed to update item.');
+        }
+      }),
+      catchError((err) => {
+        this.toast.showError('Error updating cart item.');
+        return of(err);
+      })
+    );
+  }
+
+  @Action(RemoveCartItem)
+  removeCartItem(ctx: StateContext<CartStateModel>, action: RemoveCartItem) {
+    return this.cartService.removeCartItem(action.id).pipe(
+      tap((res) => {
+        if (res?.data) {
+          ctx.patchState({ cart: res.data });
+          this.toast.showSuccess('Item removed from cart.');
+        } else {
+          this.toast.showError('Failed to remove item.');
+        }
+      }),
+      catchError((err) => {
+        this.toast.showError('Error removing item from cart.');
+        return of(err);
+      })
+    );
   }
 }

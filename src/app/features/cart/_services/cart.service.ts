@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { API_URLS } from '../../../core/constants/api-urls';
-import { APP_SETTINGS } from '../../../core/constants/app-settings';
-import { CART_API_URLS } from '../../../core/constants/cart-api-urls';
-import { CartItem } from '../_models/cart-item-model';
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { Observable, map } from "rxjs";
+import { APP_SETTINGS } from "../../../core/constants/app-settings";
+import { CART_API_URLS } from "../../../core/constants/cart-api-urls";
+import { ApiResponse } from "../../../core/models/api-response.model";
+import { CartResponseItem, deserializeCartResponse, CartItem } from "../_models/cart-item-model";
 
 @Injectable({
   providedIn: 'root'
@@ -15,26 +15,60 @@ export class CartService {
 
   constructor(private readonly httpClient: HttpClient) { }
 
-  getCart(): Observable<any> {
-    return this.httpClient.get(`${this.baseUrl}${CART_API_URLS.cart.getCart}`);
+  /**
+   * ✅ Get current user's cart
+   * Deserializes response to CartResponseItem (camelCase typed)
+   */
+  getCart(): Observable<ApiResponse<CartResponseItem>> {
+    return this.httpClient.get<ApiResponse<any>>(`${this.baseUrl}${CART_API_URLS.cart.getCart}`).pipe(
+      map((response) => ({
+        ...response,
+        data: deserializeCartResponse(response.data)
+      }))
+    );
   }
 
-  clearCart(): Observable<any> {
-    return this.httpClient.delete(`${this.baseUrl}${CART_API_URLS.cart.clearCart}`);
+  /**
+   * ✅ Clear entire cart
+   */
+  clearCart(): Observable<ApiResponse<null>> {
+    return this.httpClient.delete<ApiResponse<null>>(`${this.baseUrl}${CART_API_URLS.cart.clearCart}`);
   }
 
-  // ✅ Add Single Product to Cart
-  addToCart(productId: number, quantity: number = 1): Observable<any> {
+  /**
+   * ✅ Add product to cart
+   */
+  addToCart(productId: number, quantity: number = 1): Observable<ApiResponse<CartResponseItem>> {
     const payload: CartItem[] = [{ product_id: productId, quantity }];
-    return this.httpClient.post(`${this.baseUrl}${CART_API_URLS.cart.addItem}`, payload);
+    return this.httpClient.post<ApiResponse<any>>(`${this.baseUrl}${CART_API_URLS.cart.addItem}`, payload).pipe(
+      map((response) => ({
+        ...response,
+        data: deserializeCartResponse(response.data)
+      }))
+    );
   }
 
-  updateCartItem(id: string, item: any): Observable<any> {
-    return this.httpClient.put(`${this.baseUrl}${CART_API_URLS.cart.updateItem(id)}`, item);
+  /**
+   * ✅ Update quantity or item details
+   */
+  updateCartItem(id: string, item: any): Observable<ApiResponse<CartResponseItem>> {
+    return this.httpClient.put<ApiResponse<any>>(`${this.baseUrl}${CART_API_URLS.cart.updateItem(id)}`, item).pipe(
+      map((response) => ({
+        ...response,
+        data: deserializeCartResponse(response.data)
+      }))
+    );
   }
 
-  removeCartItem(id: string): Observable<any> {
-    return this.httpClient.delete(`${this.baseUrl}${CART_API_URLS.cart.removeItem(id)}`);
+  /**
+   * ✅ Remove an item from the cart
+   */
+  removeCartItem(id: string): Observable<ApiResponse<CartResponseItem>> {
+    return this.httpClient.delete<ApiResponse<any>>(`${this.baseUrl}${CART_API_URLS.cart.removeItem(id)}`).pipe(
+      map((response) => ({
+        ...response,
+        data: deserializeCartResponse(response.data)
+      }))
+    );
   }
-
 }
