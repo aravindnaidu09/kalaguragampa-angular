@@ -99,40 +99,104 @@
       cursor: pointer;
     }
 
-    .product-rating {
-      display: flex;
-      align-items: center;
-      margin-bottom: 15px;
+    // .product-rating {
+    //   display: flex;
+    //   align-items: center;
+    //   margin-bottom: 15px;
 
-      .product-price {
-        font-size: 0.8rem;
-        color: #333;
-      }
+    //   .product-price {
+    //     font-size: 0.8rem;
+    //     color: #333;
+    //   }
 
-      .rating-count {
-        margin-left: 8px;
-        color: #888;
-        font-size: 0.7rem;
-      }
+    //   .rating-count {
+    //     margin-left: 8px;
+    //     color: #888;
+    //     font-size: 0.7rem;
+    //   }
+    // }
+
+    // .add-to-cart {
+    //   background-color: white;
+    //   color: black;
+    //   border: 1px solid transparent;
+    //   // border-radius: 25px;
+    //   padding: 8px 20px;
+    //   cursor: pointer;
+    //   font-size: 0.7rem;
+    //   transition: background-color 0.3s;
+
+    //   &:hover {
+    //     background-color: #f7a500;
+    //     color: white;
+    //   }
+    // }
+  }
+}
+
+.rating-cart-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+
+  .product-rating {
+    font-size: 14px;
+    color: #444;
+  }
+
+  .add-to-cart-wrapper {
+    position: relative;
+    cursor: pointer;
+
+    .add-to-cart-icon {
+      font-size: 20px;
+      display: inline-block;
+      animation: bounce 1s infinite;
+      animation-play-state: paused;
+      transition: transform 0.3s;
     }
 
-    .add-to-cart {
-      background-color: white;
-      color: black;
-      border: 1px solid black;
-      border-radius: 25px;
-      padding: 8px 20px;
-      cursor: pointer;
-      font-size: 0.7rem;
-      transition: background-color 0.3s;
+    &:hover .add-to-cart-icon {
+      animation-play-state: running;
+      transform: scale(1.2);
+    }
 
-      &:hover {
-        background-color: #f7a500;
-        color: white;
-      }
+    .tooltip {
+      position: absolute;
+      bottom: 125%;
+      left: 40%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 4px;
+      opacity: 0;
+      white-space: nowrap;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover .tooltip {
+      opacity: 1;
     }
   }
 }
+
+// 💫 Keyframe for bounce effect
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(0px);
+  }
+}
+
 
 /* ✅ Scroll Button Styles */
 .scroll-button {

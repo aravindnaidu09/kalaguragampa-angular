@@ -133,59 +133,6 @@
     }
   }
 
-  .search-bar {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    max-width: 350px;
-    /* Adjusted width */
-    margin: 0 auto;
-    /* Center the search bar */
-    background-color: #f8f8f8;
-    /* Light gray background */
-    border-radius: 10px;
-    /* Slightly rounded edges */
-    padding: 2px 12px;
-    /* Reduced inner padding */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow for depth */
-
-    input {
-      flex: 1;
-      border: none;
-      outline: none;
-      background: transparent;
-      font-size: 14px;
-      /* Reduced font size */
-      padding: 8px;
-      /* Adjusted padding */
-      color: #333;
-
-      &::placeholder {
-        color: #aaa;
-        /* Placeholder text color */
-      }
-    }
-
-    .search-button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-
-      img {
-        width: 18px;
-        /* Adjusted size of search icon */
-        height: 18px;
-      }
-
-      &:hover {
-        opacity: 0.8;
-        /* Subtle hover effect */
-      }
-    }
-  }
 
   .header-actions {
     display: flex;
@@ -245,12 +192,68 @@
     }
   }
 
+
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 350px;
+  /* Adjusted width */
+  margin: 0 auto;
+  /* Center the search bar */
+  background-color: #f8f8f8;
+  /* Light gray background */
+  border-radius: 10px;
+  /* Slightly rounded edges */
+  padding: 2px 12px;
+  /* Reduced inner padding */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow for depth */
+
+  input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    /* Reduced font size */
+    padding: 8px;
+    /* Adjusted padding */
+    color: #333;
+
+    &::placeholder {
+      color: #aaa;
+      /* Placeholder text color */
+    }
+  }
+
+  .search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+
+    img {
+      width: 18px;
+      /* Adjusted size of search icon */
+      height: 18px;
+    }
+
+    &:hover {
+      opacity: 0.8;
+      /* Subtle hover effect */
+    }
+  }
+
   /* ✅ FIX: Properly position the search suggestions */
   .search-suggestions {
     position: absolute;
     top: 100%;
     /* ✅ Ensures it starts just below the search bar */
-    left: 435px;
+    left: 0;
     width: 100%;
     max-width: 350px;
     background: white;
@@ -260,32 +263,48 @@
     /* ✅ Ensures suggestions appear above other elements */
     max-height: 250px;
     overflow-y: auto;
-  }
 
-  /* ✅ FIX: Ensure list items have padding & alignment */
-  .search-suggestions ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
 
-  .search-suggestions li {
-    display: flex;
-    align-items: center;
-    padding: 12px;
-    cursor: pointer;
-    transition: background 0.2s ease-in-out;
+    li {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out;
 
-    &:hover,
-    &.highlighted {
-      background: #f1f1f1;
+      &:hover,
+      &.highlighted {
+        background: #f1f1f1;
+      }
     }
   }
 
+  .loader-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc;
+    border-top: 2px solid #333;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-left: 8px;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+
   /* ✅ FIX: Ensure proper spacing for images & product details */
   .product-img {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     border-radius: 4px;
     margin-right: 12px;
     object-fit: cover;
@@ -307,7 +326,6 @@
     color: #666;
   }
 }
-
 
 .wishlist-image {
   position: relative;

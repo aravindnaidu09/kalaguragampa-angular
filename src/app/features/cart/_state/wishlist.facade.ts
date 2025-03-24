@@ -1,5 +1,5 @@
 // 📁 wishlist.facade.ts
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, computed, signal } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { IWishlist } from '../../product/_models/wishlist-model';
 import { WishlistActions } from './wishlist.actions';
@@ -18,7 +18,9 @@ export class WishlistFacade {
   }
 
   add(productId: number) {
-    this.store.dispatch(new WishlistActions.Add(productId));
+    if (!this.isInWishlist(productId)) {
+      this.store.dispatch(new WishlistActions.Add(productId));
+    }
   }
 
   update(item: IWishlist) {
@@ -26,10 +28,29 @@ export class WishlistFacade {
   }
 
   remove(productId: number) {
-    this.store.dispatch(new WishlistActions.Remove(productId));
+    if (this.isInWishlist(productId)) {
+      this.store.dispatch(new WishlistActions.Remove(productId));
+    }
   }
 
   clear() {
     this.store.dispatch(new WishlistActions.Clear());
   }
+
+  /** ✅ Check if a product is in wishlist (with all necessary checks) */
+  isInWishlist = (productId: number): boolean => {
+    if (productId === null || productId === undefined || typeof productId !== 'number') {
+      return false;
+    }
+
+    const items = this.wishlistItems();
+    if (!Array.isArray(items) || items.length === 0) {
+      return false;
+    }
+
+    return items.some(item => {
+      const id = item?.productDetails?.id;
+      return id !== undefined && id === productId;
+    });
+  };
 }

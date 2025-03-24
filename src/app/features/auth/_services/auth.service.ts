@@ -30,7 +30,6 @@ export class AuthService {
     if (!refreshToken) {
       // return throwError(() => new Error('No refresh token available.'));
       refreshToken = localStorage.getItem('refreshToken')!;
-      console.log('refreshToken', refreshToken);
     }
 
     return this.httpClient.post<{ access: string; refresh: string }>(

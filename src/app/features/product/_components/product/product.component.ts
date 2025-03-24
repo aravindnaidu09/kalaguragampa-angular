@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, inject, Input, OnChanges, OnInit, Output, Signal, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { CartWishlistService } from '../../../cart/_services/cart-wishlist.service';
 import { IProduct } from '../../_models/product-model';
 import { HtmlParserPipe } from '../../../../core/utils/html-parser.pipe';
 import { ProductService } from '../../_services/product.service';
@@ -14,6 +13,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 import { Store } from '@ngxs/store';
 import { IWishlist } from '../../_models/wishlist-model';
 import { WishlistFacade } from '../../../cart/_state/wishlist.facade';
+import { IsInWishlistPipe } from "../../../../core/utils/is-in-wishlist.pipe";
 // import { AddToWishlist, RemoveFromWishlist } from '../../../cart/_state/wishlist.state';
 
 @Component({
@@ -21,12 +21,12 @@ import { WishlistFacade } from '../../../cart/_state/wishlist.facade';
   standalone: true,
   imports: [
     CommonModule,
-    HtmlParserPipe
-  ],
+    HtmlParserPipe,
+    IsInWishlistPipe
+],
   templateUrl: './product.component.html',
   styleUrl: './product.component.scss',
   providers: [
-    CartWishlistService,
     ProductService,
     WishlistStore,
     AuthService,
@@ -51,7 +51,6 @@ export class ProductComponent implements OnChanges {
 
   constructor(
     private readonly router: Router,
-    private readonly cartWishListService: CartWishlistService,
     private readonly productService: ProductService,
     private readonly cartService: CartService,
     private readonly authService: AuthService,
@@ -85,7 +84,11 @@ export class ProductComponent implements OnChanges {
 
   /** ✅ Add to Cart (Debounced Requests) */
   addToCart(productId: number) {
-    this.cartWishListService.updateCartCount(1);
+    if (!this.isUserLoggedIn()) {
+      this.toastService.showError('Please log in to add items to your cart.');
+      return;
+    }
+
     this.cartService.addToCart(productId).subscribe({
       next: (result) => console.log('Cart Updated: ', result),
       error: (err) => console.error('Cart Error:', err)
@@ -99,7 +102,7 @@ export class ProductComponent implements OnChanges {
       return;
     }
 
-    const isWishlisted = this.isInWishlist(product.id!);
+    const isWishlisted = this.wishlistFacade.isInWishlist(product.id!);
 
     if (isWishlisted) {
       this.wishlistFacade.remove(product.id!);
@@ -112,8 +115,6 @@ export class ProductComponent implements OnChanges {
     }
   }
 
-
-
   // Method to remove the wishlist item
   removeFromWishlist(productId: number) {
     if (!this.isUserLoggedIn()) {
@@ -124,25 +125,19 @@ export class ProductComponent implements OnChanges {
     this.wishlistFacade.remove(productId);
   }
 
-
-
   /** ✅ Navigate to Product Details */
   goToProductDetailsPage(name: string, id: number) {
     this.router.navigate([`/product/${name}/${id}`]);
   }
 
-  /** ✅ Check if product is in wishlist */
-  isInWishlist(productId: number): boolean {
-    return this.wishlistStore.wishlist().some(w => w.id === productId);
-  }
-
   /** ✅ Toggle Wishlist */
   toggleWishlist(product: IProduct): void {
-    if (this.isInWishlist(product.id!)) {
-      this.wishlistStore.removeFromWishlist(product.id);
-      console.log(`Removed from Wishlist: ${product.name}`);
+    const isWishlisted = this.wishlistFacade.isInWishlist(product.id!);
+
+    if (isWishlisted) {
+      this.wishlistFacade.remove(product.id!);
     } else {
-      this.wishlistStore.addToWishlist(product);
+      this.wishlistFacade.add(product.id!);
     }
   }
 

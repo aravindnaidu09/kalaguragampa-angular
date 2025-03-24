@@ -5,7 +5,6 @@ import { LoginComponent } from "../../../features/auth/_components/login/login.c
 import { Router, RouterModule } from '@angular/router';
 import { MenuDropdownComponent, MenuItem } from '../menu-dropdown/menu-dropdown.component';
 import { DialogComponent } from '../dialog/dialog.component';
-import { CartWishlistService } from '../../../features/cart/_services/cart-wishlist.service';
 import { MenuService } from '../../../core/services/menu.service';
 import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import { Store } from '@ngxs/store';
@@ -15,6 +14,8 @@ import { ProductService } from '../../../features/product/_services/product.serv
 import { environment } from '../../../../environments/environment.dev';
 import { ToastService } from '../../../core/services/toast.service';
 import { WishlistState } from '../../../features/cart/_state/wishlist.state';
+import { WishlistFacade } from '../../../features/cart/_state/wishlist.facade';
+import { AuthService } from '../../../features/auth/_services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -29,16 +30,14 @@ import { WishlistState } from '../../../features/cart/_state/wishlist.state';
   styleUrl: './header.component.scss',
   providers: [
     ProductService,
-    CartWishlistService
   ],
 })
 export class HeaderComponent implements OnInit {
 
   private store = inject(Store);
-  private cartWishlistService = inject(CartWishlistService);
-  wishlistCount: any
+  wishlistCount = signal<number>(0);
   cartlistCount: Signal<number> = signal<number>(0);
-  wCount: number = 0;
+  wCount =  computed(() => this.wishlistFacade.wishlistCount());
 
   isMenuOpen = false; // Menu visibility state
   loginState = false; // Track login state
@@ -53,6 +52,8 @@ export class HeaderComponent implements OnInit {
   dialogVisible: boolean = false;
   isLoginDialogVisible = false;
   selectedLoginMethod: string = '';
+
+  isLoading = signal(false);
 
   countryOptions = [
     { label: 'Australia', value: 'AUS' },
@@ -99,7 +100,8 @@ export class HeaderComponent implements OnInit {
     private elementRef: ElementRef,
     private readonly menuService: MenuService,
     private readonly toastService: ToastService,
-    private readonly cdr: ChangeDetectorRef
+    private readonly authService: AuthService,
+    private readonly wishlistFacade: WishlistFacade
   ) {
     this.searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(query => {
       if (query.length >= 2) {
@@ -115,13 +117,9 @@ export class HeaderComponent implements OnInit {
   }
 
   fetchWishlistCount() {
-    // this.store.dispatch(n)
-    this.wishlistCount = this.store.select(WishlistState.getWishlistCount);
-
-    this.wishlistCount.subscribe((count: any) => {
-      console.log('Wishlist count updated in header:', count);
-      this.wCount = count;
-    });
+    if (this.authService.isAuthenticated()) {
+      this.wishlistFacade.fetch();
+    }
   }
 
   // ✅ Handle user input changes
@@ -129,6 +127,7 @@ export class HeaderComponent implements OnInit {
     const inputValue = (event.target as HTMLInputElement).value;
 
     if (inputValue.length > 0) {
+      this.isLoading.set(true); // show loader
       this.showSuggestions.set(true); // ✅ Show suggestions when input has value
     } else {
       this.showSuggestions.set(false); // ✅ Hide suggestions when input is empty
@@ -136,6 +135,7 @@ export class HeaderComponent implements OnInit {
 
     this.searchQuery.set(inputValue);
     this.searchSubject.next(inputValue);
+    this.isLoading.set(false);
   }
 
   // ✅ Keyboard Navigation with Scrolling
@@ -274,7 +274,7 @@ export class HeaderComponent implements OnInit {
 
   goToWishlistPage() {
     this.checkMenuDropdownIsOpen();
-    if (!(this.wCount > 0)) {
+    if (!(this.wCount() > 0)) {
       this.toastService.showError('Add products to your wishlist to view them.');
       return;
     }

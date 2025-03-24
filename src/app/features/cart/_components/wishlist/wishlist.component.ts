@@ -9,7 +9,6 @@ import { environment } from '../../../../../environments/environment.dev';
 import { Router } from '@angular/router';
 import { ToastService } from '../../../../core/services/toast.service';
 import { CartItem } from '../../_models/cart-item-model';
-import { CartWishlistService } from '../../_services/cart-wishlist.service';
 
 @Component({
   selector: 'app-wishlist',
@@ -41,7 +40,6 @@ export class WishlistComponent {
     private readonly cartService: CartService,
     private readonly router: Router,
     private readonly toastService: ToastService,
-    private readonly cartWishListService: CartWishlistService,
   ) { }
 
   ngOnInit(): void {
@@ -93,7 +91,6 @@ export class WishlistComponent {
     this.wishlistService.removeFromWishlist(productId).subscribe({
       next: () => {
         this.toastService.showSuccess('Item removed from wishlist');
-        this.cartWishListService.updateWishlistCount(-1);
         this.loadWishlist(); // Reload Wishlist after removal
       },
       error: () => {

@@ -19,7 +19,7 @@ export interface WishlistStateModel {
   name: 'wishlist',
   defaults: {
     wishlistItems: JSON.parse(localStorage.getItem('wishlist') || '[]'),
-    totalItems: JSON.parse(localStorage.getItem('wishlist') || '[]').length,
+    totalItems: JSON.parse(localStorage.getItem('wishlistCount') || '[]').length,
     loaded: false,
     loading: false
   }
@@ -62,7 +62,6 @@ export class WishlistState {
       }),
       catchError((err) => {
         ctx.patchState({ loading: false });
-        console.error(err);
         this.toast.showError('Failed to load wishlist.');
         return of();
       })
@@ -87,7 +86,6 @@ export class WishlistState {
       }),
       catchError((err) => {
         ctx.patchState({ loading: false });
-        console.error(err);
         this.toast.showError('Add to wishlist failed');
         return of();
       })
@@ -112,7 +110,6 @@ export class WishlistState {
       }),
       catchError((err) => {
         ctx.patchState({ loading: false });
-        console.error(err);
         this.toast.showError('Remove from wishlist failed');
         return of();
       })
@@ -126,7 +123,6 @@ export class WishlistState {
         this.toast.showSuccess('Wishlist item updated');
       }),
       catchError((err) => {
-        console.error(err);
         this.toast.showError('Update failed');
         return of();
       })

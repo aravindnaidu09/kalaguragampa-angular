@@ -30,12 +30,9 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
 
   return next(clonedRequest).pipe(
     catchError((error: HttpErrorResponse) => {
-      console.log('error-message: ', error)
       if (error.status === 401) {
-        console.log('🔄 Access Token Expired. Attempting Refresh...');
 
         if (!refreshToken) {
-          console.warn('❌ No Refresh Token Available! Redirecting to Login.');
           store.dispatch(new ClearToken());
           // router.navigate(['/login']);
           return throwError(() => new Error('Session expired. Please log in again.'));
@@ -44,7 +41,6 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
         // ✅ Call AuthService to Get a New Access Token
         return authService.refreshAccessToken().pipe(
           switchMap((newTokens) => {
-            console.log('✅ New Tokens Received:', newTokens);
 
             // ✅ Update Tokens in NGXS Store
             store.dispatch(new SetToken(newTokens.access, newTokens.refresh));
@@ -57,7 +53,6 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
             return next(updatedRequest);
           }),
           catchError(err => {
-            console.error('❌ Refresh Token Expired. Logging Out.');
             store.dispatch(new ClearToken());
             // router.navigate(['/login']);
             return throwError(() => new Error('Session expired. Please log in again.'));

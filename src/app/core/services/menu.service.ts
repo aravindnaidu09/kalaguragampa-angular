@@ -53,8 +53,6 @@ export class MenuService {
         { label: 'Help', action: () => console.log('Help clicked') }
       ]);
     }
-
-    console.log('🔄 Menu Items Updated:', this.menuItemsSignal());
   }
 
   /**

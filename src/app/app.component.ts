@@ -4,7 +4,6 @@ import { HeaderComponent } from './shared/components/header/header.component';
 import { FooterComponent } from "./shared/components/footer/footer.component";
 import { DashboardComponent } from "./shared/components/dashboard/dashboard.component";
 import { HttpClient } from '@angular/common/http';
-import { CartWishlistService } from './features/cart/_services/cart-wishlist.service';
 
 @Component({
   selector: 'app-root',
