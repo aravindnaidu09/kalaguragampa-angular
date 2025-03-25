@@ -15,6 +15,7 @@ export interface IProduct {
   image?: string;
   price?: string;
   rating?: string;
+  reviewsCount?: string;
   images?: Images[];
 }
 
@@ -34,7 +35,8 @@ export function deserializeProducts(data: any[]): IProduct[] {
     image: product.image,
     price: product.price,
     rating: product.rating,
-    images: product.images
+    images: product.images,
+    reviewsCount: product.reviews_count
   }));
 }
 
@@ -55,6 +57,7 @@ export function deserializeProduct(data: any): IProduct {
     image: data.image,
     price: data.price,
     rating: data.rating,
-    images: data.images
+    images: data.images,
+    reviewsCount: data.reviews_count
   };
 }

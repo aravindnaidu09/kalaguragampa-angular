@@ -14,8 +14,8 @@
       <!-- ✅ Wishlist Icon -->
       <div class="wishlist-icon">
         <span (click)="addToWishlist(product)">
-          <span *ngIf="product.id! | isInWishlist; else notInWishlist">❤️</span>
-          <ng-template #notInWishlist>🤍</ng-template>
+          <span *ngIf="product.id! | isInWishlist; else notInWishlist" title="Remove from wishlist">❤️</span>
+          <ng-template #notInWishlist title="Add to wishlist">🤍</ng-template>
         </span>
       </div>
 
@@ -32,7 +32,7 @@
             {{ product.name }}
           </h4>
         </div>
-<!--
+        <!--
         <p class="product-description" [innerHTML]="product.description! | appHtmlParser"
           (click)="goToProductDetailsPage(product.name!, product.id!)">
         </p> -->
@@ -41,13 +41,13 @@
 
         <div class="rating-cart-wrapper">
           <div class="product-rating">
-            ⭐⭐⭐⭐⭐ ({{ product.rating }})
+            ({{ product.rating ?? 4.1 }}) ⭐ | 200
           </div>
 
-          <div class="add-to-cart-wrapper" (click)="addToCart(product.id!)">
+          <!-- <div class="add-to-cart-wrapper" (click)="addToCart(product.id!)">
             <span class="add-to-cart-icon">🛒</span>
             <span class="tooltip">Add to Cart</span>
-          </div>
+          </div> -->
         </div>
 
 
