@@ -17,6 +17,7 @@ export interface IProduct {
   rating?: string;
   reviewsCount?: string;
   images?: Images[];
+  isAddedToWishlist?: boolean;
 }
 
 export function deserializeProducts(data: any[]): IProduct[] {

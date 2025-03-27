@@ -26,6 +26,8 @@ export class SigninComponent implements OnInit, OnDestroy {
   @Output() closeLoginDialog = new EventEmitter<boolean>();
   @Output() isRegisterClicked = new EventEmitter<boolean>();
   @Output() isLoginSuccess = new EventEmitter<boolean>(false);
+  @Output() forgotPassword = new EventEmitter<boolean>(false);
+
 
 
   loginOtpForm!: FormGroup;
@@ -290,7 +292,8 @@ export class SigninComponent implements OnInit, OnDestroy {
    * Trigger Forgot Password action
    */
   onForgotPassword(): void {
-    alert('Redirecting to Forgot Password page...');
+    // alert('Redirecting to Forgot Password page...');
+    this.forgotPassword.emit(true);
   }
 
   /**

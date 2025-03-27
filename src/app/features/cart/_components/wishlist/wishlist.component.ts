@@ -9,6 +9,7 @@ import { environment } from '../../../../../environments/environment.dev';
 import { Router } from '@angular/router';
 import { ToastService } from '../../../../core/services/toast.service';
 import { CartItem } from '../../_models/cart-item-model';
+import { WishlistFacade } from '../../_state/wishlist.facade';
 
 @Component({
   selector: 'app-wishlist',
@@ -40,6 +41,7 @@ export class WishlistComponent {
     private readonly cartService: CartService,
     private readonly router: Router,
     private readonly toastService: ToastService,
+    private readonly wishlistFacade: WishlistFacade
   ) { }
 
   ngOnInit(): void {
@@ -87,15 +89,7 @@ export class WishlistComponent {
 
   // ✅ Remove from Wishlist
   removeFromWishlist(productId: number): void {
-    this.wishlistService.removeFromWishlist(productId).subscribe({
-      next: () => {
-        this.toastService.showSuccess('Item removed from wishlist');
-        this.loadWishlist(); // Reload Wishlist after removal
-      },
-      error: () => {
-        this.toastService.showError('Failed to remove item from wishlist');
-      }
-    });
+    this.wishlistFacade.remove(productId);
   }
 
   // ✅ Add Single Product to Cart
@@ -136,19 +130,12 @@ export class WishlistComponent {
     this.isLoading.set(true);
 
     this.wishlistItems().forEach((element: any) => {
-      this.wishlistService.removeFromWishlist(element.productDetails.id!).subscribe({
-        next: () => {
-          this.toastService.showSuccess('Wishlist cleared successfully');
-        },
-        error: () => {
-          this.toastService.showError('Failed to clear wishlist');
-        }
-      })
+      this.wishlistFacade.remove(element.productDetails.id!);
     });
   }
 
   /** ✅ TrackBy for Performance */
-  trackById(index: number, item: IWishlist): number {
+  trackById(index: number, item: IWishlist): number |string{
     return item.id;
   }
 

@@ -1,131 +1,167 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal, computed, effect } from '@angular/core';
-import { ProductComponent } from "../product/product.component";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnInit, Signal, signal, ViewChild } from '@angular/core';
 import { ICategory } from '../../_models/category-model';
-import { ProductService } from '../../_services/product.service';
 import { IProduct } from '../../_models/product-model';
-import { debounceTime, Subject, take } from 'rxjs';
+import { ProductService } from '../../_services/product.service';
 import { Router } from '@angular/router';
+import { debounceTime, Subject, take } from 'rxjs';
 import { IProductQueryParams } from '../../_models/product-query-model';
+import { WishlistFacade } from '../../../cart/_state/wishlist.facade';
+import { ProductComponent } from '../product/product.component';
+import { IWishlist } from '../../_models/wishlist-model';
+import { SkeletonLoaderComponent } from "../../../../shared/components/skeleton-loader/skeleton-loader.component";
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    ProductComponent
-  ],
+  imports: [CommonModule, ProductComponent, SkeletonLoaderComponent],
   templateUrl: './product-list.component.html',
-  styleUrl: './product-list.component.scss'
+  styleUrl: './product-list.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductListComponent implements OnInit {
-  /** ✅ Caching Categories for Preloading */
   private categoryCache = new Map<number, IProduct[]>();
+  private categorySelection$ = new Subject<number>();
+  private cdr = inject(ChangeDetectorRef);
 
-  /** ✅ Category & Product Data */
   categories = signal<ICategory[]>([]);
   productsList = signal<IProduct[]>([]);
+  topSellers = signal<IProduct[]>([]);
+  weekTopSellers = signal<IProduct[]>([]);
+  newArrivals = signal<IProduct[]>([]);
 
-  /** ✅ Pagination Metadata */
-  totalProducts = signal(0);
-  nextPage = signal<string | null>(null);
-  previousPage = signal<string | null>(null);
-
-  /** ✅ UI State */
   selectedCategory = signal<number | null>(null);
   isLoading = signal<boolean>(true);
 
-  /** ✅ Debounce for category selection */
-  private categorySelection$ = new Subject<number>();
+  wishlistItems: Signal<IWishlist[]> = signal([]);
+  selectedCategoryId: number | null = null;
+
+  isTopSellersLoading = signal(true);
+  isWeekTopSellersLoading = signal(true);
+  isNewArrivalsLoading = signal(true);
+
+  @ViewChild('scrollContainer', { static: false }) scrollContainer!: ElementRef;
+  @ViewChild('categoryScrollRef', { static: false }) categoryScrollRef!: ElementRef;
+  @ViewChild('topSellersScroll') topSellersScroll!: ElementRef;
+  @ViewChild('weekTopSellersScroll') weekTopSellersScroll!: ElementRef;
+  @ViewChild('newArrivalsScroll') newArrivalsScroll!: ElementRef;
 
   constructor(
     private readonly productService: ProductService,
-    private readonly router: Router,
+    private readonly wishlistFacade: WishlistFacade,
+    private readonly router: Router
   ) {
-    /** ✅ Apply Debounce on Category Selection */
-    this.categorySelection$.pipe(debounceTime(300)).subscribe(categoryId => {
+    this.categorySelection$.pipe(debounceTime(300)).subscribe((categoryId) => {
       this.isLoading.set(true);
       this.fetchProductList(categoryId);
     });
   }
 
   ngOnInit(): void {
-    this.preloadCategories(); // 🚀 Preloading Categories on App Load
+    this.preloadCategories();
+    this.wishlistItems = this.wishlistFacade.wishlistSignal;
   }
 
-  /** ✅ Preload Categories (Faster Category Switching) */
+  /** ✅ Preload top categories */
   private preloadCategories(): void {
-    this.productService.getCategories()
-      .pipe(take(1))
-      .subscribe({
-        next: (categories) => {
-          this.categories.set(categories);
-          this.isLoading.set(false);
+    this.productService.getCategories().pipe(take(1)).subscribe({
+      next: (categories) => {
+        this.categories.set(categories);
+        this.isLoading.set(false);
 
-          // ✅ Preload Products for the First Category (Better UX)
-          if (categories.length > 0) {
-            this.selectedCategory.set(categories[0].id);
-            this.fetchProductList(categories[0].id);
-          }
-        },
-        error: (error) => {
-          console.error('Error fetching categories:', error);
-          this.isLoading.set(false);
+        if (categories.length > 0) {
+          this.selectedCategory.set(categories[0].id);
+          this.fetchProductList(categories[0].id);
         }
-      });
+      },
+      error: () => this.isLoading.set(false),
+    });
   }
 
-  /** ✅ Fetch Product List (Handles Pagination) */
-  private fetchProductList(categoryId?: number, offset: number = 0, limit: number = 20): void {
+  /** ✅ Fetch product list by category */
+  private fetchProductList(categoryId: number, offset = 0, limit = 20): void {
     this.isLoading.set(true);
 
-    // ✅ Check Cache Before Making API Call
-    if (this.categoryCache.has(categoryId!)) {
-      console.log('🚀 Fetching Products from Cache');
-      this.productsList.set(this.categoryCache.get(categoryId!)!);
+    if (this.categoryCache.has(categoryId)) {
+      this.productsList.set(this.categoryCache.get(categoryId)!);
       this.isLoading.set(false);
       return;
     }
 
     const params: IProductQueryParams = {
-      category_id: categoryId || undefined,
+      category_id: categoryId,
+      offset,
       limit,
-      offset
     };
 
-    this.productService.getAllProducts(params)
-      .pipe(take(1))
-      .subscribe({
-        next: (response) => {
-          this.productsList.set(response.products);
-          this.totalProducts.set(response.totalCount);
-          this.nextPage.set(response.nextPage);
-          this.previousPage.set(response.previousPage);
-          this.isLoading.set(false);
-
-          // ✅ Store Products in Cache for Faster Switching
-          this.categoryCache.set(categoryId!, response.products);
-        },
-        error: (error) => {
-          console.error('Error fetching products:', error);
-          this.isLoading.set(false);
-        }
-      });
+    this.productService.getAllProducts(params).pipe(take(1)).subscribe({
+      next: (res) => {
+        this.productsList.set(res.products);
+        this.categoryCache.set(categoryId, res.products);
+        this.isLoading.set(false);
+      },
+      error: () => this.isLoading.set(false),
+    });
   }
 
-  /** ✅ Handle Category Selection (Debounced) */
+  /** ✅ Handle category tab selection */
   selectCategory(index: number, categoryId: number): void {
-    this.isLoading.set(true);
     this.selectedCategory.set(index);
     this.categorySelection$.next(categoryId);
+    this.selectedCategoryId = categoryId;
   }
 
-  /** ✅ Navigate to Product Details */
+  /** ✅ Handle wishlist toggling */
+  addToWishlist(productId: number): void {
+    const isWishlisted = this.wishlistFacade.isInWishlistSignal(productId)();
+
+    if (isWishlisted) {
+      this.wishlistFacade.remove(productId).subscribe();
+      this.cdr.markForCheck();
+    } else {
+      this.wishlistFacade.add(productId).subscribe();''
+      this.cdr.markForCheck();
+    }
+
+    if (this.selectedCategoryId) {
+      this.fetchProductList(this.selectedCategoryId);
+    }
+  }
+
+  /** ✅ Navigate to full listing */
   navigateToProductPage(): void {
     this.router.navigate(['/detail-view']);
   }
 
-  updatedWishlistCount(event: boolean) {
-    // this.cartWishlistService.fetchWishlistCount();
+  /** ✅ Per-item signal binding */
+  getWishlistSignal(productId: number) {
+    return this.wishlistFacade.isInWishlistSignal(productId);
+  }
+
+  trackByProductId(index: number, product: IProduct): number {
+    return product.id!;
+  }
+
+  scrollLeft(refName: 'topSellersScroll' | 'weekTopSellersScroll' | 'newArrivalsScroll' | 'scrollContainer') {
+    const el = this[refName]?.nativeElement;
+    if (el) {
+      el.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+  }
+
+  scrollRight(refName: 'topSellersScroll' | 'weekTopSellersScroll' | 'newArrivalsScroll' | 'scrollContainer') {
+    const el = this[refName]?.nativeElement;
+    if (el) {
+      el.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+  }
+
+  scrollCategoriesLeft(): void {
+    this.categoryScrollRef?.nativeElement.scrollBy({ left: -150, behavior: 'smooth' });
+  }
+
+  scrollCategoriesRight(): void {
+    this.categoryScrollRef?.nativeElement.scrollBy({ left: 150, behavior: 'smooth' });
   }
 }
+

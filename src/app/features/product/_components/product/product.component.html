@@ -1,64 +1,28 @@
-<div class="scroll-container">
-
-  <!-- ✅ Left Scroll Button -->
-  <button class="scroll-button left-scroll" (click)="scrollLeft()">
-    &#10094;
-  </button>
-
-  <div class="product-list-container" #productList>
-
-    <!-- ✅ Product List -->
-    @for (product of displayedProducts(); track product.id) {
-    <div class="product-card">
-
-      <!-- ✅ Wishlist Icon -->
-      <div class="wishlist-icon">
-        <span (click)="addToWishlist(product)">
-          <span *ngIf="product.id! | isInWishlist; else notInWishlist" title="Remove from wishlist">❤️</span>
-          <ng-template #notInWishlist title="Add to wishlist">🤍</ng-template>
-        </span>
-      </div>
-
-      <!-- ✅ Product Image -->
-      <div class="product-image">
-        <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" loading="lazy"
-          (error)="onImageError($event)" (click)="goToProductDetailsPage(product.name!, product.id!)" />
-      </div>
-
-      <!-- ✅ Product Details -->
-      <div class="product-details">
-        <div class="product-header">
-          <h4 [title]="product.name" (click)="goToProductDetailsPage(product.name!, product.id!)">
-            {{ product.name }}
-          </h4>
-        </div>
-        <!--
-        <p class="product-description" [innerHTML]="product.description! | appHtmlParser"
-          (click)="goToProductDetailsPage(product.name!, product.id!)">
-        </p> -->
-
-        <div class="product-price">₹{{ product.price }}</div>
-
-        <div class="rating-cart-wrapper">
-          <div class="product-rating">
-            ({{ product.rating ?? 4.1 }}) ⭐ | 200
-          </div>
-
-          <!-- <div class="add-to-cart-wrapper" (click)="addToCart(product.id!)">
-            <span class="add-to-cart-icon">🛒</span>
-            <span class="tooltip">Add to Cart</span>
-          </div> -->
-        </div>
-
-
-      </div>
-    </div>
-    }
+<div class="product-card">
+  <!-- ❤️ Wishlist Icon -->
+  <div class="wishlist-icon" (click)="onWishlistClick()">
+    <span *ngIf="isWishlisted(); else notWishlisted">❤️</span>
+    <ng-template #notWishlisted><span>🤍</span></ng-template>
   </div>
 
-  <!-- ✅ Right Scroll Button -->
-  <button class="scroll-button right-scroll" (click)="scrollRight()">
-    &#10095;
-  </button>
+  <!-- 📦 Product Image -->
+  <div class="product-image" (click)="navigateViewProduct(product.name!, product.id!)">
+    <img [src]="getImagePath(product.images?.[0]?.image)" alt="{{ product.name }}" loading="lazy"
+      (error)="onImageError($event)" />
+  </div>
 
+  <!-- 📝 Product Details -->
+  <div class="product-details">
+    <div class="product-header" (click)="navigateViewProduct(product.name!, product.id!)">
+      <h4 [title]="product.name">{{ product.name }}</h4>
+    </div>
+
+    <div class="product-price">₹{{ product.price }}</div>
+
+    <div class="rating-cart-wrapper">
+      <div class="product-rating">
+        ({{ product.rating ?? 4.1 }}) ⭐ | 200
+      </div>
+    </div>
+  </div>
 </div>

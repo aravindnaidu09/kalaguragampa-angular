@@ -4,6 +4,7 @@ export interface IWishlist {
   id: number;
   productDetails: IProduct;
   image?: string;
+  isAddedInWishlist?: boolean;
 }
 
 export function deserializeWishlist(data: any[]): IWishlist[] {

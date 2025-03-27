@@ -10,6 +10,7 @@ import { SetToken } from '../../_state/auth.state';
 import { take } from 'rxjs';
 import { MenuService } from '../../../../core/services/menu.service';
 import { SigninComponent } from "../signin/signin.component";
+import { ChangePasswordComponent } from "../change-password/change-password.component";
 
 @Component({
   selector: 'app-login',
@@ -21,7 +22,8 @@ import { SigninComponent } from "../signin/signin.component";
     FormsModule,
     ReactiveFormsModule,
     SignUpComponent,
-    SigninComponent
+    SigninComponent,
+    ChangePasswordComponent
 ],
 })
 export class LoginComponent {
@@ -30,6 +32,7 @@ export class LoginComponent {
   @Output() closeLoginDialog = new EventEmitter<boolean>();
 
   isRegistering = signal<boolean>(false);
+  isForgotPassword = signal<boolean>(false);
 
   closeDialog(event: boolean) {
     this.closeLoginDialog.emit(event);
@@ -41,5 +44,10 @@ export class LoginComponent {
 
   showLoginPage(event: boolean) {
     this.isRegistering.set(!event);
+  }
+
+  showForgotPassword(event: boolean) {
+    this.isRegistering.set(false);
+    this.isForgotPassword.set(event);
   }
 }

@@ -15,10 +15,22 @@ export interface WishlistStateModel {
   loading: boolean;
 }
 
+function normalizeWishlist(items: IWishlist[]): IWishlist[] {
+  return (items || []).map(item => ({
+    ...item,
+    isAddedInWishlist: true,
+    productDetails: {
+      ...item.productDetails,
+      isAddedToWishlist: true // ✅ ensures nested flag is set
+    }
+  }));
+}
+
+
 @State<WishlistStateModel>({
   name: 'wishlist',
   defaults: {
-    wishlistItems: JSON.parse(localStorage.getItem('wishlist') || '[]'),
+    wishlistItems: normalizeWishlist(JSON.parse(localStorage.getItem('wishlist') || '[]')),
     totalItems: JSON.parse(localStorage.getItem('wishlistCount') || '[]').length,
     loaded: false,
     loading: false
@@ -29,7 +41,7 @@ export class WishlistState {
   constructor(
     private wishlistService: WishlistService,
     private toast: ToastService
-  ) {}
+  ) { }
 
   @Selector()
   static getWishlist(state: WishlistStateModel) {
@@ -46,15 +58,22 @@ export class WishlistState {
     return state.loading;
   }
 
+  @Selector()
+  static wishlistItemsSafe(state: WishlistStateModel): IWishlist[] {
+    return Array.isArray(state?.wishlistItems) ? state.wishlistItems : [];
+  }
+
   @Action(WishlistActions.Fetch)
   fetchWishlist(ctx: StateContext<WishlistStateModel>) {
     ctx.patchState({ loading: true });
 
     return this.wishlistService.getWishlist().pipe(
       tap((items: IWishlist[]) => {
+        const normalized = normalizeWishlist(items);
+
         ctx.patchState({
-          wishlistItems: items,
-          totalItems: items.length,
+          wishlistItems: normalized,
+          totalItems: normalized.length,
           loaded: true,
           loading: false
         });
@@ -74,14 +93,34 @@ export class WishlistState {
 
     return this.wishlistService.addToWishlist(productId).pipe(
       tap((item: IWishlist) => {
-        const state = ctx.getState();
-        const updated = [...state.wishlistItems, item];
-        ctx.patchState({
-          wishlistItems: updated,
-          totalItems: updated.length,
+        const currentState = ctx.getState();
+
+        // ✅ Deep clone the item with flags
+        const newItem: IWishlist = {
+          ...item,
+          isAddedInWishlist: true,
+          productDetails: {
+            ...item.productDetails,
+            isAddedToWishlist: true
+          }
+        };
+
+        // ✅ Ensure a new array reference (forces Signal/Selector update)
+        const updatedWishlist = [...currentState.wishlistItems, newItem];
+
+        // ✅ Patch new state
+        ctx.setState({
+          ...currentState,
+          wishlistItems: updatedWishlist,
+          totalItems: updatedWishlist.length,
           loading: false
         });
-        localStorage.setItem('wishlist', JSON.stringify(updated));
+
+        // ✅ Sync localStorage (optional but good UX)
+        localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+        localStorage.setItem('wishlistCount', JSON.stringify(updatedWishlist.length));
+
+        // ✅ Notify user
         this.toast.showSuccess('Added to wishlist');
       }),
       catchError((err) => {
@@ -91,6 +130,7 @@ export class WishlistState {
       })
     );
   }
+
 
   @Action(WishlistActions.Remove)
   removeFromWishlist(ctx: StateContext<WishlistStateModel>, { productId }: WishlistActions.Remove) {

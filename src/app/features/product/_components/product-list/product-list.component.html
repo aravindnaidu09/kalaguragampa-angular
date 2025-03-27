@@ -1,21 +1,108 @@
 <section class="product-list-container">
 
+  <!-- 🔥 Top Sellers -->
+  <div class="top-sellers">
+    <div class="header">
+      <h3>Top Seller's</h3>
+    </div>
+    <div class="product-container">
+      @if (isTopSellersLoading()) {
+      <div class="skeleton-row">
+        @for (_ of [1, 2, 3, 4, 5]; track _) {
+        <app-skeleton-loader></app-skeleton-loader>
+        }
+      </div>
+      } @else {
+      <div class="product-scroll-wrapper">
+        <button class="scroll-button left" (click)="scrollLeft('topSellersScroll')">&#10094;</button>
+        <div class="product-scroll-container" #topSellersScroll>
+          <app-product *ngFor="let product of topSellers(); trackBy: trackByProductId" [product]="product"
+            [wishlistItems]="wishlistItems" (wishlistToggle)="addToWishlist($event)"></app-product>
+        </div>
+        <button class="scroll-button right" (click)="scrollRight('topSellersScroll')">&#10095;</button>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- 📈 Week Top Sellers -->
+  <div class="week-top-sellers">
+    <div class="header">
+      <h3>Week Top Seller's</h3>
+    </div>
+    <div class="product-container">
+      @if (isWeekTopSellersLoading()) {
+      <div class="skeleton-row">
+        @for (_ of [1, 2, 3, 4, 5]; track _) {
+        <app-skeleton-loader></app-skeleton-loader>
+        }
+      </div>
+      } @else {
+      <div class="product-scroll-wrapper">
+        <button class="scroll-button left" (click)="scrollLeft('weekTopSellersScroll')">&#10094;</button>
+        <div class="product-scroll-container" #weekTopSellersScroll>
+          <app-product *ngFor="let product of weekTopSellers(); trackBy: trackByProductId" [product]="product"
+            [wishlistItems]="wishlistItems" (wishlistToggle)="addToWishlist($event)"></app-product>
+        </div>
+        <button class="scroll-button right" (click)="scrollRight('weekTopSellersScroll')">&#10095;</button>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- 🆕 New Arrivals -->
+  <div class="new-arrivals">
+    <div class="header">
+      <h3>New Arrivals</h3>
+    </div>
+    <div class="product-container">
+      @if (isNewArrivalsLoading()) {
+      <div class="skeleton-row">
+        @for (_ of [1, 2, 3, 4, 5]; track _) {
+        <app-skeleton-loader></app-skeleton-loader>
+
+        }
+      </div>
+      } @else {
+      <div class="product-scroll-wrapper">
+        <button class="scroll-button left" (click)="scrollLeft('newArrivalsScroll')">&#10094;</button>
+        <div class="product-scroll-container" #newArrivalsScroll>
+          <app-product *ngFor="let product of newArrivals(); trackBy: trackByProductId" [product]="product"
+            [wishlistItems]="wishlistItems" (wishlistToggle)="addToWishlist($event)"></app-product>
+        </div>
+        <button class="scroll-button right" (click)="scrollRight('newArrivalsScroll')">&#10095;</button>
+      </div>
+      }
+    </div>
+  </div>
+
   <!-- Shop by Category Section -->
   <div class="shop-by-category">
     <div class="header">
       <h3>Shop by Category</h3>
     </div>
 
-    <div class="categories">
-      <!-- ✅ Display First 10 Categories -->
-      <div *ngFor="let category of categories().slice(0, 10); let i = index" class="category-item"
-        [ngClass]="{ selected: selectedCategory() === i }" (click)="selectCategory(i, category.id)">
-        <span>{{ category.name }}</span>
+    <div class="category-scroll-wrapper">
+      <!-- 🔁 Arrow Controls (top-right) -->
+      <div class="arrow-controls">
+        <button class="scroll-arrow" (click)="scrollCategoriesLeft()">
+          <span>&#10094;</span>
+        </button>
+        <button class="scroll-arrow" (click)="scrollCategoriesRight()">
+          <span>&#10095;</span>
+        </button>
       </div>
 
-      <!-- ✅ View All Button -->
-      <div class="category-item view-all" (click)="navigateToProductPage()">
-        <span>View All</span>
+      <!-- 🧾 Scrollable Categories -->
+      <div class="categories" #categoryScrollRef>
+        <div *ngFor="let category of categories().slice(0, 10); let i = index" class="category-item"
+          [ngClass]="{ selected: selectedCategory() === i }" (click)="selectCategory(i, category.id)">
+          <span>{{ category.name }}</span>
+        </div>
+
+        <div class="category-item view-all" (click)="navigateToProductPage()">
+          <span>View All</span>
+        </div>
       </div>
     </div>
 
@@ -24,52 +111,32 @@
       <!-- Skeleton Loader -->
       @if (isLoading()) {
       @for (_ of [1, 2, 3, 4, 5]; track _) {
-      <div class="product-card skeleton">
-        <div class="wishlist-icon">
-          <div class="skeleton-box" style="width: 20px; height: 20px; border-radius: 50%;"></div>
-        </div>
-        <div class="product-image">
-          <div class="skeleton-box" style="width: 100%; height: 150px;"></div>
-        </div>
-        <div class="product-details">
-          <div class="product-header">
-            <div class="skeleton-box" style="width: 60%; height: 20px;"></div>
-            <div class="skeleton-box" style="width: 30%; height: 20px;"></div>
-          </div>
-          <div class="skeleton-box" style="width: 100%; height: 40px;"></div>
-          <div class="product-rating">
-            <div class="skeleton-box" style="width: 80px; height: 15px;"></div>
-          </div>
-          <div class="skeleton-box add-to-cart-skeleton"></div>
-        </div>
-      </div>
+      <app-skeleton-loader></app-skeleton-loader>
       }
       }
 
-      <app-product *ngIf="!isLoading()" [productsList]="productsList()" (wishlistUpdated)="updatedWishlistCount($event)"></app-product>
+      <div class="product-scroll-wrapper">
+        <!-- ◀️ Scroll Left Button -->
+        <button class="scroll-button left" (click)="scrollLeft('scrollContainer')">
+          <span>&#10094;</span>
+        </button>
+
+        <!-- 🧾 Scrollable Row of Product Cards -->
+        <div class="product-scroll-container" #scrollContainer>
+          <app-product *ngFor="let product of productsList(); trackBy: trackByProductId" [product]="product"
+            [wishlistItems]="wishlistItems" (wishlistToggle)="addToWishlist($event)"></app-product>
+        </div>
+
+        <!-- ▶️ Scroll Right Button -->
+        <button class="scroll-button right" (click)="scrollRight('scrollContainer')">
+          <span>&#10095;</span>
+        </button>
+      </div>
+
+
     </div>
 
   </div>
-
-  <!-- Week Top Sellers Section -->
-  <!-- <div class="shop-by-category">
-    <div class="header">
-      <h3>Week Top Sellers</h3>
-    </div>
-
-    <app-product></app-product>
-
-  </div> -->
-
-  <!-- Popular Products Section -->
-  <!-- <div class="shop-by-category">
-    <div class="header">
-      <h3>Popular Products</h3>
-    </div>
-
-    <app-product></app-product>
-
-  </div> -->
 
   <div class="shop-by-category">
     <div class="header">

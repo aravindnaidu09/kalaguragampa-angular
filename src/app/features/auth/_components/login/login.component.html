@@ -4,16 +4,25 @@
     <img src="../../../../../assets/images/sign-in-page.png" alt="Kalagura Gampa" />
   </div>
 
-  <!-- Right Content Section -->
-  <ng-container *ngIf="!isRegistering(); else signUpForm">
-    <div class="right-section">
-      <app-signin [activeLoginMethod]="activeLoginMethod" (isRegisterClicked)="showRegisterPage($event)" (closeLoginDialog)="closeDialog($event)"></app-signin>
-    </div>
-  </ng-container>
+  <!-- Right Section Wrapper -->
+  <div class="right-section">
+    <!-- 👤 Login View -->
+    <ng-container *ngIf="!isRegistering() && !isForgotPassword(); else showOtherContent">
+      <app-signin [activeLoginMethod]="activeLoginMethod" (isRegisterClicked)="showRegisterPage($event)"
+        (forgotPassword)="showForgotPassword($event)" (closeLoginDialog)="closeDialog($event)"></app-signin>
+    </ng-container>
+  </div>
 
-  <ng-template #signUpForm>
+  <!-- 📦 Other Conditional Views -->
+  <ng-template #showOtherContent>
     <div class="right-section">
-      <app-sign-up (showLoginPage)="showLoginPage($event)"></app-sign-up>
+      <ng-container *ngIf="isRegistering(); else forgotPasswordBlock">
+        <app-sign-up (showLoginPage)="showLoginPage($event)"></app-sign-up>
+      </ng-container>
+
+      <ng-template #forgotPasswordBlock>
+        <app-change-password></app-change-password>
+      </ng-template>
     </div>
   </ng-template>
 </div>

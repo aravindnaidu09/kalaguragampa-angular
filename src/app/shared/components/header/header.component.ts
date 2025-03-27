@@ -30,13 +30,19 @@ import { CartFacade } from '../../../features/cart/_state/cart.facade';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
   providers: [
+    AuthService,
+    ToastService,
+    MenuService,
     ProductService,
+    WishlistFacade,
+    CartFacade
   ],
 })
 export class HeaderComponent implements OnInit {
 
   private store = inject(Store);
-  wishlistCount = signal<number>(0);
+  private wishlistFacade = inject(WishlistFacade);
+
   cartlistCount: Signal<number> = signal<number>(0);
   wCount =  computed(() => this.wishlistFacade.wishlistCount());
 
@@ -102,7 +108,6 @@ export class HeaderComponent implements OnInit {
     private readonly menuService: MenuService,
     private readonly toastService: ToastService,
     private readonly authService: AuthService,
-    private readonly wishlistFacade: WishlistFacade,
     readonly cartFacade: CartFacade,
   ) {
     this.searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(query => {

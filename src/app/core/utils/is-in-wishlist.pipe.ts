@@ -6,6 +6,6 @@ export class IsInWishlistPipe implements PipeTransform {
   constructor(private readonly wishlistFacade: WishlistFacade) {}
 
   transform(productId: number): boolean {
-    return this.wishlistFacade.isInWishlist(productId);
+    return this.wishlistFacade.isInWishlistSignal(productId);
   }
 }
