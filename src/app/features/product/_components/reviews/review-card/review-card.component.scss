@@ -1,0 +1,34 @@
+.review-card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 12px;
+
+  .review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+
+    .user-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .review-date {
+      font-size: 12px;
+      color: #888;
+    }
+  }
+
+  .review-stars {
+    color: #ff9800;
+    margin-bottom: 8px;
+  }
+
+  .review-comment {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.4;
+  }
+}

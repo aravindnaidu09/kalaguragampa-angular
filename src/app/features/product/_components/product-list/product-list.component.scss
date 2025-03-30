@@ -99,26 +99,6 @@
     }
   }
 
-  /* Skeleton Box */
-  .skeleton-box {
-    display: inline-block;
-    background: #e0e0e0;
-    border-radius: 4px;
-    animation: skeleton-loading 1.5s infinite alternate;
-  }
-
-  /* Skeleton Card */
-  .skeleton {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-    border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    // min-height: 250px;
-  }
-
   .product-scroll-wrapper {
     position: relative;
     padding: 0 10px;
@@ -191,8 +171,6 @@
       }
     }
   }
-
-
 
 }
 

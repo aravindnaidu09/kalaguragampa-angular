@@ -1,0 +1,14 @@
+<div class="review-card">
+  <div class="review-header">
+    <strong class="user-name">{{ review.fullName }}</strong>
+    <span class="review-date">{{ review.createdAt }}</span>
+  </div>
+
+  <div class="review-stars">
+    <span *ngFor="let _ of getStars()">⭐</span>
+  </div>
+
+  <div class="review-comment">
+    {{ review.comment }}
+  </div>
+</div>

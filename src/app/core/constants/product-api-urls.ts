@@ -15,8 +15,8 @@ export const PRODUCT_API_URLS = {
     },
     pricing: '/products/api/v1/pricing/',
     reviews: {
-      getByProductId: (productId: string) => `/products/api/v1/${productId}/reviews/`,
-      add: (productId: string) => `/products/api/v1/reviews/${productId}/`,
+      getByProductId: (productId: number) => `/products/api/v1/${productId}/reviews/`,
+      add: (productId: number) => `/products/api/v1/reviews/${productId}/`,
     },
     uploadImage: '/products/api/v1/upload-image/',
     wishlist: {

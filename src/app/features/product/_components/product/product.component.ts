@@ -58,10 +58,6 @@ export class ProductComponent {
   }
 
   onWishlistClick(): void {
-    if (!(this.authService.isAuthenticated)) {
-      this.toastService.showWarning('Please log in to add items!');
-      return;
-    }
     this.wishlistToggle.emit(this.product.id!);
     this.cdr.markForCheck();
   }

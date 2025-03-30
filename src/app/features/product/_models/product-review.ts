@@ -1,11 +1,11 @@
 export interface IProductReview {
-  id: number;
-  user: number;
-  fullName: string;
-  product: number;
-  rating: number;
-  comment: string;
-  createdAt: Date;
+  id?: number;
+  user?: number;
+  fullName?: string;
+  product?: number;
+  rating?: number;
+  comment?: string;
+  createdAt?: Date;
 }
 
 export function deserializeProductReview(data: any): IProductReview {

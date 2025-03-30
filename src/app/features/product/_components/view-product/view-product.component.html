@@ -43,51 +43,10 @@
     </div>
   </div>
 
-
-  <!-- ✅ Product Reviews Section -->
-  <div class="reviews-container">
-    <h3 class="section-title">Customer Reviews</h3>
-
-    <!-- ✅ Reviews List -->
-    <div class="reviews-list" *ngIf="reviews.length > 0; else noReviews">
-      <div *ngFor="let review of reviews()" class="review-card animate-fade-in">
-        <div class="review-header">
-          <img [src]="review.userImage" alt="User" class="review-user-img" />
-          <div>
-            <h4>{{ review.userName }}</h4>
-            <p class="review-date">{{ review.date }}</p>
-          </div>
-        </div>
-
-        <div class="review-rating">
-          <span *ngFor="let star of getStars(review.rating)">⭐</span>
-        </div>
-
-        <p class="review-text">{{ review.comment }}</p>
-      </div>
-    </div>
-
-    <!-- ✅ No Reviews Template -->
-    <ng-template #noReviews>
-      <p class="no-reviews">No reviews yet. Be the first to review this product!</p>
-    </ng-template>
-
-    <!-- ✅ Write a Review Form -->
-    <div class="write-review">
-      <h3>Write a Review</h3>
-      <textarea [(ngModel)]="newReview().comment" placeholder="Share your thoughts..." rows="4"></textarea>
-
-      <div class="rating-input">
-        <label>Rating:</label>
-        <span *ngFor="let star of [1,2,3,4,5]" (click)="setRating(star)">
-          <span [class.filled]="newReview().rating >= star">⭐</span>
-        </span>
-      </div>
-
-      <button (click)="submitReview()">Submit Review</button>
-    </div>
+  <!-- ✅ Inject Review Container Component -->
+  <div class="product-reviews-wrapper">
+    <app-review-container [productId]="product()?.id!"></app-review-container>
   </div>
-
 </div>
 
 <!-- ✅ Skeleton Loader for Product -->

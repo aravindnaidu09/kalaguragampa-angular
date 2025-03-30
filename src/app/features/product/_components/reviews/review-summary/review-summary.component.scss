@@ -1,0 +1,55 @@
+.review-summary {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  padding: 20px;
+  background-color: #fff;
+
+  .avg-rating {
+    h1 {
+      font-size: 3rem;
+      margin: 0;
+      color: #ff9800;
+    }
+    p {
+      color: #555;
+      font-size: 14px;
+    }
+  }
+
+  .rating-bars {
+    flex-grow: 1;
+
+    div {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+
+      .bar-label {
+        width: 30px;
+        font-size: 13px;
+      }
+
+      .bar {
+        flex: 1;
+        height: 6px;
+        background: #eee;
+        margin: 0 8px;
+        border-radius: 3px;
+        overflow: hidden;
+
+        .fill {
+          height: 100%;
+          background-color: #4caf50;
+        }
+      }
+
+      .count {
+        font-size: 12px;
+        width: 20px;
+        text-align: right;
+        color: #444;
+      }
+    }
+  }
+}

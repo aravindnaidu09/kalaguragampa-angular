@@ -138,20 +138,7 @@ export class ProductService {
       .pipe(map((data) => deserializeProductPricing(data)));;
   }
 
-  /**
-   * Fetch product reviews
-   */
-  getProductReviews(productId: string): Observable<IProductReview[]> {
-    return this.httpClient.get<IProductReview[]>(`${this.baseUrl}${PRODUCT_API_URLS.product.reviews.getByProductId(productId)}`)
-      .pipe(map((reviews: any[]) => reviews.map(deserializeProductReview)));;
-  }
 
-  /**
-   * Add a review for a product
-   */
-  addReview(productId: string, review: any): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}${PRODUCT_API_URLS.product.reviews.add(productId)}`, review);
-  }
 
   /**
    * Upload product image

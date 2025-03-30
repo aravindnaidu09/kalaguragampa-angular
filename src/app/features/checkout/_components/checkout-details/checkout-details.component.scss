@@ -1,9 +1,4 @@
-// Variables for customization
-$primary-color: #ff9800; // Active step
-$completed-color: #28a745; // Completed step
-$locked-color: #ddd; // Locked step
-$shadow-color: rgba(0, 0, 0, 0.1);
-$font-color: #333;
+// checkout-details.component.scss
 
 .checkout-container {
   display: flex;
@@ -15,9 +10,8 @@ $font-color: #333;
   .left-panel {
     flex: 2;
     background-color: #fff;
-    // border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 4px 8px $shadow-color;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
     padding: 20px;
     height: fit-content;
   }
@@ -25,19 +19,85 @@ $font-color: #333;
   .right-panel {
     flex: 1.2;
     background-color: #fff;
-    // border: 1px solid #ddd;
-    // border-radius: 8px;
-    // box-shadow: 0 4px 8px $shadow-color;
     padding: 20px;
     height: fit-content;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    border-radius: 10px;
   }
 
   .step-content {
     margin-top: 20px;
+    padding: 20px 0;
+  }
+
+  .summary-card {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border-radius: 8px;
     padding: 20px;
-    // border: 1px solid #ddd;
-    // border-radius: 8px;
-    // box-shadow: 0 4px 8px $shadow-color;
+    background-color: #fafafa;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    font-size: 14px;
+  }
+
+  .summary-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    color: #555;
+  }
+
+  .summary-row .value {
+    font-weight: 500;
+  }
+
+  .text-green {
+    color: #2e7d32;
+  }
+
+  .info-link {
+    color: #ff9800;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 4px;
+  }
+
+  .apply-link {
+    color: #ff9800;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .summary-total {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .place-order-btn {
+    margin-top: 20px;
+    background-color: #99663d;
+    color: white;
+    border: none;
+    padding: 12px 0;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .place-order-btn:hover {
+    background-color: #7b4e2f;
   }
 
   @media (max-width: 768px) {

@@ -1,0 +1,44 @@
+.address-card-container {
+  border: 1px solid #ffe4d1;
+  background-color: #fffaf4;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+
+  .address-box,
+  .no-address-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .address-text {
+    p {
+      margin: 0;
+      color: #333;
+      font-size: 14px;
+    }
+
+    strong {
+      font-weight: 600;
+    }
+  }
+
+  .change-address-btn,
+  .add-address-btn {
+    border: 1px solid #e06666;
+    background-color: transparent;
+    color: #e06666;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      background-color: #e06666;
+      color: white;
+    }
+  }
+}

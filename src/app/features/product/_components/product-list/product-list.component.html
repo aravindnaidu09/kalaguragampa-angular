@@ -110,11 +110,12 @@
     <div class="product-container">
       <!-- Skeleton Loader -->
       @if (isLoading()) {
-      @for (_ of [1, 2, 3, 4, 5]; track _) {
-      <app-skeleton-loader></app-skeleton-loader>
-      }
-      }
-
+      <div class="skeleton-row">
+        @for (_ of [1, 2, 3, 4, 5]; track _) {
+        <app-skeleton-loader></app-skeleton-loader>
+        }
+      </div>
+      } @else {
       <div class="product-scroll-wrapper">
         <!-- ◀️ Scroll Left Button -->
         <button class="scroll-button left" (click)="scrollLeft('scrollContainer')">
@@ -132,8 +133,7 @@
           <span>&#10095;</span>
         </button>
       </div>
-
-
+      }
     </div>
 
   </div>

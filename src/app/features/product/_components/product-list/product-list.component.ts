@@ -10,6 +10,8 @@ import { WishlistFacade } from '../../../cart/_state/wishlist.facade';
 import { ProductComponent } from '../product/product.component';
 import { IWishlist } from '../../_models/wishlist-model';
 import { SkeletonLoaderComponent } from "../../../../shared/components/skeleton-loader/skeleton-loader.component";
+import { AuthService } from '../../../auth/_services/auth.service';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-product-list',
@@ -20,6 +22,9 @@ import { SkeletonLoaderComponent } from "../../../../shared/components/skeleton-
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductListComponent implements OnInit {
+  private authService = inject(AuthService);
+  private toastService = inject(ToastService);
+
   private categoryCache = new Map<number, IProduct[]>();
   private categorySelection$ = new Subject<number>();
   private cdr = inject(ChangeDetectorRef);
@@ -113,6 +118,10 @@ export class ProductListComponent implements OnInit {
 
   /** ✅ Handle wishlist toggling */
   addToWishlist(productId: number): void {
+    if (!(this.authService.isAuthenticated())) {
+      this.toastService.showWarning('Please log in to add items!');
+      return;
+    }
     const isWishlisted = this.wishlistFacade.isInWishlistSignal(productId)();
 
     if (isWishlisted) {

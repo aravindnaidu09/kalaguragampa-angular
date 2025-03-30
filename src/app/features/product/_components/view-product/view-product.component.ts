@@ -8,14 +8,16 @@ import { HtmlParserPipe } from "../../../../core/utils/html-parser.pipe";
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../../core/services/toast.service';
 import { CartFacade } from '../../../cart/_state/cart.facade';
+import { ReviewContainerComponent } from "../reviews/review-container/review-container.component";
 
 @Component({
   selector: 'app-view-product',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
-  ],
+    FormsModule,
+    ReviewContainerComponent
+],
   templateUrl: './view-product.component.html',
   styleUrl: './view-product.component.scss',
 })

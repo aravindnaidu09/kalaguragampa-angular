@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { PaymentComponent } from "../payment/payment.component";
 import { ShipmentPolicyComponent } from "../../../../shared/components/shipment-policy/shipment-policy.component";
 import { StepperComponent } from "../stepper/stepper.component";
+import { CartDetailsComponent } from "../../../cart/_components/cart-details/cart-details.component";
 
 @Component({
   selector: 'app-checkout-details',
@@ -16,13 +17,14 @@ import { StepperComponent } from "../stepper/stepper.component";
     PaymentComponent,
     // ShipmentPolicyComponent,
     ShippingBillingComponent,
-    StepperComponent
+    StepperComponent,
+    CartDetailsComponent
 ],
   templateUrl: './checkout-details.component.html',
   styleUrl: './checkout-details.component.scss'
 })
 export class CheckoutDetailsComponent {
-  steps = ['Address Details', 'Order Summary', 'Payment Options']; // Steps
+  steps = ['Order Summary', 'Address Details', 'Payment Options']; // Steps
   currentStep = 0; // Tracks the current step
 
   goToNextStep(): void {

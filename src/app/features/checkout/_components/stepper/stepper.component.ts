@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {MatStepperModule} from '@angular/material/stepper';
 
 @Component({
   selector: 'app-stepper',
   imports: [
-    CommonModule
+    CommonModule,
+    MatStepperModule
   ],
   templateUrl: './stepper.component.html',
   styleUrl: './stepper.component.scss'
