@@ -1,0 +1,64 @@
+.order-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+
+  .status {
+    font-weight: bold;
+    color: green;
+    margin-bottom: 8px;
+
+    &.delivered { color: green; }
+    &.processing { color: orange; }
+    &.shipped { color: blue; }
+  }
+
+  .product-info {
+    display: flex;
+    gap: 10px;
+
+    img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    h4 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 2px 0;
+      font-size: 14px;
+      color: #555;
+    }
+  }
+
+  .exchange-note {
+    margin: 10px 0;
+    font-size: 13px;
+    color: #666;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    span {
+      color: #ccc;
+      &.filled {
+        color: gold;
+      }
+    }
+
+    a {
+      margin-left: 10px;
+      font-weight: 500;
+    }
+  }
+}

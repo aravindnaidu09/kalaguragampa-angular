@@ -1,0 +1,26 @@
+<div class="order-card">
+  <div class="status">
+    <span [class]="order.deliveryStatus.toLowerCase()">{{ order.deliveryStatus }}</span>
+    <small>On {{ order.deliveryDate }}</small>
+  </div>
+
+  <div class="product-info">
+    <img [src]="order.productImage" alt="Product" />
+    <div>
+      <h4>{{ order.brand }}</h4>
+      <p>{{ order.productName }}</p>
+      <p>Size: <strong>{{ order.size }}</strong></p>
+    </div>
+  </div>
+
+  <div class="exchange-note">
+    <span>🔄 Exchange/Return closed on {{ order.exchangeWindowClose }}</span>
+  </div>
+
+  <div class="rating">
+    <ng-container *ngFor="let star of [1,2,3,4,5]">
+      <span [class.filled]="star <= (order.rating || 0)">★</span>
+    </ng-container>
+    <p><a href="#">Rate & Review</a></p>
+  </div>
+</div>
