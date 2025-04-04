@@ -3,8 +3,8 @@ export const CART_API_URLS = {
     getCart: '/products/api/v1/cart/',
     clearCart: '/products/api/v1/cart/',
     addItem: '/products/api/v1/cart/',
-    updateItem: (id: string) => `/products/api/v1/cart/${id}/`,
-    removeItem: (id: string) => `/products/api/v1/cart/${id}/`,
+    updateItem: `/products/api/v1/cart/`,
+    removeItem: (id: number) => `/products/api/v1/cart/${id}/`,
   },
 
 }

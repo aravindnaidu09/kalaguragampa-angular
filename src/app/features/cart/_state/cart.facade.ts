@@ -4,10 +4,11 @@ import {
   LoadCart,
   ClearCart,
   AddToCart,
-  UpdateCartItem,
-  RemoveCartItem
+  RemoveCartItem,
+  UpdateCartItems
 } from './cart.actions';
 import { CartState } from './cart.state';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class CartFacade {
@@ -31,11 +32,11 @@ export class CartFacade {
     this.store.dispatch(new AddToCart(productId, quantity));
   }
 
-  updateCartItem(id: string, item: any): void {
-    this.store.dispatch(new UpdateCartItem(id, item));
+  updateCartItems(items: { id: number; quantity: number }[]): Observable<any> {
+    return this.store.dispatch(new UpdateCartItems(items));
   }
 
-  removeCartItem(id: string): void {
+  removeCartItem(id: number): void {
     this.store.dispatch(new RemoveCartItem(id));
   }
 }

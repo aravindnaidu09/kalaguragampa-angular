@@ -6,7 +6,7 @@ export interface CartItem {
 }
 
 export interface CartResponseItem {
-  id?: string;
+  id?: number;
   createdAt?: string;
   updatedAt?: string;
   items: Item[];
@@ -17,13 +17,23 @@ export interface CartResponseItem {
   totalAmount?: string;
 }
 export interface Item {
-  id?: string;
+  id?: number;
   product?: IProduct;
+  quantity?: number,
+  basePrice?: string,
+  gstRate?: string,
+  taxAmount?: string,
+  subtotal?: string
 }
 
 export function deserializeItems(data: any[]): Item[] {
   return data.map((item) => ({
     id: item.id,
+    quantity: item.quantity,
+    basePrice: item.base_price,
+    gstRate: item.gst_rate,
+    taxAmount: item.tax_amount,
+    subtotal: item.subtotal,
     product: item.product ? {
       id: item.product.id,
       name: item.product.name,

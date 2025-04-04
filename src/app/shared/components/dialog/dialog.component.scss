@@ -16,12 +16,12 @@
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  width: auto;
-  /* Dialog width will adjust to its content */
-  height: auto;
-  /* Dialog height will adjust to its content */
+  width: 100%;
+  max-width: 80vw;
+  max-height: 90vh;
   padding: 0px;
   position: relative;
+  overflow-y: auto;
   /* To position the close button absolutely */
 
   // .dialog-header {

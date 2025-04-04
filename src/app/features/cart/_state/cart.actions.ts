@@ -11,12 +11,12 @@ export class AddToCart {
   constructor(public productId: number, public quantity: number = 1) {}
 }
 
-export class UpdateCartItem {
-  static readonly type = '[Cart] Update Cart Item';
-  constructor(public id: string, public item: any) {}
+export class UpdateCartItems {
+  static readonly type = '[Cart] Update Multiple Items';
+  constructor(public items: { id: number; quantity: number }[]) {}
 }
 
 export class RemoveCartItem {
   static readonly type = '[Cart] Remove Cart Item';
-  constructor(public id: string) {}
+  constructor(public id: number) {}
 }

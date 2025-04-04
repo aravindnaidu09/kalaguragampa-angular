@@ -7,7 +7,7 @@
   </button>
 
   <!-- ✅ Add Payment Form -->
-  <form *ngIf="isAdding" [formGroup]="paymentForm" (ngSubmit)="addPaymentMethod()">
+  <form *ngIf="isAdding" [formGroup]="paymentForm">
     <label>Card Number</label>
     <input type="text" formControlName="cardNumber" placeholder="Enter 16-digit card number" />
 
@@ -30,7 +30,7 @@
     <p><strong>{{ payment.cardType }} ending in {{ payment.last4Digits }}</strong></p>
     <p>Expires {{ payment.expiry }}</p>
 
-    <button class="delete" (click)="deletePayment(payment.id)">Delete</button>
-    <button *ngIf="!payment.isDefault" class="default-btn" (click)="setDefaultPayment(payment.id)">Set as Default</button>
+    <!-- <button class="delete" (click)="deletePayment(payment.id)">Delete</button> -->
+    <!-- <button *ngIf="!payment.isDefault" class="default-btn" (click)="setDefaultPayment(payment.id)">Set as Default</button> -->
   </div>
 </div>

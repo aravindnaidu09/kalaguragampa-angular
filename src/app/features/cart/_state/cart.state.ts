@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { Selector, Action, StateContext, State } from '@ngxs/store';
 import { CartResponseItem } from '../_models/cart-item-model';
 import { CartService } from '../_services/cart.service';
-import { LoadCart, ClearCart, AddToCart, UpdateCartItem, RemoveCartItem } from './cart.actions';
+import { LoadCart, ClearCart, AddToCart, RemoveCartItem, UpdateCartItems } from './cart.actions';
 
 export interface CartStateModel {
   cart: CartResponseItem | null;
@@ -89,23 +89,23 @@ export class CartState {
     );
   }
 
-  @Action(UpdateCartItem)
-  updateCartItem(ctx: StateContext<CartStateModel>, action: UpdateCartItem) {
-    return this.cartService.updateCartItem(action.id, action.item).pipe(
-      tap((res) => {
-        if (res?.data) {
-          ctx.patchState({ cart: res.data });
-          this.toast.showSuccess('Cart item updated.');
-        } else {
-          this.toast.showError('Failed to update item.');
-        }
-      }),
-      catchError((err) => {
-        this.toast.showError('Error updating cart item.');
-        return of(err);
-      })
-    );
-  }
+  @Action(UpdateCartItems)
+updateCartItems(ctx: StateContext<CartStateModel>, action: UpdateCartItems) {
+  return this.cartService.updateCartItems(action.items).pipe(
+    tap((res) => {
+      if (res?.data) {
+        ctx.patchState({ cart: res.data });
+        // this.toast.showSuccess('Cart updated successfully.');
+      } else {
+        // this.toast.showError('Failed to update cart.');
+      }
+    }),
+    catchError((err) => {
+      // this.toast.showError('Error updating cart.');
+      return of(err);
+    })
+  );
+}
 
   @Action(RemoveCartItem)
   removeCartItem(ctx: StateContext<CartStateModel>, action: RemoveCartItem) {
@@ -113,13 +113,13 @@ export class CartState {
       tap((res) => {
         if (res?.data) {
           ctx.patchState({ cart: res.data });
-          this.toast.showSuccess('Item removed from cart.');
+          // this.toast.showSuccess('Item removed from cart.');
         } else {
-          this.toast.showError('Failed to remove item.');
+          // this.toast.showError('Failed to remove item.');
         }
       }),
       catchError((err) => {
-        this.toast.showError('Error removing item from cart.');
+        // this.toast.showError('Error removing item from cart.');
         return of(err);
       })
     );

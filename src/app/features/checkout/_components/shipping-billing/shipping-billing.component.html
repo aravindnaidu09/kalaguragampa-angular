@@ -1,31 +1,39 @@
-<div class="shipping-billing">
-  <h3>Shipping address</h3>
+<div class="address-wrapper">
+  <div class="address-header-row">
+    <h2 class="section-title">Select Delivery Address</h2>
+    <button class="add-address-btn" (click)="openAddressDialog('add')">Add New Address</button>
+  </div>
 
-  <form>
-    <label for="fullName">Full name *</label>
-    <input id="fullName" type="text" placeholder="Enter your full name" [(ngModel)]="shippingForm.fullName" name="fullName" required />
+  <div *ngFor="let address of addressList" class="address-card" [class.selected]="address.isDefault" [@moveToTop]>
 
-    <label for="email">Email address *</label>
-    <input id="email" type="email" placeholder="Enter your email address" [(ngModel)]="shippingForm.email" name="email" required />
+    <div class="address-header">
+      <div class="radio-label">
+        <input type="radio" name="address" [checked]="address.isDefault" (click)="selectAddress(address.id!)" />
+        <strong>{{ address.fullName }}</strong>
+        <span class="default-tag" *ngIf="address.isDefault">Default</span>
+      </div>
+    </div>
 
-    <label for="confirmationEmail">Confirmation email *</label>
-    <input id="confirmationEmail" type="email" placeholder="Enter your confirmation email" [(ngModel)]="shippingForm.confirmationEmail" name="confirmationEmail" required />
+    <div class="address-body">
+      <p>{{ address.street }}<span *ngIf="address.street2">, {{ address.street2 }}</span></p>
+      <p>{{ address.city }}, {{ address.state }} - {{ address.pincode }}</p>
+      <p>{{ address.country }}</p>
+      <p>Mobile: <strong>{{ address.phone }}</strong></p>
+    </div>
 
-    <label for="phoneNumber">Phone number *</label>
-    <input id="phoneNumber" type="text" placeholder="Enter your phone number (only digits)" [(ngModel)]="shippingForm.phoneNumber" name="phoneNumber" required />
+    <div class="address-actions">
+      <button type="button" class="btn outline" (click)="confirmDelete()">Remove</button>
+      <button type="button" class="btn outline" (click)="openAddressDialog('edit')">Edit</button>
+      <button *ngIf="!address.isDefault" type="button" class="btn set-default" (click)="setAsDefault(address.id!)">
+        Set as Default
+      </button>
+    </div>
+  </div>
 
-    <label for="streetAddress">Street name and house number *</label>
-    <input id="streetAddress" type="text" placeholder="Enter your street name and house number" [(ngModel)]="shippingForm.streetAddress" name="streetAddress" required />
+  <app-dialog [isVisible]="isAddressDialogVisible" [contentTemplate]="addAddressTemplate"
+    (closeDialog)="closeDialog(true)"></app-dialog>
 
-    <label for="city">City *</label>
-    <input id="city" type="text" placeholder="Enter your city" [(ngModel)]="shippingForm.city" name="city" required />
-
-    <label for="postalCode">Postal code *</label>
-    <input id="postalCode" type="text" placeholder="Enter your postal code" [(ngModel)]="shippingForm.postalCode" name="postalCode" required />
-
-    <label for="country">Select shipping country *</label>
-    <select id="country" [(ngModel)]="shippingForm.country" name="country" required>
-      <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
-    </select>
-  </form>
+  <ng-template #addAddressTemplate>
+    <app-add-address-dialog [formMode]="mode" [initialData]="selectedAddress" (save)="saveAddress($event)" (cancel)="closeDialog(true)"></app-add-address-dialog>
+  </ng-template>
 </div>

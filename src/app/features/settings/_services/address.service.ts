@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment.dev';
 import { Address, deserializeAddress, serializeAddress } from '../_model/address-model';
+import { APP_SETTINGS } from '../../../core/constants/app-settings';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { Address, deserializeAddress, serializeAddress } from '../_model/address
 export class AddressService {
 
   private http = inject(HttpClient);
-  private baseUrl = `${environment.apiBaseUrl}`;
+  private baseUrl = `${APP_SETTINGS.apiBaseUrl}`;
 
   // ✅ Fetch User Addresses & Convert API Format to Frontend Format
   getUserAddresses(): Observable<Address[]> {
@@ -21,7 +22,8 @@ export class AddressService {
 
   // ✅ Add New Address (Convert Frontend Model to API Format)
   addAddress(address: Address): Observable<any> {
-    return this.http.post(this.baseUrl, serializeAddress(address));
+    console.log('address-payload: ', address, `${this.baseUrl}auth/api/v1/users/address/create`)
+    return this.http.post(`${this.baseUrl}/auth/api/v1/users/address/create`, address);
   }
 
   // ✅ Update Address (Convert Frontend Model to API Format)

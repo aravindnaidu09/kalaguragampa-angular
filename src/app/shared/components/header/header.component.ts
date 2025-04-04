@@ -1,8 +1,8 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DoCheck, ElementRef, HostListener, Input, OnChanges, OnInit, Signal, SimpleChanges, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from "../../../features/auth/_components/login/login.component";
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MenuDropdownComponent, MenuItem } from '../menu-dropdown/menu-dropdown.component';
 import { DialogComponent } from '../dialog/dialog.component';
 import { MenuService } from '../../../core/services/menu.service';
@@ -35,7 +35,8 @@ import { CartFacade } from '../../../features/cart/_state/cart.facade';
     MenuService,
     ProductService,
     WishlistFacade,
-    CartFacade
+    CartFacade,
+    Location
   ],
 })
 export class HeaderComponent implements OnInit {
@@ -61,6 +62,8 @@ export class HeaderComponent implements OnInit {
   selectedLoginMethod: string = '';
 
   isLoading = signal(false);
+  fullPath: string = '';
+  hashRoute: string = '';
 
   countryOptions = [
     { label: 'Australia', value: 'AUS' },
@@ -109,6 +112,7 @@ export class HeaderComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly authService: AuthService,
     readonly cartFacade: CartFacade,
+    private location: Location
   ) {
     this.searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(query => {
       if (query.length >= 2) {
@@ -122,6 +126,15 @@ export class HeaderComponent implements OnInit {
     this.setMenuItems();
     this.fetchWishlistCount();
     this.fetchCartCount();
+
+    this.getCurrentUrlPath();
+  }
+
+  getCurrentUrlPath() {
+    this.fullPath = this.location.path(); // returns '/checkout'
+    this.hashRoute = this.fullPath.startsWith('/') ? this.fullPath.substring(1) : this.fullPath;
+
+    console.log('Current Route:', this.hashRoute); // 'checkout'
   }
 
   fetchWishlistCount() {

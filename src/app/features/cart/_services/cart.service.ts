@@ -51,8 +51,9 @@ export class CartService {
   /**
    * ✅ Update quantity or item details
    */
-  updateCartItem(id: string, item: any): Observable<ApiResponse<CartResponseItem>> {
-    return this.httpClient.put<ApiResponse<any>>(`${this.baseUrl}${CART_API_URLS.cart.updateItem(id)}`, item).pipe(
+  updateCartItems(items: { id: number; quantity: number }[]): Observable<ApiResponse<CartResponseItem>> {
+    console.log('url: ', `${this.baseUrl}${CART_API_URLS.cart.updateItem}`);
+    return this.httpClient.put<ApiResponse<any>>(`${this.baseUrl}${CART_API_URLS.cart.updateItem}`, items).pipe(
       map((response) => ({
         ...response,
         data: deserializeCartResponse(response.data)
@@ -63,7 +64,7 @@ export class CartService {
   /**
    * ✅ Remove an item from the cart
    */
-  removeCartItem(id: string): Observable<ApiResponse<CartResponseItem>> {
+  removeCartItem(id: number): Observable<ApiResponse<CartResponseItem>> {
     return this.httpClient.delete<ApiResponse<any>>(`${this.baseUrl}${CART_API_URLS.cart.removeItem(id)}`).pipe(
       map((response) => ({
         ...response,

@@ -15,6 +15,7 @@ import { OtpState } from './features/auth/_state/otp.state';
 import { SearchState } from './features/product/_state/search.state';
 import { WishlistState } from './features/cart/_state/wishlist.state';
 import { CartState } from './features/cart/_state/cart.state';
+import { AddressState } from './features/settings/_state/address.state';
 
 
 export const appConfig: ApplicationConfig = {
@@ -24,7 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withHashLocation()),
     provideAnimationsAsync(),
     provideHttpClient(),
-    provideStore([AuthState, OtpState, SearchState, WishlistState, CartState],
+    provideStore([AuthState, OtpState, SearchState, WishlistState, CartState, AddressState],
       withNgxsReduxDevtoolsPlugin(),
       // withNgxsFormPlugin(),
       withNgxsLoggerPlugin(),

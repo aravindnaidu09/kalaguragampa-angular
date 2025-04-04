@@ -13,9 +13,7 @@ import { CartDetailsComponent } from "../../../cart/_components/cart-details/car
   imports: [
     CommonModule,
     FormsModule,
-    OrderSummaryComponent,
     PaymentComponent,
-    // ShipmentPolicyComponent,
     ShippingBillingComponent,
     StepperComponent,
     CartDetailsComponent
