@@ -1,122 +1,135 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ToastService } from '../../../../core/services/toast.service';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Address } from '../../_model/address-model';
-import { AddressService } from '../../_services/address.service';
+import { AddressFacade } from '../../_state/address.facade';
+import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
+import { AddressFormComponent } from "../../../checkout/_components/address-form/address-form.component";
 
 @Component({
   selector: 'app-address-management',
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule
-  ],
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, AddressFormComponent],
   templateUrl: './address-management.component.html',
-  styleUrl: './address-management.component.scss'
+  styleUrl: './address-management.component.scss',
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate('200ms ease-in', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class AddressManagementComponent {
-  private addressService = inject(AddressService);
   private fb = inject(FormBuilder);
+  private addressFacade = inject(AddressFacade);
+  private confirmDialogService = inject(ConfirmDialogService);
 
-  addresses: Address[] = [];
+
   addressForm!: FormGroup;
-  isEditing: boolean = false;
+  isEditing = false;
   selectedAddressId: number | null = null;
+
+  readonly addressesSignal = this.addressFacade.addresses;
+  readonly defaultAddressId = computed(() =>
+    this.addressesSignal()?.find(a => a.isDefault)?.id
+  );
+
+  accordionOpen = false;
+  // isEditing = false;
+  editingData: Partial<Address> = {};
 
   ngOnInit(): void {
     this.initializeForm();
-    this.fetchAddresses();
+    this.addressFacade.loadAddresses();
   }
 
-  // ✅ Initialize Address Form
   private initializeForm(): void {
     this.addressForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
       phone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       street: ['', Validators.required],
+      street2: [''],
       city: ['', Validators.required],
       state: ['', Validators.required],
-      zip: ['', [Validators.required, Validators.pattern(/^\d{5,6}$/)]],
-      country: ['', Validators.required]
+      pincode: ['', [Validators.required, Validators.pattern(/^\d{5,6}$/)]],
+      country: ['India', Validators.required],
+      isDefault: [false]
     });
   }
 
-  // ✅ Fetch Addresses from Backend
-  private fetchAddresses(): void {
-    this.addressService.getUserAddresses().subscribe({
-      next: (data) => (this.addresses = data),
-      // error: () => this.toastService.showError('Failed to load addresses')
-    });
+  toggleAccordion(): void {
+    this.accordionOpen = !this.accordionOpen;
+
+    if (!this.accordionOpen) this.resetForm();
   }
 
-  // ✅ Save New Address
-  saveAddress(): void {
-    if (this.addressForm.invalid) {
-      // this.toastService.showError('Please fill all required fields');
-      return;
-    }
-
-    const addressData = this.addressForm.value;
-
-    if (this.isEditing && this.selectedAddressId !== null) {
-      // Update Address
-      this.addressService.updateAddress(this.selectedAddressId, addressData).subscribe({
-        next: () => {
-          // this.toastService.showSuccess('Address updated successfully');
-          this.fetchAddresses();
-          this.resetForm();
-        },
-        // error: () => this.toastService.showError('Failed to update address')
+  handleAddressSave(payload: Address): void {
+    if (this.isEditing && payload.id) {
+      this.addressFacade.updateAddress(payload.id, payload).subscribe(() => {
+        this.resetForm();
       });
     } else {
-      // Add New Address
-      this.addressService.addAddress(addressData).subscribe({
-        next: () => {
-          // this.toastService.showSuccess('Address added successfully');
-          this.fetchAddresses();
-          this.resetForm();
-        },
-        // error: () => this.toastService.showError('Failed to add address')
+      this.addressFacade.createAddress(payload).subscribe(success => {
+        if (success) this.resetForm();
       });
     }
   }
 
-  // ✅ Edit an Existing Address
+  saveAddress(): void {
+    if (this.addressForm.invalid) return;
+    const payload = this.addressForm.value;
+
+    if (this.isEditing && this.selectedAddressId !== null) {
+      this.addressFacade.updateAddress(this.selectedAddressId, payload).subscribe(() => {
+        this.resetForm();
+      });
+    } else {
+      this.addressFacade.createAddress(payload).subscribe(success => {
+        if (success) this.resetForm();
+      });
+    }
+  }
+
   editAddress(address: Address): void {
     this.isEditing = true;
-    this.selectedAddressId = address?.id!;
+    this.selectedAddressId = address.id!;
     this.addressForm.patchValue(address);
+
+    this.editingData = address;
+    this.accordionOpen = true;
   }
 
-  // ✅ Delete an Address
   deleteAddress(addressId: number): void {
-    if (confirm('Are you sure you want to delete this address?')) {
-      this.addressService.deleteAddress(addressId).subscribe({
-        next: () => {
-          // this.toastService.showSuccess('Address deleted');
-          this.fetchAddresses();
-        },
-        // error: () => this.toastService.showError('Failed to delete address')
-      });
-    }
-  }
 
-  // ✅ Set Default Address
-  setDefaultAddress(addressId: number): void {
-    this.addressService.setDefaultAddress(addressId).subscribe({
-      next: () => {
-        // this.toastService.showSuccess('Default address updated');
-        this.fetchAddresses();
-      },
-      // error: () => this.toastService.showError('Failed to update default address')
+    this.confirmDialogService.confirm({
+      title: 'Remove Address',
+      message: 'Are you sure you want to remove this address?',
+      confirmText: 'Remove'
+    }).subscribe(result => {
+      if (result) {
+        console.log('Confirmed delete');
+        this.addressFacade.deleteAddress(addressId).subscribe();
+      }
     });
   }
 
-  // ✅ Reset Form After Submit
+  setDefaultAddress(addressId: number): void {
+    this.addressFacade.setDefault(addressId).subscribe();
+  }
+
   resetForm(): void {
     this.isEditing = false;
     this.selectedAddressId = null;
-    this.addressForm.reset();
+    this.editingData = {};
+    this.accordionOpen = false;
+    this.addressForm.reset({ country: 'India', isDefault: false });
+  }
+
+  openAddressForm(): void {
+    this.resetForm();
+    this.isEditing = false;
   }
 }

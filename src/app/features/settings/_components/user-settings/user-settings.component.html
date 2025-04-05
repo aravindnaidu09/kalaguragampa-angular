@@ -1,25 +1,43 @@
-<div class="settings-container">
-  <!-- ✅ Sidebar -->
-  <div class="settings-sidebar">
-    <ul>
-      <li (click)="selectTab('profile')" [class.active]="selectedTab === 'profile'">Profile</li>
-      <li (click)="selectTab('orders')" [class.active]="selectedTab === 'orders'">Order History</li>
-      <li (click)="selectTab('address')" [class.active]="selectedTab === 'address'">Addresses</li>
-      <!-- <li (click)="selectTab('payments')" [class.active]="selectedTab === 'payments'">Payment Methods</li> -->
-      <li (click)="selectTab('notifications')" [class.active]="selectedTab === 'notifications'">Notifications</li>
-      <li (click)="selectTab('security')" [class.active]="selectedTab === 'security'">Security</li>
-    </ul>
+<div class="account-wrapper">
+  <!-- Left: Sidebar -->
+  <div class="sidebar-card">
+    <div class="user-profile">
+      <div class="avatar"></div>
+      <!-- <div class="user-name">Hello, <strong>{{ userName }}</strong></div> -->
+    </div>
+
+    <div class="section">
+      <div class="section-title">ACCOUNT SETTINGS</div>
+      <ul>
+        <li (click)="selectTab('profile')" [class.active]="selectedTab === 'profile'">Profile Information</li>
+        <li (click)="selectTab('address')" [class.active]="selectedTab === 'address'">Manage Addresses</li>
+        <!-- <li (click)="selectTab('security')" [class.active]="selectedTab === 'security'">Security</li> -->
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-title">MY ORDERS</div>
+      <ul>
+        <li (click)="selectTab('orders')" [class.active]="selectedTab === 'orders'">Order History</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-title">PREFERENCES</div>
+      <ul>
+        <li (click)="selectTab('notifications')" [class.active]="selectedTab === 'notifications'">Notifications</li>
+      </ul>
+    </div>
   </div>
 
-  <!-- ✅ Right Side Content -->
-  <div class="settings-content">
+  <!-- Right: Content -->
+  <div class="content-area">
     <ng-container [ngSwitch]="selectedTab">
       <app-profile *ngSwitchCase="'profile'"></app-profile>
       <app-order-history *ngSwitchCase="'orders'"></app-order-history>
       <app-address-management *ngSwitchCase="'address'"></app-address-management>
-      <app-payments *ngSwitchCase="'payments'"></app-payments>
-      <app-notification-preferences *ngSwitchCase="'notifications'"></app-notification-preferences>
       <app-security-settings *ngSwitchCase="'security'"></app-security-settings>
+      <app-notification-preferences *ngSwitchCase="'notifications'"></app-notification-preferences>
     </ng-container>
   </div>
 </div>

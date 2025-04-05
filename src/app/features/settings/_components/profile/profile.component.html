@@ -1,21 +1,49 @@
-<div class="profile-settings">
-  <h2>Profile Settings</h2>
+<div class="profile-wrapper">
+  <div class="section">
+    <h3>Personal Information <a (click)="toggleEdit('personal')">{{ isEditing.personal ? 'Cancel' : 'Edit' }}</a></h3>
 
-  <div class="profile-image">
-    <img [src]="profileImageUrl" alt="Profile Picture" />
-    <input type="file" (change)="onFileChange($event)" accept="image/*" />
+    <div *ngIf="!isEditing.personal">
+      <p>{{ profileForm.value.firstName }} {{ profileForm.value.lastName }}</p>
+      <p>Gender: {{ profileForm.value.gender }}</p>
+    </div>
+
+    <form *ngIf="isEditing.personal" [formGroup]="profileForm" (ngSubmit)="submitSection('personal')">
+      <div class="grid">
+        <input formControlName="firstName" placeholder="First Name" />
+        <input formControlName="lastName" placeholder="Last Name" />
+      </div>
+      <label>Your Gender</label>
+      <div class="gender-group">
+        <label><input type="radio" formControlName="gender" value="Male" /> Male</label>
+        <label><input type="radio" formControlName="gender" value="Female" /> Female</label>
+      </div>
+      <button type="submit">Save</button>
+    </form>
   </div>
 
-  <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
-    <label>Name</label>
-    <input type="text" formControlName="name" placeholder="Enter your name" />
+  <div class="section">
+    <h3>Email Address <a (click)="toggleEdit('email')">{{ isEditing.email ? 'Cancel' : 'Edit' }}</a></h3>
 
-    <label>Email</label>
-    <input type="email" formControlName="email" placeholder="Enter your email" />
+    <div *ngIf="!isEditing.email">
+      <p>{{ profileForm.value.email }}</p>
+    </div>
 
-    <label>Phone</label>
-    <input type="text" formControlName="phone" placeholder="Enter your phone number" />
+    <form *ngIf="isEditing.email" (ngSubmit)="submitSection('email')">
+      <input type="email" formControlName="email" />
+      <button type="submit">Save</button>
+    </form>
+  </div>
 
-    <button type="submit" [disabled]="profileForm.invalid">Save Changes</button>
-  </form>
+  <div class="section">
+    <h3>Mobile Number <a (click)="toggleEdit('phone')">{{ isEditing.phone ? 'Cancel' : 'Edit' }}</a></h3>
+
+    <div *ngIf="!isEditing.phone">
+      <p>{{ profileForm.value.phone }}</p>
+    </div>
+
+    <form *ngIf="isEditing.phone" (ngSubmit)="submitSection('phone')">
+      <input type="text" formControlName="phone" />
+      <button type="submit">Save</button>
+    </form>
+  </div>
 </div>

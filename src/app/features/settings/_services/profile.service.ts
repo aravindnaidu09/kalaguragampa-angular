@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment.dev';
 import { Observable } from 'rxjs';
+import { ProfileModel } from '../_model/profile.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +18,8 @@ export class ProfileService {
   }
 
   // ✅ Update User Profile
-  updateUserProfile(formData: FormData): Observable<any> {
-    return this.http.post(this.baseUrl, formData);
+  updateUserProfile(data: Partial<ProfileModel>): Observable<any> {
+    return this.http.post(this.baseUrl, data);
   }
 
 }

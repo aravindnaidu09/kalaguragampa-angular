@@ -1,34 +1,106 @@
-.settings-container {
-  display: flex;
-  height: 100vh;
+$primary-brown: #682f12;
+
+.account-wrapper {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  background: #f6f6f6;
+  min-height: 100vh;
 }
 
-.settings-sidebar {
-  width: 250px;
-  background: #f8f9fa;
+.sidebar-card {
+  background: #fff;
+  border-radius: 10px;
   padding: 20px;
-  border-right: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee;
+
+  .user-profile {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: url('/assets/avatar.svg') center/cover no-repeat, #eee;
+      margin-right: 12px;
+    }
+
+    .user-name {
+      font-size: 14px;
+      color: #444;
+
+      strong {
+        color: $primary-brown;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .section ul li {
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #333;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: color 0.3s ease, font-weight 0.3s;
+
+    &:hover {
+      color: $primary-brown; // Only font color change on hover
+      font-weight: 500;
+    }
+
+    &.active {
+      color: $primary-brown; // Font color on selected tab
+      font-weight: 600;
+    }
+  }
+
+  .section {
+    margin-bottom: 1.5rem;
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        padding: 10px 12px;
+        font-size: 14px;
+        color: #333;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        // &:hover {
+        //   background-color: rgba($primary-brown, 0.08);
+        //   color: $primary-brown;
+        // }
+
+        // &.active {
+        //   background-color: $primary-brown;
+        //   color: white;
+        //   font-weight: 600;
+        // }
+      }
+    }
+  }
 }
 
-.settings-sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
-.settings-sidebar li {
-  padding: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.settings-sidebar li:hover,
-.settings-sidebar li.active {
-  background: #007bff;
-  color: #fff;
-  border-radius: 5px;
-}
-
-.settings-content {
-  flex-grow: 1;
-  padding: 20px;
+.content-area {
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #eee;
 }

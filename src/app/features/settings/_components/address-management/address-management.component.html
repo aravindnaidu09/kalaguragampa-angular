@@ -1,50 +1,53 @@
-<div class="address-management">
+<div class="address-header">
   <h2>Manage Addresses</h2>
+  <button class="add-address-btn" (click)="toggleAccordion()">
+    <!-- <span></span> Add a New Address -->
+  <span>{{ accordionOpen ? '➖ Cancel' : '➕ Add a New Address' }}</span>
 
-  <!-- ✅ Address Form -->
-  <form [formGroup]="addressForm" (ngSubmit)="saveAddress()">
-    <label>Full Name</label>
-    <input type="text" formControlName="fullName" />
+  </button>
+</div>
 
-    <label>Phone</label>
-    <input type="text" formControlName="phone" />
+<!-- 🔘 Add New Address Toggle -->
+<!-- <button class="add-address-btn" (click)="toggleAccordion()">
+  <span>{{ accordionOpen ? '– Cancel' : '+ Add a New Address' }}</span>
+</button> -->
 
-    <label>Street</label>
-    <input type="text" formControlName="street" />
+<!-- 📦 Accordion Form -->
+<div class="accordion-form" *ngIf="accordionOpen" [@fadeIn]>
+  <app-address-form [initialData]="editingData" [formMode]="isEditing ? 'edit' : 'add'"
+    (save)="handleAddressSave($event)" (cancel)="resetForm()"></app-address-form>
+</div>
 
-    <label>Address Line 2 (Optional)</label>
-    <input type="text" formControlName="street2" />
+<!-- ✅ Address Cards -->
+<div *ngFor="let address of addressesSignal()">
+  <div class="address-card" [class.default]="address.isDefault" @fadeIn>
+    <!-- ✅ Optional default tag -->
+    <div *ngIf="address.isDefault" class="default-badge">Default</div>
 
-    <label>City</label>
-    <input type="text" formControlName="city" />
+    <!-- ✅ Name + Phone -->
+    <div class="name-phone">
+      <strong>{{ address.fullName }}</strong>
+      <span class="phone">{{ address.phone }}</span>
+    </div>
 
-    <label>State</label>
-    <input type="text" formControlName="state" />
+    <!-- ✅ Full Address -->
+    <div class="address-line">
+      {{ address.street }}<span *ngIf="address.street2">, {{ address.street2 }}</span>,
+      {{ address.city }}, {{ address.state }}, {{ address.country }} -
+      <strong>{{ address.pincode }}</strong>
+    </div>
 
-    <label>ZIP Code</label>
-    <input type="text" formControlName="pincode" />
+    <!-- ✅ Bottom: Set as Default and Actions -->
+    <div class="card-footer">
+      <button *ngIf="!address.isDefault" class="set-default" (click)="setDefaultAddress(address.id!)">
+        Set as Default
+      </button>
 
-    <label>Country</label>
-    <input type="text" formControlName="country" readonly />
-
-    <label>
-      <input type="checkbox" formControlName="isDefault" />
-      Set as Default Address
-    </label>
-
-    <button type="submit">{{ isEditing ? 'Update Address' : 'Add Address' }}</button>
-    <button type="button" (click)="resetForm()">Cancel</button>
-  </form>
-
-  <!-- ✅ Address List -->
-  <div *ngFor="let address of addresses" class="address-card" [ngClass]="{ 'default': address.isDefault }">
-    <p><strong>{{ address.fullName }}</strong></p>
-    <p>{{ address.street }}, {{ address.street2 }}, {{ address.city }}, {{ address.state }}, {{ address.pincode }}</p>
-    <p>{{ address.country }}</p>
-    <p>{{ address.phone }}</p>
-
-    <button class="edit" (click)="editAddress(address)">Edit</button>
-    <button class="delete" (click)="deleteAddress(address.id!)">Delete</button>
-    <button *ngIf="!address.isDefault" class="default-btn" (click)="setDefaultAddress(address.id!)">Set as Default</button>
+      <div class="action-buttons">
+        <button class="edit" (click)="editAddress(address)">Edit</button>
+        <button class="delete" (click)="deleteAddress(address.id!)">Delete</button>
+      </div>
+    </div>
   </div>
+
 </div>

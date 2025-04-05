@@ -14,7 +14,6 @@ import { SecuritySettingsComponent } from "../security-settings/security-setting
     ProfileComponent,
     OrderHistoryComponent,
     NotificationPreferencesComponent,
-    PaymentsComponent,
     AddressManagementComponent,
     SecuritySettingsComponent
 ],

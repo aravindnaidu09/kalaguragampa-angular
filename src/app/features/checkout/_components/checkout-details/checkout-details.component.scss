@@ -64,32 +64,34 @@ $primary-brown: #682f12;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
     height: fit-content;
   }
-}
 
-.payment-wrapper {
-  padding: 2rem;
+  .payment-wrapper {
+    padding: 2rem;
 
-  .payment-title {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    color: #333;
-  }
+    .payment-title {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      color: #333;
+    }
 
-  .make-payment-btn {
-    background-color: #682f12;
-    color: white;
-    padding: 12px 24px;
-    font-size: 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s ease;
+    .make-payment-btn {
+      background-color: #682f12;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
 
-    &:hover {
-      background-color: darken(#682f12, 5%);
+      &:hover {
+        background-color: darken(#682f12, 5%);
+      }
     }
   }
 }
+
+
 

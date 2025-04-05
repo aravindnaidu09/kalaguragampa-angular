@@ -27,7 +27,7 @@ export class RazorpayService {
         contact: userInfo.contact
       },
       theme: {
-        color: '#3399cc'
+        color: '#682f12'
       }
     };
 
