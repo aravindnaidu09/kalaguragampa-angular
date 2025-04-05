@@ -1,0 +1,80 @@
+@use 'sass:color';
+$primary-brown: #682f12;
+
+.summary-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1.5rem;
+  background-color: #fff;
+
+  .summary-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+
+    .green {
+      color: #2e7d32;
+    }
+
+    .apply-link {
+      color: #ff9800;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .label-with-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      .info-icon {
+        width: 14px;
+        height: 14px;
+        opacity: 0.6;
+        object-fit: contain;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  .summary-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ccc;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .place-order-btn {
+    margin-top: 1.5rem;
+    background-color: #99663d;;
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background-color: color.scale(#7b4e2f, $lightness: -5%);
+    }
+  }
+}

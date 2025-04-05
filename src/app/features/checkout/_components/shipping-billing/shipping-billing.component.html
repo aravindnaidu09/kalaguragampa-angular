@@ -9,16 +9,16 @@
     <div class="address-header">
       <div class="radio-label">
         <input type="radio" name="address" [checked]="address.isDefault" (click)="selectAddress(address.id!)" />
-        <strong>{{ address.fullName }}</strong>
+        <strong>{{ address.fullName }},  {{ address.phone }}</strong>
         <span class="default-tag" *ngIf="address.isDefault">Default</span>
       </div>
     </div>
 
     <div class="address-body">
-      <p>{{ address.street }}<span *ngIf="address.street2">, {{ address.street2 }}</span></p>
-      <p>{{ address.city }}, {{ address.state }} - {{ address.pincode }}</p>
-      <p>{{ address.country }}</p>
-      <p>Mobile: <strong>{{ address.phone }}</strong></p>
+      <p>{{ address.street }}<span *ngIf="address.street2">, {{ address.street2 }}, {{ address.city }}, {{ address.state }} - {{ address.pincode }}, {{ address.country }}</span></p>
+      <!-- <p></p> -->
+      <!-- <p></p> -->
+      <!-- <p></p> -->
     </div>
 
     <div class="address-actions">

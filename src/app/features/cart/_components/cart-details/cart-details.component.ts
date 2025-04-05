@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartResponseItem, Item } from '../../_models/cart-item-model';
 import { CartFacade } from '../../_state/cart.facade';
@@ -8,11 +8,13 @@ import { ProductService } from '../../../product/_services/product.service';
 import { ICategory } from '../../../product/_models/category-model';
 import { debounceTime, Subject } from 'rxjs';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
+import { PriceSummaryComponent } from '../price-summary/price-summary.component';
 
 @Component({
   selector: 'app-cart-details',
   imports: [
-    CommonModule
+    CommonModule,
+    PriceSummaryComponent
   ],
   templateUrl: './cart-details.component.html',
   styleUrls: ['./cart-details.component.scss'],
@@ -21,6 +23,8 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
   private cartFacade = inject(CartFacade);
   private productService = inject(ProductService);
   private dialogService = inject(ConfirmDialogService);
+
+  @Input() showPriceSummaryBlock: boolean = true; // Flag to show/hide the button
 
   cartItems: CartResponseItem[] = [];
   cartItemsSignal = computed<Item[]>(() => {

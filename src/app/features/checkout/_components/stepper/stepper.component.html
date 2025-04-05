@@ -1,7 +1,0 @@
-<mat-stepper [selectedIndex]="currentStep" class="custom-stepper" linear>
-  <mat-step *ngFor="let step of steps; let i = index" [completed]="i < currentStep" [editable]="false">
-    <ng-template matStepLabel>
-      {{ step }}
-    </ng-template>
-  </mat-step>
-</mat-stepper>

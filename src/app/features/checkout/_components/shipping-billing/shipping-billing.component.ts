@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -33,6 +33,8 @@ import { AddressFacade } from '../../../settings/_state/address.facade';
 export class ShippingBillingComponent {
   private confirmDialogService = inject(ConfirmDialogService);
   private addressFacade = inject(AddressFacade);
+
+  @Output() addNewAddressClicked = new EventEmitter<any>();
 
   addressList: Address[] = [
     {
@@ -77,17 +79,20 @@ export class ShippingBillingComponent {
 
 
   openAddressDialog(mode: 'edit' | 'add') {
-    this.mode = mode;
-    if (mode === 'edit') {
-      const defaultAddr = this.addressList.find(a => a.isDefault);
-      if (defaultAddr) {
-        this.selectedAddress = defaultAddr;
-      } else {
-        console.warn('No default address found to edit');
-        return;
-      }
-    }
-    this.isAddressDialogVisible = true;
+    const emitPayload = { mode: mode, isClicked: true };
+    this.addNewAddressClicked.emit(emitPayload);
+    return;
+    // this.mode = mode;
+    // if (mode === 'edit') {
+    //   const defaultAddr = this.addressList.find(a => a.isDefault);
+    //   if (defaultAddr) {
+    //     this.selectedAddress = defaultAddr;
+    //   } else {
+    //     console.warn('No default address found to edit');
+    //     return;
+    //   }
+    // }
+    // this.isAddressDialogVisible = true;
   }
 
   confirmDelete() {
@@ -130,7 +135,6 @@ export class ShippingBillingComponent {
 
   saveAddress(event: any) {
     if (this.mode === 'add') {
-      console.log('inside-address-component');
       this.addressFacade.createAddress(event);
     } else {
       this.addressFacade.updateAddress(event.id!, event);

@@ -1,39 +1,48 @@
 import { Component } from '@angular/core';
 import { ShippingBillingComponent } from "../shipping-billing/shipping-billing.component";
-import { OrderSummaryComponent } from "../order-summary/order-summary.component";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PaymentComponent } from "../payment/payment.component";
-import { ShipmentPolicyComponent } from "../../../../shared/components/shipment-policy/shipment-policy.component";
-import { StepperComponent } from "../stepper/stepper.component";
 import { CartDetailsComponent } from "../../../cart/_components/cart-details/cart-details.component";
+import { PriceSummaryComponent } from "../../../cart/_components/price-summary/price-summary.component";
+import { AddAddressDialogComponent } from '../add-address-dialog/add-address-dialog.component';
+import { AddressFormComponent } from "../address-form/address-form.component";
 
 @Component({
   selector: 'app-checkout-details',
   imports: [
     CommonModule,
     FormsModule,
-    PaymentComponent,
     ShippingBillingComponent,
-    StepperComponent,
-    CartDetailsComponent
+    CartDetailsComponent,
+    PriceSummaryComponent,
+    AddressFormComponent
 ],
   templateUrl: './checkout-details.component.html',
   styleUrl: './checkout-details.component.scss'
 })
 export class CheckoutDetailsComponent {
-  steps = ['Order Summary', 'Address Details', 'Payment Options']; // Steps
-  currentStep = 0; // Tracks the current step
+  currentStep = 0;
+  formMode: 'add' | 'edit' = 'add';
+
+  setStep(step: number): void {
+    this.currentStep = step;
+  }
 
   goToNextStep(): void {
-    if (this.currentStep < this.steps.length - 1) {
-      this.currentStep++;
-    }
+    this.currentStep++;
   }
 
   goToPreviousStep(): void {
-    if (this.currentStep > 0) {
-      this.currentStep--;
-    }
+    this.currentStep--;
+  }
+
+  goToAddAddressStep(event: any): void {
+    console.log('checking-event', event);
+    this.formMode = event.mode;
+    this.currentStep = 1;
+  }
+
+  goToStep(step: number): void {
+    this.currentStep = step;
   }
 }

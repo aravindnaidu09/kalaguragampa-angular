@@ -48,49 +48,19 @@
 
     <!-- RIGHT: Price Summary -->
     <div class="cart-right">
-      <div class="summary-card">
-        <h4 class="summary-title">PRICE DETAILS</h4>
-
-        <div class="summary-row">
-          <span>Total MRP</span>
-          <span>₹{{ cartSignal()?.cartTotal }}</span>
-        </div>
-
-        <div class="summary-row">
-          <span>Discount on MRP</span>
-          <span class="green">- ₹{{ cartSignal()?.discountAmount }}</span>
-        </div>
-
-        <div class="summary-row">
-          <span>Coupon Discount</span>
-          <span class="apply-link">Apply Coupon</span>
-        </div>
-
-        <div class="summary-row">
-          <span class="label-with-icon">
-            Shipping Fee
-            <img src="assets/images/icons8-info-50.png" alt="Info" class="info-icon" />
-          </span>
-          <span class="green">{{ cartSignal()?.shippingAmount === '0' ? 'FREE' : '₹' + cartSignal()?.shippingAmount }}</span>
-        </div>
-
-        <div class="summary-total">
-          <span>Total Amount</span>
-          <span>₹{{ cartSignal()?.totalAmount }}</span>
-        </div>
-
-        <button class="place-order-btn" (click)="goToCheckoutPage()">PLACE ORDER</button>
-      </div>
+      <ng-container *ngIf="showPriceSummaryBlock">
+        <app-price-summary></app-price-summary>
+      </ng-container>
     </div>
   </ng-container>
 
   <!-- EMPTY CART TEMPLATE -->
   <ng-template #emptyCart>
     <div class="empty-cart-wrapper">
-      <img src="assets/images/empty-cart.png" alt="Empty Cart" class="empty-cart-img" />
+      <img src="../../../../../assets/images/empty-cart.png" alt="Empty Cart" class="empty-cart-img" />
       <h3>Your cart is empty</h3>
       <p>Looks like you haven't added anything yet</p>
-      <button class="browse-btn" routerLink="/shop">Continue Shopping</button>
+      <button class="browse-btn" routerLink="/">Continue Shopping</button>
     </div>
   </ng-template>
 </div>

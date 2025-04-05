@@ -1,0 +1,36 @@
+<div class="summary-card">
+  <h4 class="summary-title">PRICE DETAILS</h4>
+
+  <div class="summary-row">
+    <span>Total MRP</span>
+    <span>₹{{ cart?.cartTotal }}</span>
+  </div>
+
+  <div class="summary-row">
+    <span>Discount on MRP</span>
+    <span class="green">- ₹{{ cart?.discountAmount }}</span>
+  </div>
+
+  <div class="summary-row">
+    <span>Coupon Discount</span>
+    <span class="apply-link">Apply Coupon</span>
+  </div>
+
+  <div class="summary-row">
+    <span class="label-with-icon">
+      Shipping Fee
+      <img src="assets/images/icons8-info-50.png" alt="Info" class="info-icon" />
+    </span>
+    <span class="green">{{ isShippingFree ? 'FREE' : '₹' + cart?.shippingAmount }}</span>
+  </div>
+
+  <div class="summary-total">
+    <span>Total Amount</span>
+    <span>₹{{ cart?.totalAmount }}</span>
+  </div>
+
+  <ng-container *ngIf="showPlaceOrderButton">
+    <button class="place-order-btn" (click)="goToCheckoutPage()">PLACE ORDER</button>
+  </ng-container>
+
+</div>

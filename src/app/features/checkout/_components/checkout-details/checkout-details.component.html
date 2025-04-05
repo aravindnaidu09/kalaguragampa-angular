@@ -1,50 +1,61 @@
 <div class="checkout-container">
-  <!-- Left Panel: Stepper & Step Content -->
-  <div class="left-panel">
-    <!-- Stepper Navigation -->
+  <!-- LEFT: Stepper Accordion -->
+  <div class="checkout-left">
+    <!-- Step 0: Delivery Address -->
+    <div class="accordion-step" [class.active]="currentStep === 0">
+      <div class="accordion-header" (click)="setStep(0)">
+        <span class="step-number">1</span>
+        <span class="step-title">Delivery Address</span>
+      </div>
+      <div class="accordion-content" *ngIf="currentStep === 0">
+        <app-shipping-billing
+          (continue)="goToNextStep()"
+          (addNewAddressClicked)="goToAddAddressStep($event)">
+        </app-shipping-billing>
+      </div>
+    </div>
 
+    <!-- Step 1: Add New Address -->
+    <div class="accordion-step" [class.active]="currentStep === 1">
+      <div class="accordion-header" (click)="setStep(1)">
+        <span class="step-number">2</span>
+        <span class="step-title">Add New Address</span>
+      </div>
+      <div class="accordion-content" *ngIf="currentStep === 1">
+        <app-address-form [formMode]="formMode">
+        </app-address-form>
+      </div>
+    </div>
 
-    <!-- Step Content -->
-    <div class="step-content">
-      <ng-container [ngSwitch]="currentStep">
-        <app-cart-details *ngSwitchCase="0" (next)="goToNextStep()" (prev)="goToPreviousStep()"></app-cart-details>
+    <!-- Step 2: Order Summary -->
+    <div class="accordion-step" [class.active]="currentStep === 2">
+      <div class="accordion-header" (click)="setStep(2)">
+        <span class="step-number">3</span>
+        <span class="step-title">Order Summary</span>
+      </div>
+      <div class="accordion-content" *ngIf="currentStep === 2">
+        <app-cart-details
+          [showPriceSummaryBlock]="false"
+          (continue)="goToNextStep()"
+          (back)="goToPreviousStep()">
+        </app-cart-details>
+      </div>
+    </div>
 
-        <app-shipping-billing *ngSwitchCase="1" (next)="goToNextStep()"></app-shipping-billing>
-
-        <app-payment *ngSwitchCase="2" (prev)="goToPreviousStep()"></app-payment>
-      </ng-container>
+    <!-- Step 3: Payment -->
+    <div class="accordion-step" [class.active]="currentStep === 3">
+      <div class="accordion-header" (click)="setStep(3)">
+        <span class="step-number">4</span>
+        <span class="step-title">Payment</span>
+      </div>
+      <div class="accordion-content" *ngIf="currentStep === 3">
+        <!-- <app-payment (back)="goToPreviousStep()"></app-payment> -->
+      </div>
     </div>
   </div>
 
-  <!-- Right Panel: Compact Order Summary -->
-  <div class="right-panel">
-    <div class="summary-card">
-      <h4 class="summary-title">PRICE DETAILS</h4>
-      <div class="summary-row">
-        <span>Total MRP</span>
-        <span class="value">₹</span>
-      </div>
-      <div class="summary-row">
-        <span>Discount on MRP</span>
-        <span class="value text-green">- ₹2,340</span>
-      </div>
-      <div class="summary-row">
-        <span>Coupon Discount</span>
-        <span class="value apply-link">Apply Coupon</span>
-      </div>
-      <div class="summary-row">
-        <span>Platform Fee <span class="info-link">Know More</span></span>
-        <span class="value">₹20</span>
-      </div>
-      <div class="summary-row">
-        <span>Shipping Fee <span class="info-link">Know More</span></span>
-        <span class="value text-green">FREE</span>
-      </div>
-      <div class="summary-total">
-        <span>Total Amount</span>
-        <span class="value">₹2,179</span>
-      </div>
-      <button class="place-order-btn">PLACE ORDER</button>
-    </div>
+  <!-- RIGHT: Price Summary -->
+  <div class="checkout-right">
+    <app-price-summary [showPlaceOrderButton]="false"></app-price-summary>
   </div>
 </div>
