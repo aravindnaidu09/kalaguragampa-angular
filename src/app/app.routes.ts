@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { DashboardComponent } from './shared/components/dashboard/dashboard.component';
 import { ViewProductComponent } from './features/product/_components/view-product/view-product.component';
 import { CheckoutDetailsComponent } from './features/checkout/_components/checkout-details/checkout-details.component';
-import { PaymentComponent } from './features/checkout/_components/payment/payment.component';
 import { CartDetailsComponent } from './features/cart/_components/cart-details/cart-details.component';
 import { RefundPolicyComponent } from './shared/components/refund-policy/refund-policy.component';
 import { PrivacyPolicyComponent } from './shared/components/privacy-policy/privacy-policy.component';
@@ -17,7 +16,6 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'product/:productname/:id', component: ViewProductComponent },
   { path: 'checkout', component: CheckoutDetailsComponent },
-  { path: 'payment', component: PaymentComponent },
   { path: 'cart', component: CartDetailsComponent },
   { path: 'wishlist', component: WishlistComponent },
   { path: 'refund-policy', component: RefundPolicyComponent },

@@ -24,6 +24,7 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
   private dialogService = inject(ConfirmDialogService);
 
+  @Input() showCartTitle: boolean = true;
   @Input() showPriceSummaryBlock: boolean = true; // Flag to show/hide the button
 
   cartItems: CartResponseItem[] = [];

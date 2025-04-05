@@ -1,10 +1,10 @@
 <div class="address-wrapper">
   <div class="address-header-row">
     <h2 class="section-title">Select Delivery Address</h2>
-    <button class="add-address-btn" (click)="openAddressDialog('add')">Add New Address</button>
+    <button class="add-address-btn" (click)="openAddressDialog('add', {})">Add New Address</button>
   </div>
 
-  <div *ngFor="let address of addressList" class="address-card" [class.selected]="address.isDefault" [@moveToTop]>
+  <div *ngFor="let address of addresses()" class="address-card" [class.selected]="selectedAddressId() === address.id" [@moveToTop]>
 
     <div class="address-header">
       <div class="radio-label">
@@ -22,18 +22,11 @@
     </div>
 
     <div class="address-actions">
-      <button type="button" class="btn outline" (click)="confirmDelete()">Remove</button>
-      <button type="button" class="btn outline" (click)="openAddressDialog('edit')">Edit</button>
+      <button *ngIf="!hideRemoveOption" type="button" class="btn outline" (click)="confirmDelete(address.id!)">Remove</button>
+      <button type="button" class="btn outline" (click)="openAddressDialog('edit', address)">Edit</button>
       <button *ngIf="!address.isDefault" type="button" class="btn set-default" (click)="setAsDefault(address.id!)">
         Set as Default
       </button>
     </div>
   </div>
-
-  <app-dialog [isVisible]="isAddressDialogVisible" [contentTemplate]="addAddressTemplate"
-    (closeDialog)="closeDialog(true)"></app-dialog>
-
-  <ng-template #addAddressTemplate>
-    <app-add-address-dialog [formMode]="mode" [initialData]="selectedAddress" (save)="saveAddress($event)" (cancel)="closeDialog(true)"></app-add-address-dialog>
-  </ng-template>
 </div>

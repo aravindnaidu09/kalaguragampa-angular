@@ -3,7 +3,7 @@
   <ng-container *ngIf="cartItemsSignal()?.length! > 0; else emptyCart">
     <!-- LEFT: Cart Items List -->
     <div class="cart-left">
-      <div class="cart-header">
+      <div class="cart-header" *ngIf="showCartTitle">
         <span class="section-title">My Cart</span>
       </div>
 

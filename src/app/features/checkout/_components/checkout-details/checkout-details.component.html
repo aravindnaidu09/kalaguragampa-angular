@@ -8,8 +8,7 @@
         <span class="step-title">Delivery Address</span>
       </div>
       <div class="accordion-content" *ngIf="currentStep === 0">
-        <app-shipping-billing
-          (continue)="goToNextStep()"
+        <app-shipping-billing [hideRemoveOption]="true" (continue)="goToNextStep()"
           (addNewAddressClicked)="goToAddAddressStep($event)">
         </app-shipping-billing>
       </div>
@@ -22,7 +21,8 @@
         <span class="step-title">Add New Address</span>
       </div>
       <div class="accordion-content" *ngIf="currentStep === 1">
-        <app-address-form [formMode]="formMode">
+        <app-address-form [formMode]="formMode" [initialData]="selectedAddressForEdit"
+          (save)="handleAddressSave($event)" (cancel)="goToPreviousStep()">
         </app-address-form>
       </div>
     </div>
@@ -34,10 +34,7 @@
         <span class="step-title">Order Summary</span>
       </div>
       <div class="accordion-content" *ngIf="currentStep === 2">
-        <app-cart-details
-          [showPriceSummaryBlock]="false"
-          (continue)="goToNextStep()"
-          (back)="goToPreviousStep()">
+        <app-cart-details [showCartTitle]="false"  [showPriceSummaryBlock]="false" (continue)="goToNextStep()" (back)="goToPreviousStep()">
         </app-cart-details>
       </div>
     </div>
@@ -50,6 +47,10 @@
       </div>
       <div class="accordion-content" *ngIf="currentStep === 3">
         <!-- <app-payment (back)="goToPreviousStep()"></app-payment> -->
+        <div class="payment-wrapper">
+          <h3 class="payment-title">Choose your payment method</h3>
+          <button class="make-payment-btn" (click)="makePayment()">Make Payment</button>
+        </div>
       </div>
     </div>
   </div>

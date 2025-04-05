@@ -56,6 +56,7 @@ export class AddressState {
 
   @Action(UpdateAddress)
   updateAddress(ctx: StateContext<AddressStateModel>, action: UpdateAddress) {
+    console.log('Update Address Action:', action);
     return this.addressService.updateAddress(action.id, action.payload).pipe(
       tap((res: ApiResponse<Address>) => {
         const state = ctx.getState();

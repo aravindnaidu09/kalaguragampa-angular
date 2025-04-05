@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { Store, Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { computed, inject, Injectable } from '@angular/core';
+import { Store, Actions, ofActionCompleted } from '@ngxs/store';
+import { catchError, filter, map, of, take } from 'rxjs';
 import { AddressState } from './address.state';
 import {
   LoadAddresses,
@@ -13,25 +13,56 @@ import { Address } from '../_model/address-model';
 
 @Injectable({ providedIn: 'root' })
 export class AddressFacade {
-  @Select(AddressState.addresses) addresses$!: Observable<Address[]>;
-  @Select(AddressState.isLoading) loading$!: Observable<boolean>;
+  private store = inject(Store);
 
-  constructor(private store: Store) {}
+  readonly addresses = this.store.selectSignal(AddressState.addresses);
+  readonly loading = this.store.selectSignal(AddressState.isLoading);
+
+  // ✅ Derived signal: currently selected (default) address ID
+  readonly selectedAddressId = computed(() =>
+    this.addresses().find(a => a.isDefault)?.id
+  );
+
+  constructor(private actions$: Actions) { }
 
   loadAddresses() {
     return this.store.dispatch(new LoadAddresses());
   }
 
   createAddress(payload: Address) {
-    return this.store.dispatch(new AddAddress(payload));
+    this.store.dispatch(new AddAddress(payload));
+
+    return this.actions$.pipe(
+      ofActionCompleted(AddAddress),
+      filter((result: any) => result.result?.statusCode === 200),
+      take(1),
+      map(() => true),
+      catchError(() => of(false))
+    );
   }
 
   updateAddress(id: number, payload: Address) {
-    return this.store.dispatch(new UpdateAddress(id, payload));
+    this.store.dispatch(new UpdateAddress(id, payload));
+
+    return this.actions$.pipe(
+      ofActionCompleted(UpdateAddress),
+      filter((result: any) => result.result?.statusCode === 200),
+      take(1),
+      map(() => true),
+      catchError(() => of(false))
+    );
   }
 
   deleteAddress(id: number) {
-    return this.store.dispatch(new DeleteAddress(id));
+    this.store.dispatch(new DeleteAddress(id));
+
+    return this.actions$.pipe(
+      ofActionCompleted(DeleteAddress),
+      filter((result: any) => result.result?.statusCode === 200),
+      take(1),
+      map(() => true),
+      catchError(() => of(false))
+    );
   }
 
   setDefault(id: number) {

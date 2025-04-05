@@ -28,7 +28,9 @@ export function deserializeAddress(apiData: any): Address {
 
 // ✅ Serialize Frontend Model to API Format
 export function serializeAddress(address: Address): any {
+  console.log('checking-data: ', address);
   return {
+    id: address.id, // If the API requires an ID for updates
     name: address.fullName,
     address_line_1: address.street,
     address_line_2: address.street2 || '',

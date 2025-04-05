@@ -65,3 +65,31 @@ $primary-brown: #682f12;
     height: fit-content;
   }
 }
+
+.payment-wrapper {
+  padding: 2rem;
+
+  .payment-title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .make-payment-btn {
+    background-color: #682f12;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background-color: darken(#682f12, 5%);
+    }
+  }
+}
+
