@@ -147,6 +147,11 @@ $primary-brown: #682f12;
         font-size: 14px;
         color: #444;
         margin: 4px 0;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
 
       .selectors {

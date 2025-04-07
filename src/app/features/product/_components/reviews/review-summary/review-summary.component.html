@@ -7,10 +7,10 @@
   <div class="rating-bars">
     <div *ngFor="let r of [5, 4, 3, 2, 1]">
       <div class="bar-label">{{ r }}★</div>
-      <div class="bar">
+      <!-- <div class="bar">
         <div class="fill" [style.width.%]="getRatingPercentage(r)"></div>
       </div>
-      <div class="count">{{ ratingBreakdown[r] || 0 }}</div>
+      <div class="count">{{ ratingBreakdown[r] || 0 }}</div> -->
     </div>
   </div>
 </div>

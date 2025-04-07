@@ -9,6 +9,7 @@ import { ICategory } from '../../../product/_models/category-model';
 import { debounceTime, Subject } from 'rxjs';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 import { PriceSummaryComponent } from '../price-summary/price-summary.component';
+import { IProduct } from '../../../product/_models/product-model';
 
 @Component({
   selector: 'app-cart-details',
@@ -144,6 +145,11 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
   }
 
   removeSelected() { }
+
+  navigateToProductPage(pItem: IProduct) {
+    this.router.navigate([`/product/${pItem.name}/${pItem.id}`]);
+
+  }
 
   ngOnDestroy() {
     Object.values(this.quantityChangeSubjectMap).forEach((subject) => subject.complete());

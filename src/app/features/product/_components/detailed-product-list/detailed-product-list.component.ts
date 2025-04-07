@@ -5,6 +5,7 @@ import { ProductService } from '../../_services/product.service';
 import { SortFilterBarComponent } from '../sort-filter-bar/sort-filter-bar.component';
 import { IProductQueryParams } from '../../_models/product-query-model';
 import { environment } from '../../../../../environments/environment.dev';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-detailed-product-list',
@@ -26,7 +27,9 @@ export class DetailedProductListComponent implements OnInit, OnChanges {
   nextPage = signal<string | null>(null); // Next page URL
   previousPage = signal<string | null>(null); // Previous page URL
 
-  constructor(private readonly productService: ProductService) { }
+  constructor(private readonly productService: ProductService,
+    private readonly router: Router
+  ) { }
 
   ngOnInit(): void {
     // this.fetchProducts();
@@ -36,6 +39,10 @@ export class DetailedProductListComponent implements OnInit, OnChanges {
     if (changes['queryParams']) {
       // this.fetchProducts();
     }
+  }
+
+  navigateToProductPage(item: IProduct) {
+    this.router.navigate([`/product/${item.name}/${item.id}`]);
   }
 
   /**

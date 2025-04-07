@@ -3,17 +3,17 @@
   <div *ngFor="let product of products(); trackBy: trackById" class="product-card">
 
     <!-- ✅ Product Image -->
-    <div class="product-image">
+    <div class="product-image" (click)="navigateToProductPage(product)">
       <img [src]="getImagePath(product.images![0].image)" [alt]="product.name" (error)="onImageError($event)" />
     </div>
 
     <!-- ✅ Product Details -->
     <div class="product-details">
-      <h3 class="product-name" [title]="product.name">{{ product.name }}</h3>
+      <h3 class="product-name" [title]="product.name" (click)="navigateToProductPage(product)">{{ product.name }}</h3>
 
       <div class="product-meta">
         <span class="price">₹{{ product.price }}</span>
-        <span class="rating">⭐⭐⭐⭐⭐</span>
+        <span class="rating">(4.1) ⭐ | 200</span>
       </div>
 
       <!-- ✅ Wishlist & Add to Cart -->

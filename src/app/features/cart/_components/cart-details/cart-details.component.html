@@ -15,7 +15,7 @@
 
         <div class="product-info">
           <div class="brand-name">{{ getCategoryNameOfProduct(item.product?.category!) }}</div>
-          <div class="product-title">{{ item.product?.name }}</div>
+          <div class="product-title" (click)="navigateToProductPage(item.product!)">{{ item.product?.name }}</div>
 
           <!-- Quantity Selectors -->
           <div class="selectors">

@@ -39,6 +39,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 
   img {
     width: 100%;
@@ -68,6 +69,11 @@
     width: 100%;
     display: block;
     margin-bottom: 5px;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   .product-meta {
