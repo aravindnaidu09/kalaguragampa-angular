@@ -18,12 +18,10 @@
 
       <!-- ✅ Wishlist & Add to Cart -->
       <div class="product-actions">
-        <button class="wishlist-btn" (click)="toggleWishlist(product)">
-          🤍
-        </button>
-        <button class="cart-btn" (click)="addToCart(product)">
-          🛒 Add to Cart
-        </button>
+        <div class="wishlist-icon" (click)="toggleWishlist(product)" title="Toggle Wishlist">
+          <span *ngIf="isWishlisted(product.id!); else notWishlisted">❤️</span>
+          <ng-template #notWishlisted><span>🤍</span></ng-template>
+        </div>
       </div>
     </div>
   </div>

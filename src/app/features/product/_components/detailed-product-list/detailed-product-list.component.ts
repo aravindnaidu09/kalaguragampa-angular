@@ -1,11 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, OnInit, signal, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, Signal, signal, SimpleChanges } from '@angular/core';
 import { IProduct } from '../../_models/product-model';
 import { ProductService } from '../../_services/product.service';
 import { SortFilterBarComponent } from '../sort-filter-bar/sort-filter-bar.component';
 import { IProductQueryParams } from '../../_models/product-query-model';
 import { environment } from '../../../../../environments/environment.dev';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../auth/_services/auth.service';
+import { WishlistFacade } from '../../../cart/_state/wishlist.facade';
+import { ToastService } from '../../../../core/services/toast.service';
+import { IWishlist } from '../../_models/wishlist-model';
 
 @Component({
   selector: 'app-detailed-product-list',
@@ -27,8 +31,13 @@ export class DetailedProductListComponent implements OnInit, OnChanges {
   nextPage = signal<string | null>(null); // Next page URL
   previousPage = signal<string | null>(null); // Previous page URL
 
+  @Input() wishlistItems!: Signal<IWishlist[]>;
+
   constructor(private readonly productService: ProductService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly authService: AuthService,
+    private readonly wishlistFacade: WishlistFacade,
+    private readonly toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -41,6 +50,13 @@ export class DetailedProductListComponent implements OnInit, OnChanges {
     }
   }
 
+  isWishlisted(productId: number): boolean {
+    const items = this.wishlistFacade.wishlistItems();
+    return items?.some(item => item.productDetails?.id === productId) ?? false;
+  }
+
+
+
   navigateToProductPage(item: IProduct) {
     this.router.navigate([`/product/${item.name}/${item.id}`]);
   }
@@ -49,14 +65,17 @@ export class DetailedProductListComponent implements OnInit, OnChanges {
    * ✅ Toggle Wishlist
    */
   toggleWishlist(product: IProduct): void {
-    console.log('Wishlist Toggled for:', product.name);
-  }
+    if (!(this.authService.isAuthenticated())) {
+      this.toastService.showWarning('Please log in to add items!');
+      return;
+    }
+    const isWishlisted = this.wishlistFacade.isInWishlistSignal(product.id!)();
 
-  /**
-   * ✅ Add to Cart
-   */
-  addToCart(product: IProduct): void {
-    console.log('Added to Cart:', product.name);
+    if (isWishlisted) {
+      this.wishlistFacade.remove(product.id!).subscribe();
+    } else {
+      this.wishlistFacade.add(product.id!).subscribe(); ''
+    }
   }
 
   /**

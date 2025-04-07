@@ -12,6 +12,7 @@
 
 /* ✅ Product Card */
 .product-card {
+  position: relative;
   background: white;
   border-radius: 12px;
   overflow: hidden;
@@ -106,24 +107,25 @@
     font-weight: 600;
   }
 
-  .wishlist-btn {
-    background: none;
-    font-size: 18px;
-    color: red;
-    transition: color 0.3s;
+  .wishlist-icon {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: transform 0.3s ease;
 
-    &:hover {
-      color: darkred;
+    &.active .heart-icon {
+      color: red;
+      transform: scale(1.2);
     }
-  }
 
-  .cart-btn {
-    background: black;
-    color: white;
-    padding: 10px 16px;
+    .heart-icon {
+      color: #ccc;
+    }
 
-    &:hover {
-      background: #444;
+    &:hover .heart-icon {
+      transform: scale(1.1);
     }
   }
 }

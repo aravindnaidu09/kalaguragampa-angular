@@ -19,8 +19,8 @@
     </div>
 
     <div class="product-rating">
-      <span>⭐⭐⭐⭐⭐</span>
-      <span>(10)</span>
+      <span>4.1⭐ | (25)</span>
+      <!-- <span>(10)</span> -->
     </div>
 
     <!-- ✅ Quantity Selector & Stock Info -->
@@ -32,14 +32,14 @@
       </div>
 
       <div class="stock-info">
-        <p><span class="stock-count">{{ product()?.maxQuantity }} Items Left</span></p>
+        <p><span class="stock-count">{{ product()?.stockStatus === 'low_stock' ? 'Low Stock' : 'In Stock' }}</span></p>
       </div>
     </div>
 
     <!-- ✅ Add to Cart & Buy Now Buttons -->
     <div class="product-actions">
-      <button class="buy-now-btn" (click)="goToCheckoutPage()">Buy Now</button>
-      <button class="add-to-cart-btn" (click)="addToCart()">Add to Cart</button>
+      <button class="btn buy-now" (click)="goToCheckoutPage()">Buy Now</button>
+      <button class="btn add-to-cart" (click)="addToCart()">Add to Cart</button>
     </div>
   </div>
 

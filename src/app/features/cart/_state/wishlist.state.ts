@@ -81,7 +81,7 @@ export class WishlistState {
       }),
       catchError((err) => {
         ctx.patchState({ loading: false });
-        this.toast.showError('Failed to load wishlist.');
+        // this.toast.showError('Failed to load wishlist.');
         return of();
       })
     );
@@ -121,11 +121,11 @@ export class WishlistState {
         localStorage.setItem('wishlistCount', JSON.stringify(updatedWishlist.length));
 
         // ✅ Notify user
-        this.toast.showSuccess('Added to wishlist');
+        // this.toast.showSuccess('Added to wishlist');
       }),
       catchError((err) => {
         ctx.patchState({ loading: false });
-        this.toast.showError('Add to wishlist failed');
+        // this.toast.showError('Add to wishlist failed');
         return of();
       })
     );
@@ -146,11 +146,11 @@ export class WishlistState {
           loading: false
         });
         localStorage.setItem('wishlist', JSON.stringify(filtered));
-        this.toast.showSuccess('Removed from wishlist');
+        // this.toast.showSuccess('Removed from wishlist');
       }),
       catchError((err) => {
         ctx.patchState({ loading: false });
-        this.toast.showError('Remove from wishlist failed');
+        // this.toast.showError('Remove from wishlist failed');
         return of();
       })
     );
