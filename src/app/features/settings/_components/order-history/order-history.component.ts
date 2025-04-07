@@ -5,6 +5,9 @@ import { OrderService } from '../../_services/order.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { Order } from '../../_model/order-model';
 import { OrderCardComponent } from '../order-card/order-card.component';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { Store } from '@ngxs/store';
+import { OrderState } from '../../_state/order.state';
 
 @Component({
   selector: 'app-order-history',
@@ -12,16 +15,28 @@ import { OrderCardComponent } from '../order-card/order-card.component';
     CommonModule,
     FormsModule,
     OrderCardComponent
-],
+  ],
   templateUrl: './order-history.component.html',
   styleUrl: './order-history.component.scss',
-  providers: [OrderService, ToastService]
+  providers: [OrderService, ToastService],
+  animations: [
+    trigger('fadeInUp', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class OrderHistoryComponent {
   private orderService = inject(OrderService);
   private toastService = inject(ToastService);
+  private store = inject(Store); // Assuming you have a store service for state management
 
-  orders:Order[] = [
+  loading = this.store.selectSnapshot(OrderState.loading);
+
+
+  orders: Order[] = [
     {
       id: 101,
       total: 2999,
@@ -38,7 +53,10 @@ export class OrderHistoryComponent {
           color: 'Black',
           price: 2999,
           quantity: 1,
-          isRated: false
+          isRated: false,
+          status: 'Delivered',
+          deliveryDate: '2024-12-16',
+
         }
       ]
     }

@@ -41,39 +41,35 @@
 
   .order-status {
     display: flex;
-    flex-direction: column;
-    font-size: 14px;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
 
     .status-dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      margin-right: 8px;
-      display: inline-block;
+    }
+
+    .delivered {
+      background-color: #4caf50;
+    }
+
+    .pending {
+      background-color: #ff9800;
+    }
+
+    .cancelled {
+      background-color: #f44336;
     }
 
     .status-text {
-      font-weight: 600;
-      color: #2e7d32;
-    }
-
-    .description {
-      font-size: 13px;
-      color: #666;
-    }
-
-    .status-dot.green {
-      background-color: #2e7d32;
-    }
-
-    .status-dot.orange {
-      background-color: #ffa726;
-    }
-
-    .status-dot.red {
-      background-color: #e53935;
+      font-size: 14px;
+      color: #555;
+      font-weight: 500;
     }
   }
+
 
   .review-action {
     align-self: flex-start;

@@ -23,4 +23,14 @@ export class OrderCardComponent {
     // You can route to review page or open a modal
     console.log('Reviewing product:', item);
   }
+
+  statusClass(status: string): string {
+    switch (status) {
+      case 'Delivered': return 'delivered';
+      case 'Pending': return 'pending';
+      case 'Cancelled': return 'cancelled';
+      default: return '';
+    }
+  }
+
 }

@@ -7,6 +7,8 @@ export interface OrderItem {
   price?: number;
   quantity?: number;
   isRated?: boolean;
+  status?: 'Delivered' | 'Pending' | 'Cancelled';
+  deliveryDate?: string
 }
 
 export interface Order {

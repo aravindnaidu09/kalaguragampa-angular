@@ -1,16 +1,26 @@
 <div class="order-history">
-  <h2>Your Orders <span class="order-count">{{ orders.length }}</span></h2>
+  <h2 class="title">
+    Your Orders <span class="order-count">{{ orders.length }}</span>
+  </h2>
 
+  <!-- Skeleton loader -->
+  <ng-container *ngIf="loading">
+    <div class="skeleton-card" *ngFor="let _ of [1, 2, 3]"></div>
+  </ng-container>
 
-  <ng-container *ngFor="let item of orders"; let i = "index">
-    <app-order-card [item]="item.items[0]" />
+  <!-- Actual order cards -->
+  <ng-container *ngIf="!loading">
+    <ng-container *ngFor="let item of orders">
+      <app-order-card [@fadeInUp] [item]="item.items[0]"></app-order-card>
+    </ng-container>
   </ng-container>
 
 
-  <!-- ✅ Pagination -->
+  <!-- Pagination -->
   <div class="pagination">
-    <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
-    <span>Page {{ currentPage }}</span>
-    <button (click)="nextPage()" [disabled]="(currentPage * pageSize) >= filteredOrders.length">Next</button>
+    <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+    <span class="page-indicator">Page {{ currentPage }}</span>
+    <button class="page-btn" (click)="nextPage()"
+      [disabled]="(currentPage * pageSize) >= filteredOrders.length">Next</button>
   </div>
 </div>

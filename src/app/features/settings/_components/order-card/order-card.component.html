@@ -8,9 +8,9 @@
   </div>
 
   <div class="order-status">
-    <span class="status-dot" [ngClass]="getStatusClass(item.isRated)"></span>
+    <span class="status-dot" [ngClass]="statusClass(item.status!)"></span>
     <span class="status-text">
-      {{ item.isRated ? 'You rated this item' : 'Awaiting your feedback' }}
+      {{ item.status === 'Delivered' ? 'Delivered on ' + item.deliveryDate : 'Awaiting Delivery' }}
     </span>
   </div>
 
