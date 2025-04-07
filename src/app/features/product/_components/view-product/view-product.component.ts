@@ -54,13 +54,15 @@ export class ViewProductComponent implements OnInit {
   newReview = signal({ comment: '', rating: 0 });
 
   ngOnInit(): void {
-    this.fetchProductDetails();
+    this.route.params
+    .subscribe((params: any) => {
+      const productId = params['id'];
+      this.fetchProductDetails(productId);
+    });
   }
 
   // ✅ Fetch Product by ID from API
-  private fetchProductDetails(): void {
-    const productId = this.route.snapshot.params['id'];
-
+  private fetchProductDetails(productId: string): void {
     if (!productId) {
       this.errorMessage.set('Product not found.');
       this.router.navigate(['/products']);
