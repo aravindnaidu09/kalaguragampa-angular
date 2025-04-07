@@ -2,8 +2,8 @@
   <h2>Your Orders <span class="order-count">{{ orders.length }}</span></h2>
 
 
-  <ng-container *ngFor="let item of orders">
-    <app-order-card [item]="item" />
+  <ng-container *ngFor="let item of orders"; let i = "index">
+    <app-order-card [item]="item.items[0]" />
   </ng-container>
 
 
