@@ -65,6 +65,31 @@ $primary-brown: #682f12;
     height: fit-content;
   }
 
+  .delivery-selection {
+    margin-top: 1rem;
+
+    .delivery-option {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+
+      &.selected {
+        border-color: #682f12;
+        background: #fef9f6;
+      }
+
+      .etd {
+        display: block;
+        font-size: 13px;
+        color: #666;
+      }
+    }
+  }
+
+
   .payment-wrapper {
     padding: 2rem;
 

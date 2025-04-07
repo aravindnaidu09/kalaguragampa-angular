@@ -1,20 +1,25 @@
 import { Injectable } from '@angular/core';
-import { APP_SETTINGS } from '../../../core/constants/app-settings';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Order } from '../_model/order-model';
+import { APP_SETTINGS } from '../../../core/constants/app-settings';
+import { ORDER_API_URLS } from '../../../core/constants/order-urls';
+import { ApiResponse } from '../../../core/models/api-response.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class OrderService {
-
-  private baseUrl = APP_SETTINGS.apiBaseUrl;
+  private readonly baseUrl = `${APP_SETTINGS.apiBaseUrl}${ORDER_API_URLS.order.getAll}`;
 
   constructor(private http: HttpClient) {}
 
-  getOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.baseUrl}`);
+  /**
+   * ✅ Get all user orders
+   */
+  getUserOrders(): Observable<Order[]> {
+    return this.http.get<ApiResponse<Order[]>>(`${this.baseUrl}`).pipe(
+      map(res => res.data)
+    );
   }
 
+  // You can also add methods like getOrderDetails(id), downloadInvoice(id), etc. if needed in the future.
 }

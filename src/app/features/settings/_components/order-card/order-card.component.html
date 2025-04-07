@@ -1,0 +1,20 @@
+<div class="order-item-card">
+  <div class="order-info">
+    <img [src]="item.image" alt="{{ item.productName }}" />
+    <div class="details">
+      <h3 class="product-name">{{ item.productName }}</h3>
+      <p class="price">₹{{ item.price }} × {{ item.quantity }}</p>
+    </div>
+  </div>
+
+  <div class="order-status">
+    <span class="status-dot" [ngClass]="getStatusClass(item.isRated)"></span>
+    <span class="status-text">
+      {{ item.isRated ? 'You rated this item' : 'Awaiting your feedback' }}
+    </span>
+  </div>
+
+  <div class="review-action" *ngIf="!item.isRated">
+    <button (click)="reviewProduct(item)" class="review-btn">★ Rate & Review Product</button>
+  </div>
+</div>

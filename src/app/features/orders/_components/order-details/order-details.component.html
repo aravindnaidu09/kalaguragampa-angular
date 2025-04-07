@@ -1,9 +1,0 @@
-<div class="order-tracking-container">
-  <h2>All orders</h2>
-  <input type="text" placeholder="Search in orders" />
-  <button class="filter-btn">⚙️ FILTER</button>
-
-  <ng-container *ngIf="orders$ | async as orders">
-    <app-order-card *ngFor="let order of orders" [order]="order"></app-order-card>
-  </ng-container>
-</div>

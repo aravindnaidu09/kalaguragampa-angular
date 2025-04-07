@@ -47,6 +47,15 @@
       </div>
       <div class="accordion-content" *ngIf="currentStep === 3">
         <!-- <app-payment (back)="goToPreviousStep()"></app-payment> -->
+        <div class="delivery-selection" *ngIf="deliveryOptions.length > 0">
+          <h3>Select Delivery Partner</h3>
+          <div *ngFor="let option of deliveryOptions" class="delivery-option" (click)="selectDeliveryOption(option)" [class.selected]="selectedDeliveryOption?.courier_company_id === option.courier_company_id">
+            <strong>{{ option.courier_name }}</strong>
+            <span>₹{{ option.shipping_amount }}</span>
+            <span class="etd">Delivery in: {{ option.etd }}</span>
+          </div>
+        </div>
+
         <div class="payment-wrapper">
           <h3 class="payment-title">Choose your payment method</h3>
           <button class="make-payment-btn" (click)="makePayment()">Make Payment</button>

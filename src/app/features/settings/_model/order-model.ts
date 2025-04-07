@@ -1,14 +1,20 @@
+export interface OrderItem {
+  id?: number;
+  productId?: number;
+  productName?: string;
+  image?: string;
+  color?: string;
+  price?: number;
+  quantity?: number;
+  isRated?: boolean;
+}
+
 export interface Order {
   id: number;
-  date: string;
   total: number;
-  shipTo: string;
-  deliveryDate: string;
-  status: string;
-  items: {
-    productName: string;
-    quantity: number;
-    price: number;
-    image: string
-  }[];
+  date: string; // ISO string
+  deliveryDate: string; // ISO string
+  status: 'Delivered' | 'Pending' | 'Cancelled';
+  shippingAddress: string;
+  items: OrderItem[];
 }

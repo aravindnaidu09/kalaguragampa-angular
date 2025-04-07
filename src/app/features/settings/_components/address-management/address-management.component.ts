@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Address } from '../../_model/address-model';
+import { Address, serializeAddress } from '../../_model/address-model';
 import { AddressFacade } from '../../_state/address.facade';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 import { AddressFormComponent } from "../../../checkout/_components/address-form/address-form.component";
@@ -66,7 +66,9 @@ export class AddressManagementComponent {
     if (!this.accordionOpen) this.resetForm();
   }
 
-  handleAddressSave(payload: Address): void {
+  handleAddressSave(rawPayload: Address): void {
+    const payload = serializeAddress(rawPayload);
+
     if (this.isEditing && payload.id) {
       this.addressFacade.updateAddress(payload.id, payload).subscribe(() => {
         this.resetForm();

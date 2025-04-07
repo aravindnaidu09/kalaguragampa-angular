@@ -4,13 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../_services/order.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { Order } from '../../_model/order-model';
+import { OrderCardComponent } from '../order-card/order-card.component';
 
 @Component({
   selector: 'app-order-history',
   imports: [
     CommonModule,
     FormsModule,
-  ],
+    OrderCardComponent
+],
   templateUrl: './order-history.component.html',
   styleUrl: './order-history.component.scss',
   providers: [OrderService, ToastService]
@@ -19,8 +21,32 @@ export class OrderHistoryComponent {
   private orderService = inject(OrderService);
   private toastService = inject(ToastService);
 
-  orders: Order[] = [];
-  filteredOrders: Order[] = [];
+  orders:Order[] = [
+    {
+      id: 101,
+      total: 2999,
+      date: '2024-12-12',
+      deliveryDate: '2024-12-16',
+      status: 'Delivered',
+      shippingAddress: 'Hyderabad, India',
+      items: [
+        {
+          id: 1,
+          productId: 1001,
+          productName: 'JBL Wave Buds',
+          image: 'https://via.placeholder.com/100x100.png?text=JBL',
+          color: 'Black',
+          price: 2999,
+          quantity: 1,
+          isRated: false
+        }
+      ]
+    }
+  ];
+  filteredOrders = this.orders;
+  // paginatedOrders = this.orders;
+
+  // filteredOrders: Order[] = [];
   selectedStatus: string = 'all';
   selectedDateRange: string = 'past3months';
   currentPage: number = 1;

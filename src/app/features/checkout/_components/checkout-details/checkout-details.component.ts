@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ShippingBillingComponent } from "../shipping-billing/shipping-billing.component";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,6 +8,10 @@ import { AddAddressDialogComponent } from '../add-address-dialog/add-address-dia
 import { AddressFormComponent } from "../address-form/address-form.component";
 import { AddressFacade } from '../../../settings/_state/address.facade';
 import { Address, serializeAddress } from '../../../settings/_model/address-model';
+import { DeliveryService } from '../../../../core/services/delivery.service';
+import { DeliveryOption } from '../../../../core/models/delivery.model';
+import { PaymentService } from '../../../../core/services/payment.service';
+import { CartFacade } from '../../../cart/_state/cart.facade';
 
 @Component({
   selector: 'app-checkout-details',
@@ -22,13 +26,35 @@ import { Address, serializeAddress } from '../../../settings/_model/address-mode
   templateUrl: './checkout-details.component.html',
   styleUrl: './checkout-details.component.scss'
 })
-export class CheckoutDetailsComponent {
+export class CheckoutDetailsComponent implements OnInit {
   private addressFacade = inject(AddressFacade);
+  private deliveryService = inject(DeliveryService);
+  private paymentService = inject(PaymentService);
+  private cartFacade = inject(CartFacade);
+
 
   currentStep = 0;
   formMode: 'add' | 'edit' = 'add';
 
   selectedAddressForEdit: Address = {};
+
+  deliveryOptions: DeliveryOption[] = [];
+  selectedDeliveryOption?: DeliveryOption;
+
+  ngOnInit(): void {
+    this.fetchDeliveryOptions();
+  }
+
+  fetchDeliveryOptions(): void {
+    this.deliveryService.getDeliveryOptions().subscribe({
+      next: (options) => this.deliveryOptions = options,
+      error: () => console.error('Failed to fetch delivery options')
+    });
+  }
+
+  selectDeliveryOption(option: DeliveryOption) {
+    this.selectedDeliveryOption = option;
+  }
 
   setStep(step: number): void {
     this.currentStep = step;
@@ -82,5 +108,37 @@ export class CheckoutDetailsComponent {
     });
   }
 
-  makePayment() {}
+  makePayment() {
+    if (!this.selectedDeliveryOption) {
+      console.error('Delivery option not selected');
+      // return;
+    }
+
+    const addressId = this.addressFacade.selectedAddressId(); // signal based getter
+    if (!addressId) {
+      console.error('No address selected');
+      return;
+    }
+
+    const totalAmount = Number(this.cartFacade.cartSignal()?.totalAmount || 0); // fallback
+    // const courierCompanyId = this.selectedDeliveryOption.courier_company_id;
+    const countryCode = 'IND'; // optional: derive from selected address
+
+    const payload = {
+      total_amount: totalAmount,
+      address_id: addressId,
+      courier_company_id: '0',
+      country_code: countryCode
+    };
+
+    this.paymentService.createOrder(payload).subscribe({
+      next: (response) => {
+        console.log('Order Created:', response);
+        // TODO: Call Razorpay.init(response.data) or open Razorpay checkout here
+      },
+      error: () => {
+        console.error('Failed to create order');
+      }
+    });
+  }
 }
