@@ -44,9 +44,9 @@ export class MenuService {
       // 🔹 Set menu for logged-in users
       this.menuItemsSignal.set([
         { label: `👤Hi, ${username}`, disabled: true },
-        { label: 'Dashboard', action: () => console.log('Navigate to Dashboard') },
-        { label: 'Orders', action: () => console.log('Navigate to Profile') },
-        { label: 'Settings', action: () => this.router.navigate(['/settings']) },
+        { label: 'Dashboard', action: () => this.router.navigate(['/']) },
+        { label: 'Orders', action: () => this.router.navigate(['/settings']) },
+        { label: 'Settings', action: () => this.router.navigate(['/settings/profile']) },
         { label: 'Logout', action: () => this.logout() }
       ]);
     } else {

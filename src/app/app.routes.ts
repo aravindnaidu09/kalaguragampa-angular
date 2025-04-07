@@ -23,5 +23,5 @@ export const routes: Routes = [
   { path: 'shipping-policy', component: ShipmentPolicyComponent },
   { path: 'terms-services', component: TermsComponent },
   { path: 'detail-view', component: ProductsPageComponent },
-  { path: 'settings', component: UserSettingsComponent }
+  { path: 'settings/:id', component: UserSettingsComponent }
 ];

@@ -1,0 +1,12 @@
+<div class="offline-banner" @fadeInOut>
+  <!-- Logo (centered absolutely within the container) -->
+  <img src="../../../../assets/images/logo.png" alt="Logo" class="offline-logo" />
+
+  <!-- Main Banner Content -->
+  <div class="icon">📡</div>
+  <div class="text">
+    <h4>You’re offline or on a slow network</h4>
+    <p>We’ll try reconnecting in the background.</p>
+  </div>
+  <button (click)="onRetry()">Retry</button>
+</div>

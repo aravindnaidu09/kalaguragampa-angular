@@ -1,0 +1,65 @@
+.offline-banner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1.5rem 2rem;
+  width: 90%;
+  max-width: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background-color: #fff4e5;
+  border: 1px solid #ffd89e;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
+  z-index: 1000;
+  animation: fadeIn 0.4s ease forwards;
+
+  // Logo Centered Absolute
+  .offline-logo {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .icon {
+    font-size: 2rem;
+  }
+
+  .text {
+    flex-grow: 1;
+
+    h4 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1rem;
+    }
+  }
+
+  button {
+    background-color: #682f12;
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #4a210c;
+    }
+  }
+}
