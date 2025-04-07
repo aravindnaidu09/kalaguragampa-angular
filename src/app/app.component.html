@@ -1,18 +1,18 @@
+<!-- 🌐 Offline Banner -->
 <app-network-banner *ngIf="showBanner" (retry)="onRetryNetwork()"></app-network-banner>
 
 <ng-container *ngIf="!showBanner">
   <div class="dashboard-container">
-    <!-- 🌐 Offline Banner -->
 
-    <div class="header-wrapper" *ngIf="showHeader$ | async">
-      <app-header></app-header>
+    <div class="header-wrapper">
+      <app-header [compact]="!showHeader"></app-header>
     </div>
 
     <div class="body-wrapper">
       <router-outlet></router-outlet>
     </div>
 
-    <div class="footer-wrapper">
+    <div class="footer-wrapper" *ngIf="showFooter">
       <app-footer></app-footer>
     </div>
   </div>

@@ -44,6 +44,8 @@ export class HeaderComponent implements OnInit {
   private store = inject(Store);
   private wishlistFacade = inject(WishlistFacade);
 
+  @Input() compact = false;
+
   cartlistCount: Signal<number> = signal<number>(0);
   wCount =  computed(() => this.wishlistFacade.wishlistCount());
 

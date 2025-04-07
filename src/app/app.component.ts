@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component, effect, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { FooterComponent } from "./shared/components/footer/footer.component";
 import { DashboardComponent } from "./shared/components/dashboard/dashboard.component";
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { filter, Observable } from 'rxjs';
 import { LayoutService } from './core/services/layout.service';
 import { CommonModule } from '@angular/common';
 import { NetworkService } from './core/services/network.service';
@@ -28,9 +28,12 @@ export class AppComponent {
   showHeader$: Observable<boolean>;
   isOffline = false;
   showBanner = false;
+  showHeader = true;
+  showFooter = true;
 
   constructor(private layoutService: LayoutService,
-    private readonly networkService: NetworkService
+    private readonly networkService: NetworkService,
+    private readonly router: Router,
   ) {
     this.showHeader$ = this.layoutService.showHeader$;
 
@@ -45,6 +48,18 @@ export class AppComponent {
           this.showBanner = false;
         }, 3000);
       }
+    });
+
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      const currentRoute = event.url;
+
+      // Hide header/footer on /checkout
+      const isCheckout = currentRoute.includes('/checkout');
+
+      this.showHeader = !isCheckout;
+      this.showFooter = !isCheckout;
     });
   }
 
