@@ -180,5 +180,12 @@ export class ProductService {
   }
 
 
+  getRankedProducts(type: 'top_sellers' | 'weekly_top_sellers' | 'new_arrivals', limit = 10, country = 'IND'): Observable<IProduct[]> {
+    return this.httpClient.get<{ data: IProduct[] }>(`${this.baseUrl}${PRODUCT_API_URLS.product.product.productsRanked(type, limit, country)}`).pipe(
+      map(res => res.data)
+    );
+  }
+
+
 
 }

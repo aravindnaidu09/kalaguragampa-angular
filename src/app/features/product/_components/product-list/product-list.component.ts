@@ -65,7 +65,55 @@ export class ProductListComponent implements OnInit {
   ngOnInit(): void {
     this.preloadCategories();
     this.wishlistItems = this.wishlistFacade.wishlistSignal;
+
+
+    this.getTopSellers();
+    this.getWeekTopSellers();
+    this.getNewArrivals();
   }
+
+  /** ✅ Fetch Top Sellers */
+private getTopSellers(): void {
+  this.isTopSellersLoading.set(true);
+
+  this.productService
+    .getRankedProducts('top_sellers', 10)
+    .pipe(take(1))
+    .subscribe({
+      next: (res) => this.topSellers.set(res),
+      error: () => this.toastService.showError('Failed to load top sellers.'),
+      complete: () => this.isTopSellersLoading.set(false),
+    });
+}
+
+/** ✅ Fetch Weekly Top Sellers */
+private getWeekTopSellers(): void {
+  this.isWeekTopSellersLoading.set(true);
+
+  this.productService
+    .getRankedProducts('weekly_top_sellers', 10)
+    .pipe(take(1))
+    .subscribe({
+      next: (res) => this.weekTopSellers.set(res),
+      error: () => this.toastService.showError('Failed to load weekly top sellers.'),
+      complete: () => this.isWeekTopSellersLoading.set(false),
+    });
+}
+
+/** ✅ Fetch New Arrivals */
+private getNewArrivals(): void {
+  this.isNewArrivalsLoading.set(true);
+
+  this.productService
+    .getRankedProducts('new_arrivals', 10)
+    .pipe(take(1))
+    .subscribe({
+      next: (res) => this.newArrivals.set(res),
+      error: () => this.toastService.showError('Failed to load new arrivals.'),
+      complete: () => this.isNewArrivalsLoading.set(false),
+    });
+}
+
 
   /** ✅ Preload top categories */
   private preloadCategories(): void {
