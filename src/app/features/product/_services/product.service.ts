@@ -156,30 +156,6 @@ export class ProductService {
       );;
   }
 
-  /**
-   * Fetch wishlist items
-   */
-  getWishlist(): Observable<IWishlist[]> {
-    return this.httpClient
-      .get<IWishlist[]>(`${this.baseUrl}${PRODUCT_API_URLS.product.wishlist.get}`)
-      .pipe(map((data: any) => deserializeWishlist(data.data)));
-  }
-
-  /**
-   * Add a product to wishlist
-   */
-  addToWishlist(productId: number): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}${PRODUCT_API_URLS.product.wishlist.add(productId)}`, {});
-  }
-
-  /**
-   * Remove a product from wishlist
-   */
-  removeFromWishlist(productId: number): Observable<any> {
-    return this.httpClient.delete(`${this.baseUrl}${PRODUCT_API_URLS.product.wishlist.remove(productId)}`);
-  }
-
-
   getRankedProducts(type: 'top_sellers' | 'weekly_top_sellers' | 'new_arrivals', limit = 10, country = 'IND'): Observable<IProduct[]> {
     return this.httpClient.get<{ data: IProduct[] }>(`${this.baseUrl}${PRODUCT_API_URLS.product.product.productsRanked(type, limit, country)}`).pipe(
       map(res => res.data)

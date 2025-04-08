@@ -1,66 +1,69 @@
 .refund-policy-container {
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  font-family: 'Nunito', sans-serif;
-  line-height: 1.8;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  max-width: 960px;
+  margin: 0 auto;
 
   h1 {
     font-size: 28px;
-    color: #1a1a1a; /* Darker header */
-    margin-bottom: 20px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 0.5rem;
   }
 
   h2 {
-    font-size: 22px;
-    color: #333; /* Slightly darker */
-    margin: 20px 0 15px;
-    font-weight: bold;
-    text-transform: capitalize;
+    font-size: 20px;
+    font-weight: 600;
+    color: #4a4a4a;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
   }
 
   p {
-    font-size: 16px;
-    color: #555;
-    margin: 10px 0;
+    font-size: 15px;
     line-height: 1.8;
+    color: #555;
+    margin-bottom: 1rem;
   }
 
   ul {
-    margin: 10px 0;
+    margin-left: 0;
     padding-left: 0;
+    list-style: none;
 
     li {
-      font-size: 16px;
-      color: #555;
-      margin-bottom: 10px;
-      list-style: none; /* Remove dots */
-      padding-left: 20px;
       position: relative;
+      font-size: 15px;
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+      color: #555;
 
       &::before {
-        // content: '•'; /* Add custom bullet */
-        // color: #682f12; /* Theme color for bullet */
-        font-size: 18px;
+        content: '✔';
         position: absolute;
         left: 0;
-        top: 0;
+        top: 2px;
+        color: #682f12;
+        font-weight: bold;
+        font-size: 14px;
       }
     }
   }
 
   a {
-    color: #682f12; /* Theme color */
+    color: #682f12;
     text-decoration: underline;
-    font-weight: bold;
+    font-weight: 500;
     transition: color 0.3s ease;
 
     &:hover {
-      color: #844026; /* Slightly darker on hover */
+      color: #4a210c;
     }
   }
 }

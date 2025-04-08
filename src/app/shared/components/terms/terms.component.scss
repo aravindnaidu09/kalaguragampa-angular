@@ -1,51 +1,59 @@
 .terms-service-container {
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  font-family: 'Nunito', sans-serif;
+  padding: 2rem;
+  max-width: 960px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  color: #333;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  line-height: 1.8;
 
   h1 {
     font-size: 28px;
+    font-weight: 700;
     color: #1a1a1a;
-    margin-bottom: 20px;
-    font-weight: bold;
-    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #eee;
+    letter-spacing: 0.5px;
   }
 
   h2 {
-    font-size: 22px;
-    color: #333;
-    margin: 20px 0 15px;
-    font-weight: bold;
-    text-transform: capitalize;
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #4a4a4a;
+    border-left: 4px solid #682f12;
+    padding-left: 0.75rem;
   }
 
   p {
-    font-size: 16px;
+    font-size: 15px;
+    margin-bottom: 1.25rem;
     color: #555;
-    margin-bottom: 10px;
     line-height: 1.8;
   }
 
   ul {
-    padding-left: 20px;
-    margin: 10px 0;
+    list-style: none;
+    padding-left: 0;
+    margin: 1rem 0;
 
     li {
-      font-size: 16px;
-      color: #555;
-      margin-bottom: 10px;
-      list-style: none;
       position: relative;
+      padding-left: 1.6rem;
+      font-size: 15px;
+      margin-bottom: 1rem;
+      color: #555;
 
       &::before {
-        // content: '•';
-        // color: #682f12;
-        font-size: 18px;
+        content: '✔';
         position: absolute;
-        left: -20px;
-        top: 0;
+        left: 0;
+        top: 2px;
+        font-size: 14px;
+        color: #682f12;
       }
     }
   }
@@ -53,11 +61,28 @@
   a {
     color: #682f12;
     text-decoration: underline;
-    font-weight: bold;
+    font-weight: 500;
     transition: color 0.3s ease;
 
     &:hover {
-      color: #844026;
+      color: #4a210c;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 1.5rem;
+
+    h1 {
+      font-size: 24px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    p,
+    li {
+      font-size: 14px;
     }
   }
 }
