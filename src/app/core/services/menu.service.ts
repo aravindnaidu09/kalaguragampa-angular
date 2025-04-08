@@ -45,7 +45,7 @@ export class MenuService {
       this.menuItemsSignal.set([
         { label: `👤Hi, ${username}`, disabled: true },
         { label: 'Dashboard', action: () => this.router.navigate(['/']) },
-        { label: 'Orders', action: () => this.router.navigate(['/settings']) },
+        { label: 'Orders', action: () => this.router.navigate(['/settings/orders']) },
         { label: 'Settings', action: () => this.router.navigate(['/settings/profile']) },
         { label: 'Logout', action: () => this.logout() }
       ]);
