@@ -19,6 +19,7 @@ import { AddressState } from './features/settings/_state/address.state';
 import { OrderState } from './features/settings/_state/order.state';
 
 import { provideServiceWorker } from '@angular/service-worker';
+import { ProfileState } from './features/settings/_state/profile.state';
 
 
 export const appConfig: ApplicationConfig = {
@@ -28,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withHashLocation()),
     provideAnimationsAsync(),
     provideHttpClient(),
-    provideStore([AuthState, OtpState, SearchState, WishlistState, CartState, AddressState, OrderState],
+    provideStore([AuthState, OtpState, SearchState, WishlistState, CartState, AddressState, OrderState, ProfileState],
       withNgxsReduxDevtoolsPlugin(),
       // withNgxsFormPlugin(),
       withNgxsLoggerPlugin(),

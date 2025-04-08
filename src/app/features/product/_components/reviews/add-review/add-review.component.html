@@ -1,0 +1,27 @@
+<div class="add-review-wrapper">
+  <!-- Left: Guidelines -->
+  <aside class="guidelines">
+    <h3>What makes a good review</h3>
+    <ul>
+      <li><strong>Have you used this product?</strong> Share your experience.</li>
+      <li><strong>Why review a product?</strong> Help fellow shoppers.</li>
+      <li><strong>How to review?</strong> Be honest, helpful, and factual.</li>
+    </ul>
+  </aside>
+
+  <!-- Right: Review Form -->
+  <section class="form-section">
+    <div class="product-meta">
+      <span class="product-name">JBL Wave Buds TWS, 32H...</span>
+      <img src="assets/sample-product.jpg" alt="Product" />
+    </div>
+
+    <app-star-rating [(rating)]="formData.rating" />
+
+    <textarea [(ngModel)]="formData.description" placeholder="Description..." rows="5"></textarea>
+    <input [(ngModel)]="formData.title" placeholder="Title (optional)" />
+
+
+    <button class="submit-btn" (click)="submitReview()">SUBMIT</button>
+  </section>
+</div>

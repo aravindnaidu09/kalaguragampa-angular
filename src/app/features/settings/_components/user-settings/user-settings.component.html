@@ -3,41 +3,36 @@
   <div class="sidebar-card">
     <div class="user-profile">
       <div class="avatar"></div>
-      <!-- <div class="user-name">Hello, <strong>{{ userName }}</strong></div> -->
+      <div class="user-name" *ngIf="user()">{{ user()?.full_name }}</div>
     </div>
 
     <div class="section">
       <div class="section-title">ACCOUNT SETTINGS</div>
       <ul>
-        <li (click)="selectTab('profile')" [class.active]="selectedTab === 'profile'">Profile Information</li>
-        <li (click)="selectTab('address')" [class.active]="selectedTab === 'address'">Manage Addresses</li>
-        <!-- <li (click)="selectTab('security')" [class.active]="selectedTab === 'security'">Security</li> -->
+        <li routerLink="profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          Profile Information
+        </li>
+        <li routerLink="address" routerLinkActive="active">Manage Addresses</li>
       </ul>
     </div>
 
     <div class="section">
       <div class="section-title">MY ORDERS</div>
       <ul>
-        <li (click)="selectTab('orders')" [class.active]="selectedTab === 'orders'">Order History</li>
+        <li routerLink="orders" routerLinkActive="active">Order History</li>
       </ul>
     </div>
 
     <div class="section">
       <div class="section-title">PREFERENCES</div>
       <ul>
-        <li (click)="selectTab('notifications')" [class.active]="selectedTab === 'notifications'">Notifications</li>
+        <li routerLink="notifications" routerLinkActive="active">Notifications</li>
       </ul>
     </div>
   </div>
 
   <!-- Right: Content -->
   <div class="content-area">
-    <ng-container [ngSwitch]="selectedTab">
-      <app-profile *ngSwitchCase="'profile'"></app-profile>
-      <app-order-history *ngSwitchCase="'orders'"></app-order-history>
-      <app-address-management *ngSwitchCase="'address'"></app-address-management>
-      <app-security-settings *ngSwitchCase="'security'"></app-security-settings>
-      <app-notification-preferences *ngSwitchCase="'notifications'"></app-notification-preferences>
-    </ng-container>
+    <router-outlet #outlet="outlet"></router-outlet>
   </div>
 </div>

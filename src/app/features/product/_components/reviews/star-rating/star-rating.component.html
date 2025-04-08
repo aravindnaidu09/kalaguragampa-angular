@@ -1,0 +1,11 @@
+<div class="star-container">
+  <ng-container *ngFor="let star of stars; index as i">
+    <span
+      class="star"
+      [class.filled]="i < rating"
+      (click)="selectRating(i + 1)">
+      ★
+    </span>
+  </ng-container>
+  <span *ngIf="rating" class="label">{{ getLabel(rating) }}</span>
+</div>

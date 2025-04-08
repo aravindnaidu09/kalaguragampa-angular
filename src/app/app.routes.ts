@@ -11,6 +11,11 @@ import { ProductsPageComponent } from './features/product/_components/products-p
 import { WishlistComponent } from './features/cart/_components/wishlist/wishlist.component';
 import { UserSettingsComponent } from './features/settings/_components/user-settings/user-settings.component';
 import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
+import { AddReviewContainerComponent } from './features/product/_components/reviews/add-review-container/add-review-container.component';
+import { ProfileComponent } from './features/settings/_components/profile/profile.component';
+import { AddressManagementComponent } from './features/settings/_components/address-management/address-management.component';
+import { NotificationPreferencesComponent } from './features/settings/_components/notification-preferences/notification-preferences.component';
+import { OrderHistoryComponent } from './features/settings/_components/order-history/order-history.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -24,7 +29,19 @@ export const routes: Routes = [
   { path: 'shipping-policy', component: ShipmentPolicyComponent },
   { path: 'terms-services', component: TermsComponent },
   { path: 'detail-view', component: ProductsPageComponent },
-  { path: 'settings/:id', component: UserSettingsComponent },
+  {
+    path: 'settings',
+    component: UserSettingsComponent,
+    children: [
+      { path: '', redirectTo: 'profile', pathMatch: 'full' },
+      { path: 'profile', component: ProfileComponent, data: { animation: 'profile' } },
+      { path: 'address', component: AddressManagementComponent, data: { animation: 'address' } },
+      { path: 'orders', component: OrderHistoryComponent, data: { animation: 'orders' } },
+      { path: 'notifications', component: NotificationPreferencesComponent, data: { animation: 'notifications' } }
+    ]
+  },
+  { path: 'review/:id', component: AddReviewContainerComponent },
+
 
   // 🚨 Catch-all fallback route — should always be last
   { path: '**', component: PageNotFoundComponent },
