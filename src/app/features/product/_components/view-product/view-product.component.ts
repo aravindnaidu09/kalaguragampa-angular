@@ -9,6 +9,8 @@ import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../../core/services/toast.service';
 import { CartFacade } from '../../../cart/_state/cart.facade';
 import { ReviewContainerComponent } from "../reviews/review-container/review-container.component";
+import { Observable, of } from 'rxjs';
+import { AuthService } from '../../../auth/_services/auth.service';
 
 @Component({
   selector: 'app-view-product',
@@ -27,6 +29,7 @@ export class ViewProductComponent implements OnInit {
   private productService = inject(ProductService);
   private toastService = inject(ToastService);
   private cartFacade = inject(CartFacade);
+  private auth = inject(AuthService);
 
   product = signal<IProduct | null>(null); // ✅ Reactive Signal for Product Data
   quantity = signal<number>(1); // ✅ Default Quantity
@@ -97,20 +100,45 @@ export class ViewProductComponent implements OnInit {
     }
   }
 
-  // ✅ Add to Cart Function
-  addToCart(): void {
-    if (this.product()?.maxQuantity && this.quantity() > this.product()?.maxQuantity!) {
-      this.toastService.showError(`You can only purchase up to ${this.product()?.maxQuantity} units.`);
-      return;
+  private tryAddToCart(): Observable<boolean> {
+
+    const product = this.product();
+    const qty = this.quantity();
+
+    if (product?.maxQuantity && qty > product.maxQuantity) {
+      this.toastService.showError(`You can only purchase up to ${product.maxQuantity} units.`);
+      return of(false);
     }
 
-    // ✅ All good, dispatch add to cart
-    this.cartFacade.addToCart(this.product()?.id!, this.quantity());
+    return this.cartFacade.addToCart(product?.id!, qty);
+  }
+
+
+  // ✅ Add to Cart Function
+  addToCart(): void {
+    if (!(this.auth.isAuthenticated())) {
+      this.toastService.showWarning('Please log in to add items!');
+      return;
+    }
+    this.tryAddToCart().subscribe((success) => {
+      console.log('checking-cart: ', success);
+      if (success) {
+        this.toastService.showSuccess('Item added to cart!');
+      }
+    });
   }
 
   // ✅ Navigate to Checkout
   goToCheckoutPage(): void {
-    this.router.navigate(['/checkout']);
+    if (!(this.auth.isAuthenticated())) {
+      this.toastService.showWarning('Please log in to add items!');
+      return;
+    }
+    this.tryAddToCart().subscribe((success) => {
+      if (success) {
+        this.router.navigate(['/checkout']);
+      }
+    });
   }
 
   // ✅ Get Image Path with Fallback

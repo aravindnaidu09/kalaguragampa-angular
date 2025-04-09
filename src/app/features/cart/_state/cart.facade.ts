@@ -8,7 +8,7 @@ import {
   UpdateCartItems
 } from './cart.actions';
 import { CartState } from './cart.state';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class CartFacade {
@@ -28,9 +28,10 @@ export class CartFacade {
     this.store.dispatch(new ClearCart());
   }
 
-  addToCart(productId: number, quantity: number = 1): void {
-    this.store.dispatch(new AddToCart(productId, quantity));
+  addToCart(productId: number, quantity: number = 1): Observable<any> {
+    return this.store.dispatch(new AddToCart(productId, quantity));
   }
+
 
   updateCartItems(items: { id: number; quantity: number }[]): Observable<any> {
     return this.store.dispatch(new UpdateCartItems(items));

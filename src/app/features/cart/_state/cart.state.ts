@@ -1,5 +1,5 @@
-import { catchError, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 import { ToastService } from '../../../core/services/toast.service';
 import { Injectable } from '@angular/core';
 import { Selector, Action, StateContext, State } from '@ngxs/store';
@@ -24,7 +24,7 @@ export class CartState {
   constructor(
     private cartService: CartService,
     private toast: ToastService
-  ) {}
+  ) { }
 
   @Selector()
   static cart(state: CartStateModel): CartResponseItem | null {
@@ -45,12 +45,12 @@ export class CartState {
         if (res?.data) {
           ctx.patchState({ cart: res.data });
         } else {
-          this.toast.showError('Cart data is empty or malformed.');
+          // this.toast.showError('Cart data is empty or malformed.');
         }
         ctx.patchState({ loading: false });
       }),
       catchError((err) => {
-        this.toast.showError('Failed to load cart.');
+        // this.toast.showError('Failed to load cart.');
         ctx.patchState({ loading: false });
         return of(err);
       })
@@ -62,50 +62,45 @@ export class CartState {
     return this.cartService.clearCart().pipe(
       tap(() => {
         ctx.patchState({ cart: null });
-        this.toast.showSuccess('Cart cleared successfully.');
+        // this.toast.showSuccess('Cart cleared successfully.');
       }),
       catchError((err) => {
-        this.toast.showError('Failed to clear cart.');
+        // this.toast.showError('Failed to clear cart.');
         return of(err);
       })
     );
   }
 
   @Action(AddToCart)
-  addToCart(ctx: StateContext<CartStateModel>, action: AddToCart) {
+  addToCart(ctx: StateContext<CartStateModel>, action: AddToCart): Observable<boolean> {
     return this.cartService.addToCart(action.productId, action.quantity).pipe(
       tap((res) => {
         if (res?.data) {
           ctx.patchState({ cart: res.data });
-          this.toast.showSuccess('Product added to cart.');
-        } else {
-          this.toast.showError('Failed to add product to cart.');
         }
       }),
-      catchError((err) => {
-        this.toast.showError('Error adding to cart.');
-        return of(err);
-      })
+      map((res) => !!res?.data), // ✅ emits true if API response has data
+      catchError(() => of(false)) // ✅ emits false on error
     );
   }
 
   @Action(UpdateCartItems)
-updateCartItems(ctx: StateContext<CartStateModel>, action: UpdateCartItems) {
-  return this.cartService.updateCartItems(action.items).pipe(
-    tap((res) => {
-      if (res?.data) {
-        ctx.patchState({ cart: res.data });
-        // this.toast.showSuccess('Cart updated successfully.');
-      } else {
-        // this.toast.showError('Failed to update cart.');
-      }
-    }),
-    catchError((err) => {
-      // this.toast.showError('Error updating cart.');
-      return of(err);
-    })
-  );
-}
+  updateCartItems(ctx: StateContext<CartStateModel>, action: UpdateCartItems) {
+    return this.cartService.updateCartItems(action.items).pipe(
+      tap((res) => {
+        if (res?.data) {
+          ctx.patchState({ cart: res.data });
+          // this.toast.showSuccess('Cart updated successfully.');
+        } else {
+          // this.toast.showError('Failed to update cart.');
+        }
+      }),
+      catchError((err) => {
+        // this.toast.showError('Error updating cart.');
+        return of(err);
+      })
+    );
+  }
 
   @Action(RemoveCartItem)
   removeCartItem(ctx: StateContext<CartStateModel>, action: RemoveCartItem) {
