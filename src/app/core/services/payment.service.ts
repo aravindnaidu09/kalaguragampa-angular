@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { APP_SETTINGS } from '../constants/app-settings';
 import { ApiResponse } from '../models/api-response.model';
 import { Observable } from 'rxjs';
+import { PAYMENT_API_URLS } from '../constants/payments-api-urls';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class PaymentService {
 
 
   private http = inject(HttpClient);
-  private baseUrl = `${APP_SETTINGS.apiBaseUrl}/payments/api/v1`;
+  private baseUrl = `${APP_SETTINGS.apiBaseUrl}`;
 
   /**
    * Create a new Razorpay order
@@ -22,19 +23,19 @@ export class PaymentService {
     address_id: number;
     courier_company_id: string;
   }): Observable<ApiResponse<{ id: string; amount: number; currency: string }>> {
-    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/order/`, payload);
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/${PAYMENT_API_URLS.payment.createOrder}`, payload);
   }
 
   /**
    * Verify Razorpay payment using order PK (from backend order object)
    */
-  verifyPayment(orderPk: number, payload: {
+  verifyPayment(orderPk: string, payload: {
     razorpay_payment_id: string;
     razorpay_order_id: string;
     razorpay_signature: string;
   }): Observable<ApiResponse<any>> {
     return this.http.post<ApiResponse<any>>(
-      `${this.baseUrl}/order/${orderPk}/verify-payment/`,
+      `${this.baseUrl}${PAYMENT_API_URLS.payment.verifyPayment(orderPk)}`,
       payload
     );
   }

@@ -12,6 +12,11 @@ import { DeliveryService } from '../../../../core/services/delivery.service';
 import { DeliveryOption } from '../../../../core/models/delivery.model';
 import { PaymentService } from '../../../../core/services/payment.service';
 import { CartFacade } from '../../../cart/_state/cart.facade';
+import { RazorpayService } from '../../../../core/services/razorpay.service';
+import { ToastService } from '../../../../core/services/toast.service';
+import { RazorpayOrder } from '../../../../core/models/razorpay.model';
+import { AuthService } from '../../../auth/_services/auth.service';
+import { ProfileFacade } from '../../../settings/_state/profile.facade';
 
 @Component({
   selector: 'app-checkout-details',
@@ -31,6 +36,10 @@ export class CheckoutDetailsComponent implements OnInit {
   private deliveryService = inject(DeliveryService);
   private paymentService = inject(PaymentService);
   private cartFacade = inject(CartFacade);
+  private razorpayService = inject(RazorpayService);
+  private toastService = inject(ToastService);
+  private authFacade = inject(ProfileFacade);
+
 
 
   currentStep = 0;
@@ -134,10 +143,49 @@ export class CheckoutDetailsComponent implements OnInit {
     this.paymentService.createOrder(payload).subscribe({
       next: (response) => {
         console.log('Order Created:', response);
+        this.launchRazorpay(response.data)
         // TODO: Call Razorpay.init(response.data) or open Razorpay checkout here
       },
       error: () => {
         console.error('Failed to create order');
+      }
+    });
+  }
+
+  /** Step 2: Open Razorpay Checkout */
+  private launchRazorpay(order: any): void {
+    const razorpayOrder: RazorpayOrder = {
+      id: order.payment_order_id,
+      amount: Number(order.amount) * 100, // Razorpay expects paisa
+      currency: order.currency
+    };
+
+    const userInfo = {
+      name: this.authFacade.userSignal()?.full_name!,
+      email: this.authFacade.userSignal()?.email!,
+      contact: this.authFacade.userSignal()?.phone!
+    };
+
+    this.razorpayService.openCheckout(razorpayOrder, userInfo, (response) => {
+      this.verifyPaymentCallback(order.id, response);
+    });
+  }
+
+  /** Step 3: Verify payment with server */
+  private verifyPaymentCallback(orderPk: string, response: any): void {
+    const payload = {
+      razorpay_payment_id: response.razorpay_payment_id,
+      razorpay_order_id: response.razorpay_order_id,
+      razorpay_signature: response.razorpay_signature
+    };
+
+    this.paymentService.verifyPayment(orderPk, payload).subscribe({
+      next: () => {
+        this.toastService.showSuccess('Payment verified successfully!');
+        // this.router.navigate(['/thank-you']);
+      },
+      error: () => {
+        this.toastService.showError('Payment verification failed.');
       }
     });
   }
