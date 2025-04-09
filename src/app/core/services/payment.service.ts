@@ -30,9 +30,8 @@ export class PaymentService {
    * Verify Razorpay payment using order PK (from backend order object)
    */
   verifyPayment(orderPk: string, payload: {
-    razorpay_payment_id: string;
-    razorpay_order_id: string;
-    razorpay_signature: string;
+    payment_id: string;
+    payment_signature: string;
   }): Observable<ApiResponse<any>> {
     return this.http.post<ApiResponse<any>>(
       `${this.baseUrl}${PAYMENT_API_URLS.payment.verifyPayment(orderPk)}`,

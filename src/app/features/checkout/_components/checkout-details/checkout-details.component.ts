@@ -17,6 +17,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 import { RazorpayOrder } from '../../../../core/models/razorpay.model';
 import { AuthService } from '../../../auth/_services/auth.service';
 import { ProfileFacade } from '../../../settings/_state/profile.facade';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-checkout-details',
@@ -39,6 +40,7 @@ export class CheckoutDetailsComponent implements OnInit {
   private razorpayService = inject(RazorpayService);
   private toastService = inject(ToastService);
   private authFacade = inject(ProfileFacade);
+  private router = inject(Router);
 
 
 
@@ -174,15 +176,14 @@ export class CheckoutDetailsComponent implements OnInit {
   /** Step 3: Verify payment with server */
   private verifyPaymentCallback(orderPk: string, response: any): void {
     const payload = {
-      razorpay_payment_id: response.razorpay_payment_id,
-      razorpay_order_id: response.razorpay_order_id,
-      razorpay_signature: response.razorpay_signature
+      payment_id: response.razorpay_payment_id,
+      payment_signature: response.razorpay_signature
     };
 
     this.paymentService.verifyPayment(orderPk, payload).subscribe({
       next: () => {
         this.toastService.showSuccess('Payment verified successfully!');
-        // this.router.navigate(['/thank-you']);
+        this.router.navigate(['/']);
       },
       error: () => {
         this.toastService.showError('Payment verification failed.');
