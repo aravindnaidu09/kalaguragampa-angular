@@ -9,6 +9,7 @@ import { WishlistFacade } from '../../_state/wishlist.facade';
 import { CartService } from '../../_services/cart.service';
 import { IWishlist } from '../../../product/_models/wishlist-model';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
+import { CartFacade } from '../../_state/cart.facade';
 
 @Component({
   selector: 'app-wishlist',
@@ -31,7 +32,8 @@ export class WishlistComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly router: Router,
     private readonly toastService: ToastService,
-    private readonly confirmService: ConfirmDialogService
+    private readonly confirmService: ConfirmDialogService,
+    private readonly cartFacade: CartFacade
   ) { }
 
   ngOnInit(): void {
@@ -43,24 +45,33 @@ export class WishlistComponent implements OnInit {
     if (!products.length) return;
 
     let completed = 0;
+    let failed = 0;
+
     products.forEach((product) => {
-      this.cartService.addToCart(product.productDetails.id!).subscribe({
+      this.cartFacade.addToCart(product.productDetails.id!).subscribe({
         next: () => {
           completed++;
-          if (completed === products.length) {
-            // this.toastService.showSuccess('All items added to cart');
-            this.wishlistFacade.fetch();
-          }
+          this.checkAllComplete(completed, products.length, failed);
         },
         error: () => {
+          failed++;
           completed++;
-          if (completed === products.length) {
-            this.toastService.showError('Some items failed to add');
-            this.wishlistFacade.fetch();
-          }
+          this.checkAllComplete(completed, products.length, failed);
         }
       });
     });
+  }
+
+  // ✅ Small helper to check completion state
+  private checkAllComplete(done: number, total: number, failed: number) {
+    if (done === total) {
+      if (failed > 0) {
+        this.toastService.showError(`${failed} items failed to add`);
+      } else {
+        this.toastService.showSuccess('All items added to cart');
+      }
+      this.wishlistFacade.fetch();
+    }
   }
 
   toggleView(): void {
@@ -85,16 +96,17 @@ export class WishlistComponent implements OnInit {
   }
 
   addToCart(product: IWishlist): void {
-    this.cartService.addToCart(product.productDetails.id!).subscribe({
+    this.cartFacade.addToCart(product.productDetails.id!).subscribe({
       next: () => {
-        this.toastService.showSuccess(`${product.productDetails.name} added to cart`);
-        this.wishlistFacade.fetch();
+        // this.toastService.showSuccess(`${product.productDetails.name} added to cart`);
+        this.wishlistFacade.fetch(); // ✅ Refresh the wishlist after successful add
       },
       error: () => {
         // this.toastService.showError(`Failed to add ${product.productDetails.name} to cart`);
       }
     });
   }
+
 
   changeSorting(sortType: string): void {
     this.selectedSort.set(sortType);
@@ -115,18 +127,27 @@ export class WishlistComponent implements OnInit {
   }
 
   clearWishlist(): void {
-    const products = this.wishlistItems();
-    if (!products.length) return;
+    this.confirmService.confirm({
+      title: 'Remove Item',
+      message: 'Are you sure you want to remove this item from the wishlist?',
+      confirmText: 'Remove',
+      cancelText: 'Cancel'
+    }).subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        const products = this.wishlistItems();
+        if (!products.length) return;
 
-    let removed = 0;
-    products.forEach(product => {
-      this.wishlistFacade.remove(product.id!).subscribe(() => {
-        removed++;
-        if (removed === products.length) {
-          // this.toastService.showSuccess('Wishlist cleared');
-          this.wishlistFacade.fetch();
-        }
-      });
+        let removed = 0;
+        products.forEach(product => {
+          this.wishlistFacade.remove(product.id!).subscribe(() => {
+            removed++;
+            if (removed === products.length) {
+              // this.toastService.showSuccess('Wishlist cleared');
+              this.wishlistFacade.fetch();
+            }
+          });
+        });
+      }
     });
   }
 

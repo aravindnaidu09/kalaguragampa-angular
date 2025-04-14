@@ -70,7 +70,6 @@ export class CartState {
       })
     );
   }
-
   @Action(AddToCart)
   addToCart(ctx: StateContext<CartStateModel>, action: AddToCart): Observable<boolean> {
     return this.cartService.addToCart(action.productId, action.quantity).pipe(
@@ -79,10 +78,13 @@ export class CartState {
           ctx.patchState({ cart: res.data });
         }
       }),
-      map((res) => !!res?.data), // ✅ emits true if API response has data
-      catchError(() => of(false)) // ✅ emits false on error
+      map((res) => !!res?.data), // ✅ return true on success
+      catchError((err) => {
+        return of(false); // ✅ return false on failure
+      })
     );
   }
+
 
   @Action(UpdateCartItems)
   updateCartItems(ctx: StateContext<CartStateModel>, action: UpdateCartItems) {

@@ -11,7 +11,7 @@ import { ApiResponse } from '../../../core/models/api-response.model';
 export class WishlistService {
   private readonly baseUrl = APP_SETTINGS.apiBaseUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getWishlist(): Observable<IWishlist[]> {
     return this.http
@@ -22,14 +22,25 @@ export class WishlistService {
   addToWishlist(productId: number): Observable<IWishlist> {
     return this.http
       .post<ApiResponse<IWishlist>>(`${this.baseUrl}${PRODUCT_API_URLS.product.wishlist.add(productId)}`, {})
-      .pipe(map((res) => res.data));
+      .pipe(
+        map((res) => {
+          const deserialized = deserializeWishlist([res.data]); // wrap single item in array
+          return deserialized[0]; // return first (and only) item
+        })
+      );
   }
 
   updateWishlistItem(item: IWishlist): Observable<IWishlist> {
     return this.http
       .put<ApiResponse<IWishlist>>(`${this.baseUrl}/wishlist/${item.productDetails.id}`, item)
-      .pipe(map((res) => res.data));
+      .pipe(
+        map((res) => {
+          const deserialized = deserializeWishlist([res.data]); // wrap single item in array
+          return deserialized[0]; // return first (and only) item
+        })
+      );
   }
+
 
   removeFromWishlist(id: number): Observable<void> {
     return this.http

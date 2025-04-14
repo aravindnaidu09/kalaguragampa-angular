@@ -8,7 +8,7 @@ import {
   UpdateCartItems
 } from './cart.actions';
 import { CartState } from './cart.state';
-import { catchError, map, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class CartFacade {
@@ -28,10 +28,13 @@ export class CartFacade {
     this.store.dispatch(new ClearCart());
   }
 
-  addToCart(productId: number, quantity: number = 1): Observable<any> {
-    return this.store.dispatch(new AddToCart(productId, quantity));
+  addToCart(productId: number, quantity: number = 1): Observable<boolean> {
+    return this.store.dispatch(new AddToCart(productId, quantity)).pipe(
+      switchMap(() => this.store.selectOnce(CartState.cart)), // optional if you want to verify result
+      map((cart) => !!cart), // ✅ confirm presence of cart or simply return true earlier
+      catchError(() => of(false))
+    );
   }
-
 
   updateCartItems(items: { id: number; quantity: number }[]): Observable<any> {
     return this.store.dispatch(new UpdateCartItems(items));
