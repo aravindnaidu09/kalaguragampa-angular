@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '../../../../core/services/toast.service';
 import { ProfileService } from '../../_services/profile.service';
@@ -17,7 +17,7 @@ import { ProfileFacade } from '../../_state/profile.facade';
   styleUrl: './profile.component.scss',
   providers: [ProfileService, ToastService]
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit{
   private authFacade = inject(ProfileFacade);
   private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
@@ -25,20 +25,13 @@ export class ProfileComponent {
   profileForm!: FormGroup;
   profileImageUrl: string = '/assets/default-avatar.png';
 
-  isEditing = {
-    personal: false,
-    email: false,
-    phone: false
-  };
+  isEditing = false;
+
+
 
   ngOnInit(): void {
     this.initForm();
     this.authFacade.loadUser();
-
-    effect(() => {
-      const user = this.authFacade.userSignal();
-      if (user) this.patchForm(user);
-    });
   }
 
   private initForm(): void {
@@ -47,49 +40,32 @@ export class ProfileComponent {
       lastName: [this.authFacade.userSignal()?.full_name?.split(' ').slice(1).join(' ') || '', [Validators.required]],
       gender: [this.authFacade.userSignal()?.gender || '', [Validators.required]],
       email: [this.authFacade.userSignal()?.email, [Validators.required, Validators.email]],
-      phone: [this.authFacade.userSignal()?.phone, [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      phone: [this.authFacade.userSignal()?.mobile, [Validators.required, Validators.pattern(/^\d{10}$/)]],
       profileImage: [null]
     });
   }
 
-  private patchForm(user: ProfileModel): void {
-    const [firstName, ...rest] = user.full_name?.split(' ') ?? [''];
-    const lastName = rest.join(' ');
-
-    this.profileForm.patchValue({
-      firstName,
-      lastName,
-      gender: user.gender,
-      email: user.email,
-      phone: user.phone
-    });
-
-    this.profileImageUrl = user.profileImage || this.profileImageUrl;
+  toggleEdit(): void {
+    this.isEditing = !this.isEditing;
   }
 
-  toggleEdit(section: keyof typeof this.isEditing): void {
-    this.isEditing[section] = !this.isEditing[section];
-  }
+  // toggleEdit(section: keyof typeof this.isEditing): void {
+  //   this.isEditing[section] = !this.isEditing[section];
+  // }
 
-  submitSection(section: 'personal' | 'email' | 'phone'): void {
-    let payload: Partial<ProfileModel> = {};
-
-    if (section === 'personal') {
-      const fullName = `${this.profileForm.get('firstName')?.value} ${this.profileForm.get('lastName')?.value}`;
-      payload = {
-        full_name: fullName,
-        gender: this.profileForm.get('gender')?.value
-      };
-    } else if (section === 'email') {
-      payload = { email: this.profileForm.get('email')?.value };
-    } else if (section === 'phone') {
-      payload = { phone: this.profileForm.get('phone')?.value };
-    }
+  submitSection(): void {
+    const fullName = `${this.profileForm.get('firstName')?.value} ${this.profileForm.get('lastName')?.value}`;
+    const payload: Partial<ProfileModel> = {
+      full_name: fullName,
+      gender: this.profileForm.get('gender')?.value,
+      email: this.profileForm.get('email')?.value,
+      mobile: this.profileForm.get('phone')?.value
+    };
 
     this.authFacade.updateUser(payload).subscribe({
       next: () => {
         this.toastService.showSuccess('Profile updated successfully');
-        this.toggleEdit(section);
+        this.isEditing = false;
       },
       error: () => {
         this.toastService.showError('Failed to update profile');

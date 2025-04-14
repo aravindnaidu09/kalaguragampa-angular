@@ -1,49 +1,39 @@
 <div class="profile-wrapper">
   <div class="section">
-    <h3>Personal Information <a (click)="toggleEdit('personal')">{{ isEditing.personal ? 'Cancel' : 'Edit' }}</a></h3>
+    <h3>
+      Profile Information
+      <a (click)="toggleEdit()">{{ isEditing ? 'Cancel' : 'Edit' }}</a>
+    </h3>
 
-    <div *ngIf="!isEditing.personal">
-      <p>{{ profileForm.value.firstName }} {{ profileForm.value.lastName }}</p>
-      <p>Gender: {{ profileForm.value.gender }}</p>
-    </div>
-
-    <form *ngIf="isEditing.personal" [formGroup]="profileForm" (ngSubmit)="submitSection('personal')">
+    <form [formGroup]="profileForm" *ngIf="isEditing" (ngSubmit)="submitSection()">
+      <!-- Name -->
       <div class="grid">
         <input formControlName="firstName" placeholder="First Name" />
         <input formControlName="lastName" placeholder="Last Name" />
       </div>
+
+      <!-- Gender -->
       <label>Your Gender</label>
       <div class="gender-group">
-        <label><input type="radio" formControlName="gender" value="Male" /> Male</label>
-        <label><input type="radio" formControlName="gender" value="Female" /> Female</label>
+        <label><input type="radio" formControlName="gender" value="male" /> Male</label>
+        <label><input type="radio" formControlName="gender" value="female" /> Female</label>
       </div>
-      <button type="submit">Save</button>
+
+      <!-- Email -->
+      <input type="email" formControlName="email" placeholder="Email Address" />
+
+      <!-- Phone -->
+      <input type="text" formControlName="phone" placeholder="Mobile Number" />
+
+      <button type="submit">Save Changes</button>
     </form>
-  </div>
 
-  <div class="section">
-    <h3>Email Address <a (click)="toggleEdit('email')">{{ isEditing.email ? 'Cancel' : 'Edit' }}</a></h3>
-
-    <div *ngIf="!isEditing.email">
-      <p>{{ profileForm.value.email }}</p>
+    <!-- View Mode -->
+    <div class="view-fields" *ngIf="!isEditing">
+      <div class="view-box"><strong>Name:</strong> {{ profileForm.value.firstName }} {{ profileForm.value.lastName }}</div>
+      <div class="view-box"><strong>Gender:</strong> {{ profileForm.value.gender }}</div>
+      <div class="view-box"><strong>Email:</strong> {{ profileForm.value.email }}</div>
+      <div class="view-box"><strong>Mobile:</strong> {{ profileForm.value.phone }}</div>
     </div>
-
-    <form *ngIf="isEditing.email" (ngSubmit)="submitSection('email')">
-      <input type="email" formControlName="email" />
-      <button type="submit">Save</button>
-    </form>
-  </div>
-
-  <div class="section">
-    <h3>Mobile Number <a (click)="toggleEdit('phone')">{{ isEditing.phone ? 'Cancel' : 'Edit' }}</a></h3>
-
-    <div *ngIf="!isEditing.phone">
-      <p>{{ profileForm.value.phone }}</p>
-    </div>
-
-    <form *ngIf="isEditing.phone" (ngSubmit)="submitSection('phone')">
-      <input type="text" formControlName="phone" />
-      <button type="submit">Save</button>
-    </form>
   </div>
 </div>

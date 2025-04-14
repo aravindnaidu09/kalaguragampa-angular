@@ -63,21 +63,30 @@ export class AddressManagementComponent {
   toggleAccordion(): void {
     this.accordionOpen = !this.accordionOpen;
 
-    if (!this.accordionOpen) this.resetForm();
+    if (!this.accordionOpen) this.resetForm(false);
   }
 
   handleAddressSave(rawPayload: Address): void {
     const payload = serializeAddress(rawPayload);
 
     if (this.isEditing && payload.id) {
-      this.addressFacade.updateAddress(payload.id, payload).subscribe(() => {
-        this.resetForm();
+      this.addressFacade.updateAddress(payload.id, payload).subscribe(success => {
+        if (success) {
+          this.resetForm(true);
+          this.accordionOpen = false;
+
+        }
       });
     } else {
       this.addressFacade.createAddress(payload).subscribe(success => {
-        if (success) this.resetForm();
+        if (success) {
+          this.resetForm(true);
+          this.accordionOpen = false;
+
+        }
       });
     }
+
   }
 
   saveAddress(): void {
@@ -86,11 +95,11 @@ export class AddressManagementComponent {
 
     if (this.isEditing && this.selectedAddressId !== null) {
       this.addressFacade.updateAddress(this.selectedAddressId, payload).subscribe(() => {
-        this.resetForm();
+        this.resetForm(true);
       });
     } else {
       this.addressFacade.createAddress(payload).subscribe(success => {
-        if (success) this.resetForm();
+        if (success) this.resetForm(true);
       });
     }
   }
@@ -105,7 +114,6 @@ export class AddressManagementComponent {
   }
 
   deleteAddress(addressId: number): void {
-
     this.confirmDialogService.confirm({
       title: 'Remove Address',
       message: 'Are you sure you want to remove this address?',
@@ -122,16 +130,14 @@ export class AddressManagementComponent {
     this.addressFacade.setDefault(addressId).subscribe();
   }
 
-  resetForm(): void {
+  resetForm(isCancel: boolean): void {
     this.isEditing = false;
     this.selectedAddressId = null;
     this.editingData = {};
     this.accordionOpen = false;
     this.addressForm.reset({ country: 'India', isDefault: false });
-  }
-
-  openAddressForm(): void {
-    this.resetForm();
-    this.isEditing = false;
+    if (!isCancel) {
+      this.addressFacade.loadAddresses();
+    }
   }
 }

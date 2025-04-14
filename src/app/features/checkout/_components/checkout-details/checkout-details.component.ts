@@ -18,6 +18,8 @@ import { RazorpayOrder } from '../../../../core/models/razorpay.model';
 import { AuthService } from '../../../auth/_services/auth.service';
 import { ProfileFacade } from '../../../settings/_state/profile.facade';
 import { Router } from '@angular/router';
+import { OrderSuccessDialogComponent } from '../../../../shared/components/order-success-dialog/order-success-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-checkout-details',
@@ -53,6 +55,8 @@ export class CheckoutDetailsComponent implements OnInit {
   selectedDeliveryOption?: DeliveryOption;
 
   isProcessingPayment = false;
+
+  constructor(private dialog: MatDialog) {}
 
 
   ngOnInit(): void {
@@ -179,7 +183,7 @@ export class CheckoutDetailsComponent implements OnInit {
     const userInfo = {
       name: this.authFacade.userSignal()?.full_name!,
       email: this.authFacade.userSignal()?.email!,
-      contact: this.authFacade.userSignal()?.phone!
+      contact: this.authFacade.userSignal()?.mobile!
     };
 
     this.razorpayService.openCheckout(razorpayOrder, userInfo, (response) => {
@@ -196,8 +200,32 @@ export class CheckoutDetailsComponent implements OnInit {
 
     this.paymentService.verifyPayment(orderPk, payload).subscribe({
       next: () => {
-        this.toastService.showSuccess('Payment verified successfully!');
-        this.router.navigate(['/']);
+
+        const orderId = orderPk;
+        const orderDate = new Date().toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+
+        const dialogRef = this.dialog.open(OrderSuccessDialogComponent, {
+          data: {
+            orderId,
+            date: orderDate
+          },
+          disableClose: true,
+          width: '500px'
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result === 'orders') {
+            this.router.navigate(['/settings/orders']);
+          } else {
+            this.router.navigate(['/']);
+          }
+        });
+        // this.toastService.showSuccess('Payment verified successfully!');
+        // this.router.navigate(['/']);
       },
       error: () => {
         this.toastService.showError('Payment verification failed.');

@@ -49,7 +49,7 @@ export class NotificationPreferencesComponent {
 
 
   ngOnInit(): void {
-    this.fetchNotificationSettings();
+    // this.fetchNotificationSettings();
   }
 
   // ✅ Fetch Notification Preferences

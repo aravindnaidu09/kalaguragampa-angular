@@ -1,0 +1,17 @@
+<div class="success-dialog">
+  <h2>Thank You! Your Order Was Successful.</h2>
+  <p><strong>Order ID:</strong> #{{ data.orderId }}</p>
+  <p><strong>Date:</strong> {{ data.date }}</p>
+
+  <p>You’ll receive a confirmation email shortly with your order details.</p>
+  <p>Your product will be shipped within 24 hours.</p>
+  <p>
+    Need help? Our support team is here for you — just reply to the email or
+    <a routerLink="/contact">contact us here</a>.
+  </p>
+
+  <div class="dialog-actions">
+    <button class="btn outline" (click)="goToOrders()">Go to Order History</button>
+    <button class="btn primary" (click)="continueShopping()">Continue Shopping</button>
+  </div>
+</div>

@@ -20,7 +20,7 @@ export interface AddressStateModel {
 })
 @Injectable()
 export class AddressState {
-  constructor(private addressService: AddressService) {}
+  constructor(private addressService: AddressService) { }
 
   @Selector()
   static addresses(state: AddressStateModel) {
@@ -45,10 +45,10 @@ export class AddressState {
   @Action(AddAddress)
   addAddress(ctx: StateContext<AddressStateModel>, action: AddAddress) {
     return this.addressService.addAddress(action.payload).pipe(
-      tap((res: ApiResponse<Address>) => {
+      tap((newAddress: Address) => {
         const state = ctx.getState();
         ctx.patchState({
-          addresses: [res.data, ...state.addresses]
+          addresses: [newAddress, ...state.addresses]
         });
       })
     );
@@ -56,17 +56,17 @@ export class AddressState {
 
   @Action(UpdateAddress)
   updateAddress(ctx: StateContext<AddressStateModel>, action: UpdateAddress) {
-    console.log('Update Address Action:', action);
     return this.addressService.updateAddress(action.id, action.payload).pipe(
-      tap((res: ApiResponse<Address>) => {
+      tap((updatedAddress: Address) => {
         const state = ctx.getState();
         const updatedList = state.addresses.map(a =>
-          a.id === action.id ? res.data : a
+          a.id === updatedAddress.id ? updatedAddress : a
         );
         ctx.patchState({ addresses: updatedList });
       })
     );
   }
+
 
   @Action(DeleteAddress)
   deleteAddress(ctx: StateContext<AddressStateModel>, action: DeleteAddress) {

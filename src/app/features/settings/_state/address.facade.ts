@@ -1,6 +1,6 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { Store, Actions, ofActionCompleted } from '@ngxs/store';
-import { catchError, filter, map, of, take } from 'rxjs';
+import { catchError, filter, map, Observable, of, take } from 'rxjs';
 import { AddressState } from './address.state';
 import {
   LoadAddresses,
@@ -29,7 +29,7 @@ export class AddressFacade {
     return this.store.dispatch(new LoadAddresses());
   }
 
-  createAddress(payload: Address) {
+  createAddress(payload: Address): Observable<any> {
     this.store.dispatch(new AddAddress(payload));
 
     return this.actions$.pipe(
@@ -41,7 +41,7 @@ export class AddressFacade {
     );
   }
 
-  updateAddress(id: number, payload: Address) {
+  updateAddress(id: number, payload: Address): Observable<any> {
     this.store.dispatch(new UpdateAddress(id, payload));
 
     return this.actions$.pipe(

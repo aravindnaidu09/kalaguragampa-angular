@@ -1,0 +1,42 @@
+.success-dialog {
+  text-align: center;
+  padding: 1.5rem;
+  background: #fff !important;
+
+  h2 {
+    color: #682f12;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    color: #444;
+  }
+
+  .dialog-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+
+    .btn {
+      padding: 10px 20px;
+      font-weight: 600;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .btn.outline {
+      background: transparent;
+      border: 1px solid #682f12;
+      color: #682f12;
+    }
+
+    .btn.primary {
+      background: #682f12;
+      color: white;
+      border: none;
+    }
+  }
+}

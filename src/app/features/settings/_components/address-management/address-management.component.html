@@ -2,21 +2,18 @@
   <h2 class="title">Manage Addresses</h2>
   <button class="add-address-btn" (click)="toggleAccordion()">
     <!-- <span></span> Add a New Address -->
-  <span>{{ accordionOpen ? '➖ Cancel' : '➕ Add a New Address' }}</span>
+    <span>{{ accordionOpen ? '➖ Cancel' : '➕ Add a New Address' }}</span>
 
   </button>
 </div>
 
-<!-- 🔘 Add New Address Toggle -->
-<!-- <button class="add-address-btn" (click)="toggleAccordion()">
-  <span>{{ accordionOpen ? '– Cancel' : '+ Add a New Address' }}</span>
-</button> -->
-
 <!-- 📦 Accordion Form -->
-<div class="accordion-form" *ngIf="accordionOpen" [@fadeIn]>
-  <app-address-form [initialData]="editingData" [formMode]="isEditing ? 'edit' : 'add'"
-    (save)="handleAddressSave($event)" (cancel)="resetForm()"></app-address-form>
-</div>
+<ng-container *ngIf="accordionOpen">
+  <div class="accordion-form" [@fadeIn]>
+    <app-address-form [initialData]="editingData" [formMode]="isEditing ? 'edit' : 'add'"
+      (save)="handleAddressSave($event)" (cancel)="resetForm(false)"></app-address-form>
+  </div>
+</ng-container>
 
 <!-- ✅ Address Cards -->
 <div *ngFor="let address of addressesSignal()">

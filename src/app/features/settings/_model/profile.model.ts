@@ -5,7 +5,7 @@ export interface ProfileModel {
   last_name?: string;       // Derived if needed
   gender?: 'Male' | 'Female' | 'Other';
   email?: string;
-  phone?: string;
+  mobile?: string;
   profileImage?: string;    // full URL or media path
 
   // Optional Address Info
