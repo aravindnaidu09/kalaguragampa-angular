@@ -1,23 +1,22 @@
-import { Injectable, computed, inject } from '@angular/core';
+// ✅ Reusable Angular Facade Template (with NGXS + Toast + Signals)
+
+import { Injectable, inject, computed, signal } from '@angular/core';
 import { Store } from '@ngxs/store';
-import {
-  LoadCart,
-  ClearCart,
-  AddToCart,
-  RemoveCartItem,
-  UpdateCartItems
-} from './cart.actions';
+import { Observable, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { CartState } from './cart.state';
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { AddToCart, ClearCart, LoadCart, RemoveCartItem, UpdateCartItems } from './cart.actions';
+import { CartResponseItem } from '../_models/cart-item-model';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class CartFacade {
   private store = inject(Store);
+  private toast = inject(ToastService);
 
   readonly cartSignal = this.store.selectSignal(CartState.cart);
   readonly loadingSignal = this.store.selectSignal(CartState.loading);
 
-  // ✅ computed count based on cart items
   readonly countSignal = computed(() => this.cartSignal()?.items?.length ?? 0);
 
   loadCart(): void {
@@ -30,17 +29,40 @@ export class CartFacade {
 
   addToCart(productId: number, quantity: number = 1): Observable<boolean> {
     return this.store.dispatch(new AddToCart(productId, quantity)).pipe(
-      switchMap(() => this.store.selectOnce(CartState.cart)), // optional if you want to verify result
-      map((cart) => !!cart), // ✅ confirm presence of cart or simply return true earlier
-      catchError(() => of(false))
+      switchMap(() => this.store.selectOnce(CartState.cart)),
+      map(cart => !!cart),
+      tap(success => {
+        if (success) this.toast.showSuccess('Item added to cart');
+        else this.toast.showError('Failed to add item');
+      }),
+      catchError(() => {
+        this.toast.showError('Unexpected error');
+        return of(false);
+      })
     );
   }
 
-  updateCartItems(items: { id: number; quantity: number }[]): Observable<any> {
-    return this.store.dispatch(new UpdateCartItems(items));
+  updateCartItems(items: { id: number; quantity: number }[]): Observable<boolean> {
+    return this.store.dispatch(new UpdateCartItems(items)).pipe(
+      tap(() => this.toast.showSuccess('Cart updated successfully')),
+      map(() => true),
+      catchError(() => {
+        this.toast.showError('Failed to update cart');
+        return of(false);
+      })
+    );
   }
 
-  removeCartItem(id: number): void {
-    this.store.dispatch(new RemoveCartItem(id));
+  removeCartItem(id: number): Observable<boolean> {
+    return this.store.dispatch(new RemoveCartItem(id)).pipe(
+      tap(() => this.toast.showSuccess('Item removed from cart')),
+      map(() => true),
+      catchError(() => {
+        this.toast.showError('Failed to remove item');
+        return of(false);
+      })
+    );
   }
 }
+
+// ℹ️ Use actions.ts and state.ts patterns that return predictable responses from state for composable facades.
