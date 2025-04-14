@@ -33,9 +33,6 @@ export class AddressManagementComponent {
   selectedAddressId: number | null = null;
 
   readonly addressesSignal = this.addressFacade.addresses;
-  readonly defaultAddressId = computed(() =>
-    this.addressesSignal()?.find(a => a.isDefault)?.id
-  );
 
   accordionOpen = false;
   // isEditing = false;
@@ -126,8 +123,10 @@ export class AddressManagementComponent {
     });
   }
 
-  setDefaultAddress(addressId: number): void {
-    this.addressFacade.setDefault(addressId).subscribe();
+  setDefaultAddress(addressId: number, address: Address): void {
+    const rawPayload = { ...address, isDefault: true };
+    const payload = serializeAddress(rawPayload);
+    this.addressFacade.updateAddress(addressId, payload);
   }
 
   resetForm(isCancel: boolean): void {

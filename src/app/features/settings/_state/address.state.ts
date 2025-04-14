@@ -59,14 +59,21 @@ export class AddressState {
     return this.addressService.updateAddress(action.id, action.payload).pipe(
       tap((updatedAddress: Address) => {
         const state = ctx.getState();
-        const updatedList = state.addresses.map(a =>
-          a.id === updatedAddress.id ? updatedAddress : a
+
+        // ✅ If setting this one as default, unset previous defaults
+        let updatedList = state.addresses.map(a =>
+          a.id === updatedAddress.id
+            ? updatedAddress
+            : {
+              ...a,
+              isDefault: updatedAddress.isDefault ? false : a.isDefault
+            }
         );
+
         ctx.patchState({ addresses: updatedList });
       })
     );
   }
-
 
   @Action(DeleteAddress)
   deleteAddress(ctx: StateContext<AddressStateModel>, action: DeleteAddress) {

@@ -1,6 +1,6 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { Store, Actions, ofActionCompleted } from '@ngxs/store';
-import { catchError, filter, map, Observable, of, take } from 'rxjs';
+import { catchError, filter, map, Observable, of, take, tap } from 'rxjs';
 import { AddressState } from './address.state';
 import {
   LoadAddresses,
@@ -35,6 +35,7 @@ export class AddressFacade {
     return this.actions$.pipe(
       ofActionCompleted(AddAddress),
       filter((result: any) => result.result?.statusCode === 200),
+      tap(() => this.loadAddresses()),
       take(1),
       map(() => true),
       catchError(() => of(false))
@@ -47,6 +48,7 @@ export class AddressFacade {
     return this.actions$.pipe(
       ofActionCompleted(UpdateAddress),
       filter((result: any) => result.result?.statusCode === 200),
+      tap(() => this.loadAddresses()),
       take(1),
       map(() => true),
       catchError(() => of(false))

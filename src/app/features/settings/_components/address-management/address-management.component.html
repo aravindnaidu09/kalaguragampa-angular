@@ -36,7 +36,7 @@
 
     <!-- ✅ Bottom: Set as Default and Actions -->
     <div class="card-footer">
-      <button *ngIf="!address.isDefault" class="set-default" (click)="setDefaultAddress(address.id!)">
+      <button *ngIf="!address.isDefault" class="set-default" (click)="setDefaultAddress(address.id!, address)">
         Set as Default
       </button>
 
