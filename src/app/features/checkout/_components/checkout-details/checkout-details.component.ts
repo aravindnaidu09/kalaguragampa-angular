@@ -60,7 +60,7 @@ export class CheckoutDetailsComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.fetchDeliveryOptions();
+    // this.fetchDeliveryOptions();
   }
 
   fetchDeliveryOptions(): void {
