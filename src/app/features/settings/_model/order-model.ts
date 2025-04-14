@@ -20,3 +20,15 @@ export interface Order {
   shippingAddress: string;
   items: OrderItem[];
 }
+
+export interface IOrder {
+  order_id: number;
+  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'; // Add more as needed
+  total_amount: number;
+  coupon_code: string | null;
+  coupon_discount: number;
+  created_at: string; // ISO string format
+  delivery_date: string | null; // ISO string or null
+  delivery_status: string | null;
+}
+

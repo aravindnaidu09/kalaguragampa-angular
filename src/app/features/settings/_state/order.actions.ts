@@ -1,4 +1,4 @@
-import { Order } from "../_model/order-model";
+import { IOrder, Order } from "../_model/order-model";
 
 // ✅ order.actions.ts
 export class LoadOrders {
@@ -7,7 +7,7 @@ export class LoadOrders {
 
 export class LoadOrdersSuccess {
   static readonly type = '[Order] Load Orders Success';
-  constructor(public payload: Order[]) {}
+  constructor(public payload: IOrder[]) {}
 }
 
 export class LoadOrdersFail {

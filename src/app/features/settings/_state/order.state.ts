@@ -1,13 +1,13 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { Order } from '../_model/order-model';
+import { IOrder, Order } from '../_model/order-model';
 import { OrderService } from '../_services/order.service';
 import { LoadOrders, LoadOrdersSuccess, LoadOrdersFail } from './order.actions';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 export interface OrderStateModel {
-  orders: Order[];
+  orders: IOrder[];
   loading: boolean;
   error: string | null;
 }
@@ -25,7 +25,7 @@ export class OrderState {
   constructor(private orderService: OrderService) {}
 
   @Selector()
-  static orders(state: OrderStateModel): Order[] {
+  static orders(state: OrderStateModel): IOrder[] {
     return state.orders;
   }
 

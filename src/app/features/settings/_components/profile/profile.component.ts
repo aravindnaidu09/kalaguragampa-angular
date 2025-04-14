@@ -43,11 +43,11 @@ export class ProfileComponent {
 
   private initForm(): void {
     this.profileForm = this.fb.group({
-      firstName: [''],
-      lastName: [''],
-      gender: [''],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      firstName: [this.authFacade.userSignal()?.full_name?.split(' ')[0] || '', [Validators.required]],
+      lastName: [this.authFacade.userSignal()?.full_name?.split(' ').slice(1).join(' ') || '', [Validators.required]],
+      gender: [this.authFacade.userSignal()?.gender || '', [Validators.required]],
+      email: [this.authFacade.userSignal()?.email, [Validators.required, Validators.email]],
+      phone: [this.authFacade.userSignal()?.phone, [Validators.required, Validators.pattern(/^\d{10}$/)]],
       profileImage: [null]
     });
   }

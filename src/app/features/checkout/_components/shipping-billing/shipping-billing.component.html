@@ -29,4 +29,9 @@
       </button>
     </div>
   </div>
+
+   <!-- ✅ CONTINUE BUTTON: Shown only from accordion -->
+   <div *ngIf="showContinueButton" class="continue-btn-wrapper">
+    <button class="btn primary continue-btn" (click)="emitContinue()">Continue →</button>
+  </div>
 </div>

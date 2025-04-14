@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,6 +8,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 import { WishlistFacade } from '../../_state/wishlist.facade';
 import { CartService } from '../../_services/cart.service';
 import { IWishlist } from '../../../product/_models/wishlist-model';
+import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-wishlist',
@@ -15,7 +16,7 @@ import { IWishlist } from '../../../product/_models/wishlist-model';
   templateUrl: './wishlist.component.html',
   styleUrl: './wishlist.component.scss'
 })
-export class WishlistComponent {
+export class WishlistComponent implements OnInit {
   private wishlistFacade = inject(WishlistFacade);
   activeTab = signal<'favorites' | 'collections' | 'feed'>('favorites');
   gridView = signal<boolean>(true);
@@ -29,8 +30,9 @@ export class WishlistComponent {
   constructor(
     private readonly cartService: CartService,
     private readonly router: Router,
-    private readonly toastService: ToastService
-  ) {}
+    private readonly toastService: ToastService,
+    private readonly confirmService: ConfirmDialogService
+  ) { }
 
   ngOnInit(): void {
     this.wishlistFacade.fetch();
@@ -46,7 +48,7 @@ export class WishlistComponent {
         next: () => {
           completed++;
           if (completed === products.length) {
-            this.toastService.showSuccess('All items added to cart');
+            // this.toastService.showSuccess('All items added to cart');
             this.wishlistFacade.fetch();
           }
         },
@@ -66,9 +68,20 @@ export class WishlistComponent {
   }
 
   removeFromWishlist(productId: number): void {
-    this.wishlistFacade.remove(productId).subscribe(() => {
-      this.wishlistFacade.fetch();
+    this.confirmService.confirm({
+      title: 'Remove Item',
+      message: 'Are you sure you want to remove this item from the wishlist?',
+      confirmText: 'Remove',
+      cancelText: 'Cancel'
+    }).subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        // this.cartItems = this.cartItems.filter(item => item.id !== itemId);
+        this.wishlistFacade.remove(productId).subscribe(() => {
+          this.wishlistFacade.fetch();
+        });
+      }
     });
+
   }
 
   addToCart(product: IWishlist): void {
@@ -78,7 +91,7 @@ export class WishlistComponent {
         this.wishlistFacade.fetch();
       },
       error: () => {
-        this.toastService.showError(`Failed to add ${product.productDetails.name} to cart`);
+        // this.toastService.showError(`Failed to add ${product.productDetails.name} to cart`);
       }
     });
   }
@@ -97,8 +110,8 @@ export class WishlistComponent {
     (event.target as HTMLImageElement).src = `${environment.apiBaseUrl}/media/KG_LOGO.png`;
   }
 
-  goToProduct(product: IProduct): void {
-    this.router.navigate([`/product/${product.name}/${product.id}`]);
+  goToProduct(product: IWishlist): void {
+    this.router.navigate([`/product/${product.productDetails.name}/${product.productDetails.id}`]);
   }
 
   clearWishlist(): void {
@@ -107,10 +120,10 @@ export class WishlistComponent {
 
     let removed = 0;
     products.forEach(product => {
-      this.wishlistFacade.remove(product.productDetails.id!).subscribe(() => {
+      this.wishlistFacade.remove(product.id!).subscribe(() => {
         removed++;
         if (removed === products.length) {
-          this.toastService.showSuccess('Wishlist cleared');
+          // this.toastService.showSuccess('Wishlist cleared');
           this.wishlistFacade.fetch();
         }
       });

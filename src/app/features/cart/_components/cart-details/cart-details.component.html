@@ -8,9 +8,7 @@
       </div>
 
       <div class="cart-item-wrapper" *ngFor="let item of cartItemsSignal()">
-        <img
-          [src]="getImagePath(item.product?.images![0].image)"
-          alt="{{ item.product?.name }}"
+        <img [src]="getImagePath(item.product?.images![0].image)" alt="{{ item.product?.name }}"
           (error)="onImageError($event)" />
 
         <div class="product-info">
@@ -23,8 +21,7 @@
               <button class="qty-btn" (click)="updateQuantity(item, 'decrement')"
                 [disabled]="item.quantity! <= 1 || isLoading(item?.id!)">–</button>
 
-              <input class="qty-input" type="number" [value]="item.quantity" min="1"
-                [max]="item.product?.maxQuantity"
+              <input class="qty-input" type="number" [value]="item.quantity" min="1" [max]="item.product?.maxQuantity"
                 (input)="onManualQtyInput(item, $event)" [disabled]="isLoading(item?.id!)" />
 
               <button class="qty-btn" (click)="updateQuantity(item, 'increment')"
@@ -38,11 +35,17 @@
             <span class="new-price">₹{{ item.basePrice }}</span>
             <span class="old-price">GST: {{ item.gstRate }}%</span>
             <span class="discount">Tax: {{ item.taxAmount }}</span>
-            <span class="discount">SubTotal: ₹{{ item.subtotal }}</span>
+            <span class="discount">Total: ₹{{ item.subtotal }}</span>
           </div>
         </div>
 
         <button class="remove-button" (click)="removeItem(item.id!)" title="Remove this item">✕</button>
+      </div>
+
+      <!-- ✅ CART NAVIGATION BUTTONS -->
+      <div class="cart-navigation-buttons" *ngIf="showNavigationButtons">
+        <button class="btn outline back-btn" (click)="onBack()">← Previous</button>
+        <button class="btn primary continue-btn" (click)="onContinue()">Continue →</button>
       </div>
     </div>
 
@@ -63,4 +66,7 @@
       <button class="browse-btn" routerLink="/">Continue Shopping</button>
     </div>
   </ng-template>
+
+
+
 </div>

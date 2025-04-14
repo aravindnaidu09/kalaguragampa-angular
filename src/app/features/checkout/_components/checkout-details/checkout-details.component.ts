@@ -52,6 +52,9 @@ export class CheckoutDetailsComponent implements OnInit {
   deliveryOptions: DeliveryOption[] = [];
   selectedDeliveryOption?: DeliveryOption;
 
+  isProcessingPayment = false;
+
+
   ngOnInit(): void {
     this.fetchDeliveryOptions();
   }
@@ -72,11 +75,19 @@ export class CheckoutDetailsComponent implements OnInit {
   }
 
   goToNextStep(): void {
-    this.currentStep++;
+    if (this.currentStep === 0) {
+      this.currentStep = 2; // Skip Step 1 (address add/edit), go to Order Summary
+    } else {
+      this.currentStep++;
+    }
   }
 
   goToPreviousStep(): void {
-    this.currentStep--;
+    if (this.currentStep === 2) {
+      this.currentStep = 0; // Go back to address list
+    } else {
+      this.currentStep--;
+    }
   }
 
   goToAddAddressStep(event: any): void {
@@ -120,20 +131,21 @@ export class CheckoutDetailsComponent implements OnInit {
   }
 
   makePayment() {
-    if (!this.selectedDeliveryOption) {
-      console.error('Delivery option not selected');
-      // return;
-    }
+    // if (!this.selectedDeliveryOption) {
+    //   this.toastService.showWarning('Please select a delivery option');
+    //   return;
+    // }
 
-    const addressId = this.addressFacade.selectedAddressId(); // signal based getter
+    const addressId = this.addressFacade.selectedAddressId();
     if (!addressId) {
-      console.error('No address selected');
+      this.toastService.showWarning('Please select a delivery address');
       return;
     }
 
-    const totalAmount = Number(this.cartFacade.cartSignal()?.totalAmount || 0); // fallback
-    // const courierCompanyId = this.selectedDeliveryOption.courier_company_id;
-    const countryCode = 'IND'; // optional: derive from selected address
+    this.isProcessingPayment = true; // 🔁 Start loader
+
+    const totalAmount = Number(this.cartFacade.cartSignal()?.totalAmount || 0);
+    const countryCode = 'IND';
 
     const payload = {
       total_amount: totalAmount,
@@ -145,14 +157,16 @@ export class CheckoutDetailsComponent implements OnInit {
     this.paymentService.createOrder(payload).subscribe({
       next: (response) => {
         console.log('Order Created:', response);
-        this.launchRazorpay(response.data)
-        // TODO: Call Razorpay.init(response.data) or open Razorpay checkout here
+        this.launchRazorpay(response.data);
+        this.isProcessingPayment = false; // ✅ Stop loader once Razorpay is shown
       },
       error: () => {
-        console.error('Failed to create order');
+        this.toastService.showError('Failed to create order');
+        this.isProcessingPayment = false;
       }
     });
   }
+
 
   /** Step 2: Open Razorpay Checkout */
   private launchRazorpay(order: any): void {

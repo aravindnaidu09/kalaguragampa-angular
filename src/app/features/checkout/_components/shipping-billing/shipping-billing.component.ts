@@ -56,6 +56,10 @@ export class ShippingBillingComponent implements OnInit {
   mode: 'edit' | 'add' = 'add';
   selectedAddress: Address = {};
 
+  @Input() showContinueButton = false;
+
+  @Output() continue = new EventEmitter<void>();
+
   ngOnInit() {
     this.addressFacade.loadAddresses().subscribe();
   }
@@ -87,5 +91,11 @@ export class ShippingBillingComponent implements OnInit {
 
   setAsDefault(id: number) {
     this.selectAddress(id);
+  }
+
+  emitContinue() {
+    if (this.selectedAddressId != null) {
+      this.continue.emit();
+    }
   }
 }

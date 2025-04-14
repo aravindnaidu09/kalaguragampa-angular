@@ -11,7 +11,7 @@
   <!-- Actual order cards -->
   <ng-container *ngIf="!loading">
     <ng-container *ngFor="let item of orders">
-      <app-order-card [@fadeInUp] [item]="item.items[0]"></app-order-card>
+      <app-order-card [@fadeInUp]></app-order-card>
     </ng-container>
   </ng-container>
 

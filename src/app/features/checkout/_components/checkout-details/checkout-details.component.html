@@ -1,14 +1,15 @@
 <div class="checkout-container">
   <!-- LEFT: Stepper Accordion -->
   <div class="checkout-left">
+
     <!-- Step 0: Delivery Address -->
     <div class="accordion-step" [class.active]="currentStep === 0">
-      <div class="accordion-header" (click)="setStep(0)">
+      <div class="accordion-header disabled">
         <span class="step-number">1</span>
         <span class="step-title">Delivery Address</span>
       </div>
       <div class="accordion-content" *ngIf="currentStep === 0">
-        <app-shipping-billing [hideRemoveOption]="true" (continue)="goToNextStep()"
+        <app-shipping-billing [hideRemoveOption]="true" [showContinueButton]="true" (continue)="goToNextStep()"
           (addNewAddressClicked)="goToAddAddressStep($event)">
         </app-shipping-billing>
       </div>
@@ -16,7 +17,7 @@
 
     <!-- Step 1: Add New Address -->
     <div class="accordion-step" [class.active]="currentStep === 1">
-      <div class="accordion-header" (click)="setStep(1)">
+      <div class="accordion-header disabled">
         <span class="step-number">2</span>
         <span class="step-title">Add New Address</span>
       </div>
@@ -29,27 +30,28 @@
 
     <!-- Step 2: Order Summary -->
     <div class="accordion-step" [class.active]="currentStep === 2">
-      <div class="accordion-header" (click)="setStep(2)">
+      <div class="accordion-header disabled">
         <span class="step-number">3</span>
         <span class="step-title">Order Summary</span>
       </div>
       <div class="accordion-content" *ngIf="currentStep === 2">
-        <app-cart-details [showCartTitle]="false"  [showPriceSummaryBlock]="false" (continue)="goToNextStep()" (back)="goToPreviousStep()">
+        <app-cart-details [showCartTitle]="false" [showPriceSummaryBlock]="false" [showNavigationButtons]="true"
+          (continue)="goToNextStep()" (back)="goToPreviousStep()">
         </app-cart-details>
       </div>
     </div>
 
     <!-- Step 3: Payment -->
     <div class="accordion-step" [class.active]="currentStep === 3">
-      <div class="accordion-header" (click)="setStep(3)">
+      <div class="accordion-header disabled">
         <span class="step-number">4</span>
         <span class="step-title">Payment</span>
       </div>
       <div class="accordion-content" *ngIf="currentStep === 3">
-        <!-- <app-payment (back)="goToPreviousStep()"></app-payment> -->
         <div class="delivery-selection" *ngIf="deliveryOptions.length > 0">
           <h3>Select Delivery Partner</h3>
-          <div *ngFor="let option of deliveryOptions" class="delivery-option" (click)="selectDeliveryOption(option)" [class.selected]="selectedDeliveryOption?.courier_company_id === option.courier_company_id">
+          <div *ngFor="let option of deliveryOptions" class="delivery-option" (click)="selectDeliveryOption(option)"
+            [class.selected]="selectedDeliveryOption?.courier_company_id === option.courier_company_id">
             <strong>{{ option.courier_name }}</strong>
             <span>₹{{ option.shipping_amount }}</span>
             <span class="etd">Delivery in: {{ option.etd }}</span>
@@ -58,7 +60,17 @@
 
         <div class="payment-wrapper">
           <h3 class="payment-title">Choose your payment method</h3>
-          <button class="make-payment-btn" (click)="makePayment()">Make Payment</button>
+          <div class="payment-actions">
+            <button class="btn outline back-btn" (click)="goToPreviousStep()">← Previous</button>
+            <button class="btn primary make-payment-btn" [disabled]="isProcessingPayment" (click)="makePayment()">
+              <ng-container *ngIf="!isProcessingPayment; else loading">
+                Make Payment
+              </ng-container>
+              <ng-template #loading>
+                <span class="spinner"></span> Processing...
+              </ng-template>
+            </button>
+          </div>
         </div>
       </div>
     </div>

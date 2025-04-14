@@ -12,6 +12,7 @@ import {
   inject,
   OnChanges,
   signal,
+  computed,
 } from '@angular/core';
 import { IProduct } from '../../_models/product-model';
 import { WishlistStore } from '../../_services/wishliststore';
@@ -49,13 +50,12 @@ export class ProductComponent {
   @Output() wishlistToggle = new EventEmitter<number>();
   @Output() addToCart = new EventEmitter<number>();
 
-  isWishlisted(): boolean {
-    const found = this.wishlistItems()?.some(
+  readonly isWishlistedSignal = computed(() =>
+    this.wishlistItems()?.some(
       item => item.productDetails?.id === this.product.id
-    );
+    )
+  );
 
-    return found;
-  }
 
   onWishlistClick(): void {
     this.wishlistToggle.emit(this.product.id!);

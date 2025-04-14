@@ -32,7 +32,7 @@
 
         <!-- ✅ Card Header (Image) -->
         <div class="wishlist-card-header" (click)="goToProduct(product)">
-          <img [src]="getImagePath(product.productDetails.images![0].image)" alt="{{ product.productDetails.name }}"
+          <img [src]="getImagePath(product.productDetails?.images?.[0]?.image)" alt="{{ product.productDetails.name }}"
             loading="lazy" (error)="onImageError($event)" [title]="product.productDetails.name" />
         </div>
 
@@ -40,7 +40,7 @@
         <div class="wishlist-card-body">
           <h3 [title]="product.productDetails.name" (click)="goToProduct(product)">
             {{ product.productDetails.name | slice:0:30 }}<span
-              *ngIf="product.productDetails.name!.length > 30">...</span>
+              *ngIf="product.productDetails?.name!.length > 30">...</span>
           </h3>
           <p class="wishlist-price">₹{{ product.productDetails.price }}</p>
         </div>

@@ -308,3 +308,39 @@ $primary-brown: #682f12;
     }
   }
 }
+
+.cart-navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+  padding: 1rem 0;
+
+  .back-btn,
+  .continue-btn {
+    padding: 10px 20px;
+    font-weight: 600;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .back-btn {
+    border: 1px solid #682f12;
+    background-color: transparent;
+    color: #682f12;
+
+    &:hover {
+      background-color: #f9f4f2;
+    }
+  }
+
+  .continue-btn {
+    background-color: #682f12;
+    color: white;
+    border: none;
+
+    &:hover {
+      background-color: #4a210c;
+    }
+  }
+}

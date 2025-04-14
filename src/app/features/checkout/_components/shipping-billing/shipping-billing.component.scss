@@ -131,3 +131,24 @@ $primary-brown: #682f12;
     }
   }
 }
+
+.continue-btn-wrapper {
+  margin-top: 1rem;
+  text-align: right;
+
+  .continue-btn {
+    background-color: #682f12;
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #4a210c;
+    }
+  }
+}
+

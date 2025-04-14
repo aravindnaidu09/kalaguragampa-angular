@@ -123,7 +123,7 @@ private getNewArrivals(): void {
         this.isLoading.set(false);
 
         if (categories.length > 0) {
-          this.selectedCategory.set(categories[0].id);
+          this.selectedCategory.set(0);
           this.fetchProductList(categories[0].id);
         }
       },

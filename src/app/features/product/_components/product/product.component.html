@@ -1,7 +1,7 @@
 <div class="product-card">
   <!-- ❤️ Wishlist Icon -->
   <div class="wishlist-icon" (click)="onWishlistClick()">
-    <span *ngIf="isWishlisted(); else notWishlisted">❤️</span>
+    <span *ngIf="isWishlistedSignal(); else notWishlisted">❤️</span>
     <ng-template #notWishlisted><span>🤍</span></ng-template>
   </div>
 

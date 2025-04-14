@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../_services/order.service';
 import { ToastService } from '../../../../core/services/toast.service';
-import { Order } from '../../_model/order-model';
+import { IOrder, Order } from '../../_model/order-model';
 import { OrderCardComponent } from '../order-card/order-card.component';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Store } from '@ngxs/store';
@@ -36,31 +36,7 @@ export class OrderHistoryComponent {
   loading = this.store.selectSnapshot(OrderState.loading);
 
 
-  orders: Order[] = [
-    {
-      id: 101,
-      total: 2999,
-      date: '2024-12-12',
-      deliveryDate: '2024-12-16',
-      status: 'Delivered',
-      shippingAddress: 'Hyderabad, India',
-      items: [
-        {
-          id: 1,
-          productId: 1001,
-          productName: 'JBL Wave Buds',
-          image: 'https://via.placeholder.com/100x100.png?text=JBL',
-          color: 'Black',
-          price: 2999,
-          quantity: 1,
-          isRated: false,
-          status: 'Delivered',
-          deliveryDate: '2024-12-16',
-
-        }
-      ]
-    }
-  ];
+  orders: IOrder[] = [];
   filteredOrders = this.orders;
   // paginatedOrders = this.orders;
 
@@ -76,13 +52,14 @@ export class OrderHistoryComponent {
 
   // ✅ Fetch Orders from Backend
   private fetchOrders(): void {
-    // this.orderService.getUserOrders().subscribe({
-    //   next: (data) => {
-    //     this.orders = data;
-    //     this.filterOrders();
-    //   },
-    //   error: () => this.toastService.showError('Failed to load orders')
-    // });
+    this.orderService.getUserOrders().subscribe({
+      next: (data) => {
+        console.log('Fetched Orders:', data);
+        this.orders = data;
+        this.filterOrders();
+      },
+      error: () => this.toastService.showError('Failed to load orders')
+    });
   }
 
   // ✅ Filter Orders by Status
@@ -92,28 +69,28 @@ export class OrderHistoryComponent {
   }
 
   // ✅ Filter Orders by Date Range
-  filterByDate(): void {
-    const now = new Date();
-    this.filteredOrders = this.orders.filter(order => {
-      const orderDate = new Date(order.date);
-      const differenceInDays = Math.floor((now.getTime() - orderDate.getTime()) / (1000 * 60 * 60 * 24));
+  // filterByDate(): void {
+  //   const now = new Date();
+  //   this.filteredOrders = this.orders.filter(order => {
+  //     const orderDate = new Date(order.delivery_date);
+  //     const differenceInDays = Math.floor((now.getTime() - orderDate.getTime()) / (1000 * 60 * 60 * 24));
 
-      if (this.selectedDateRange === 'past3months') {
-        return differenceInDays <= 90;
-      } else if (this.selectedDateRange === 'past6months') {
-        return differenceInDays <= 180;
-      } else if (this.selectedDateRange === 'pastYear') {
-        return differenceInDays <= 365;
-      }
-      return true;
-    });
+  //     if (this.selectedDateRange === 'past3months') {
+  //       return differenceInDays <= 90;
+  //     } else if (this.selectedDateRange === 'past6months') {
+  //       return differenceInDays <= 180;
+  //     } else if (this.selectedDateRange === 'pastYear') {
+  //       return differenceInDays <= 365;
+  //     }
+  //     return true;
+  //   });
 
-    this.currentPage = 1; // Reset pagination after filtering
-  }
+  //   this.currentPage = 1; // Reset pagination after filtering
+  // }
 
   // ✅ Filter Orders by Status & Date Combined
   filterOrders(): void {
-    this.filterByDate(); // Apply date filtering first
+    // this.filterByDate(); // Apply date filtering first
 
     if (this.selectedStatus !== 'all') {
       this.filteredOrders = this.filteredOrders.filter(order => order.status === this.selectedStatus);
@@ -123,10 +100,10 @@ export class OrderHistoryComponent {
   }
 
   // ✅ Pagination Logic
-  get paginatedOrders(): Order[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredOrders.slice(start, start + this.pageSize);
-  }
+  // get paginatedOrders(): Order[] {
+  //   const start = (this.currentPage - 1) * this.pageSize;
+  //   return this.filteredOrders.slice(start, start + this.pageSize);
+  // }
 
   nextPage(): void {
     if ((this.currentPage * this.pageSize) < this.filteredOrders.length) {

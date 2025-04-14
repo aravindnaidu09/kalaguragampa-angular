@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartResponseItem, Item } from '../../_models/cart-item-model';
 import { CartFacade } from '../../_state/cart.facade';
@@ -44,6 +44,13 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
   discount = 0;
   grandTotal = 0;
   categories: ICategory[] = [];
+
+  @Input() showNavigationButtons: boolean = false;
+
+  @Output() continue = new EventEmitter<void>();
+  @Output() back = new EventEmitter<void>();
+
+
 
   private quantityChangeSubjectMap: { [key: number]: Subject<number> } = {};
   private loadingItems: Set<number> = new Set();
@@ -112,10 +119,10 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
     if (!this.quantityChangeSubjectMap[id]) {
       this.quantityChangeSubjectMap[id] = new Subject<number>();
       this.quantityChangeSubjectMap[id]
-        .pipe(debounceTime(400))
+        .pipe(debounceTime(300))
         .subscribe((qty) => {
           this.loadingItems.add(id);
-          const payload = [{ id, quantity }];
+          const payload = [{ id, quantity: qty }];
           this.cartFacade.updateCartItems(payload).subscribe({
             next: () => this.loadingItems.delete(id),
             error: () => this.loadingItems.delete(id)
@@ -123,8 +130,9 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
-    this.quantityChangeSubjectMap[id].next(quantity);
+    this.quantityChangeSubjectMap[id].next(quantity); // ✅ triggers latest qty
   }
+
 
   isLoading(id: number): boolean {
     return this.loadingItems.has(id);
@@ -149,6 +157,14 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
   navigateToProductPage(pItem: IProduct) {
     this.router.navigate([`/product/${pItem.name}/${pItem.id}`]);
 
+  }
+
+  onContinue() {
+    this.continue.emit();
+  }
+
+  onBack() {
+    this.back.emit();
   }
 
   ngOnDestroy() {

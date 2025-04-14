@@ -123,7 +123,7 @@ export class ViewProductComponent implements OnInit {
     this.tryAddToCart().subscribe((success) => {
       console.log('checking-cart: ', success);
       if (success) {
-        this.toastService.showSuccess('Item added to cart!');
+        // this.toastService.showSuccess('Item added to cart!');
       }
     });
   }
@@ -135,6 +135,7 @@ export class ViewProductComponent implements OnInit {
       return;
     }
     this.tryAddToCart().subscribe((success) => {
+      console.log('checking-buy-now-option: ', success);
       if (success) {
         this.router.navigate(['/checkout']);
       }
