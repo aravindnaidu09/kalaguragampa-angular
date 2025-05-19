@@ -48,7 +48,7 @@ export class HeaderComponent implements OnInit {
   @Input() compact = false;
 
   cartlistCount: Signal<number> = signal<number>(0);
-  wCount =  computed(() => this.wishlistFacade.wishlistCount());
+  wCount = computed(() => this.wishlistFacade.wishlistCount());
 
   isMenuOpen = false; // Menu visibility state
   loginState = false; // Track login state
@@ -132,13 +132,20 @@ export class HeaderComponent implements OnInit {
     this.fetchCartCount();
 
     this.getCurrentUrlPath();
+
+    console.log('Current Route:', this.hashRoute); // 'checkout'
+
+    const savedCurrency = localStorage.getItem('currency');
+    if (savedCurrency) {
+      this.selectedCountry = savedCurrency;
+      this.currencyService.setCurrency(savedCurrency);
+    }
   }
 
   getCurrentUrlPath() {
     this.fullPath = this.location.path(); // returns '/checkout'
     this.hashRoute = this.fullPath.startsWith('/') ? this.fullPath.substring(1) : this.fullPath;
 
-    console.log('Current Route:', this.hashRoute); // 'checkout'
   }
 
   fetchWishlistCount() {
@@ -317,6 +324,7 @@ export class HeaderComponent implements OnInit {
   }
 
   onCurrencyChange(code: string) {
+    localStorage.setItem('currency', code);
     this.currencyService.setCurrency(code);
   }
 }

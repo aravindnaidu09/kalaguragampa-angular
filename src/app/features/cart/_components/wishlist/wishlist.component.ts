@@ -10,6 +10,7 @@ import { CartService } from '../../_services/cart.service';
 import { IWishlist } from '../../../product/_models/wishlist-model';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 import { CartFacade } from '../../_state/cart.facade';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 @Component({
   selector: 'app-wishlist',
@@ -33,7 +34,8 @@ export class WishlistComponent implements OnInit {
     private readonly router: Router,
     private readonly toastService: ToastService,
     private readonly confirmService: ConfirmDialogService,
-    private readonly cartFacade: CartFacade
+    private readonly cartFacade: CartFacade,
+    public currencyService: CurrencyService,
   ) { }
 
   ngOnInit(): void {

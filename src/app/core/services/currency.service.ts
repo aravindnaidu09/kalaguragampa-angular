@@ -13,6 +13,9 @@ export class CurrencyService {
   private exchangeRates = signal<Record<string, number>>({});
 
   constructor(private http: HttpClient) {
+    const stored = localStorage.getItem('currency');
+    if (stored) this.setCurrency(stored);
+
     this.loadRates();
   }
 

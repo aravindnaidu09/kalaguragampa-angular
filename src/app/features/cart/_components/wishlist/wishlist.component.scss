@@ -1,79 +1,87 @@
-// ✅ Wishlist Container
+// 🌿 Wishlist Container
 .wishlist-container {
   max-width: 1200px;
   margin: auto;
-  padding: 24px;
+  padding: 32px 16px;
   background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 
-// ✅ Header Section
+// 🧾 Header Section
 .wishlist-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 
   h2 {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 700;
-    color: #222;
-  }
-
-  .clear-wishlist-btn {
-    background-color: #ff4d4d;
-    border: none;
-    padding: 8px 14px;
-    font-size: 14px;
-    color: #fff;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-
-    &:hover {
-      background-color: #cc0000;
-    }
+    color: #3a2b2a;
   }
 }
 
-// ✅ Grid Layout
+// 🧩 Clear Wishlist Button (already modernized)
+.clear-wishlist-btn {
+  background-color: transparent;
+  border: 1px solid #682f12;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #682f12;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #f8f1ee;
+    box-shadow: 0 2px 6px rgba(104, 47, 18, 0.15);
+    transform: translateY(-1px) scale(1.02);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+// 🧱 Grid Layout
 .wishlist-items {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  gap: 20px;
+  gap: 24px;
 }
 
-// ✅ Card Design
+// 🧾 Card Design
 .wishlist-card {
-  width: 220px;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 14px 12px;
+  width: 240px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 16px 14px;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(-6px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   }
 }
 
-// ✅ Image Section
+// 🖼️ Image Section
 .wishlist-card-header {
   width: 100%;
-  height: 160px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  height: 180px;
+  background-color: #f3f3f3;
+  border-radius: 12px;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
-  cursor: pointer;
+  margin-bottom: 12px;
+  position: relative;
 
   img {
     max-width: 100%;
@@ -87,57 +95,68 @@
   }
 }
 
-// ✅ Title & Price Section
+// 📦 Title & Price Section
 .wishlist-card-body {
   h3 {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
-    color: #222;
+    color: #333;
     margin: 6px 0;
-    line-height: 1.2;
+    line-height: 1.3;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: pointer;
 
     &:hover {
+      color: #682f12;
       text-decoration: underline;
     }
   }
 
   .wishlist-price {
-    font-size: 16px;
+    font-size: 17px;
     color: #1a8f3b;
-    font-weight: bold;
+    font-weight: 700;
+    margin-top: 4px;
   }
 }
 
-// ✅ Footer Buttons
+// 🎯 Footer Button Section
 .wishlist-card-footer {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin-top: 14px;
+  gap: 16px;
+  margin-top: 12px;
 
   button {
     border: none;
-    background: #f1f1f1;
-    padding: 8px;
-    border-radius: 8px;
+    background: transparent;
+    padding: 5px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
-      background: #e0e0e0;
+      background: #e4e4e4;
+      transform: scale(1.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
     }
 
     svg {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
     }
 
     &.wishlist-remove svg {
       stroke: red;
+      transition: stroke 0.3s ease;
 
       &:hover {
         stroke: darkred;
@@ -145,31 +164,42 @@
     }
 
     &.wishlist-cart {
-      font-size: 18px;
+      font-size: 20px;
       color: #333;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        color: #682f12;
+      }
     }
   }
 }
 
-// ✅ Add All Button
+// ➕ Add All Button (already modernized)
 .add-all-button {
-  background-color: #007e33;
-  color: #fff;
+  background-color: transparent;
+  color: #682f12;
   padding: 12px 20px;
   font-size: 15px;
   margin: 30px auto 10px;
-  border: none;
+  border: 1px solid #682f12;
   border-radius: 6px;
   cursor: pointer;
   display: block;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
 
   &:hover {
-    background-color: #005c24;
+    background-color: #f8f1ee;
+    box-shadow: 0 2px 8px rgba(104, 47, 18, 0.15);
+    transform: scale(1.03);
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 }
 
-// ✅ Responsive Layout
+// 📱 Responsive Adjustments
 @media (max-width: 1024px) {
   .wishlist-card {
     width: calc(33.33% - 20px);
