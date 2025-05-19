@@ -3,11 +3,13 @@ import { Component, computed, EventEmitter, inject, Input, OnInit, Output } from
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { Address } from '../../../settings/_model/address-model';
+import { Address, serializeAddress } from '../../../settings/_model/address-model';
 import { DialogComponent } from "../../../../shared/components/dialog/dialog.component";
 import { AddAddressDialogComponent } from "../add-address-dialog/add-address-dialog.component";
 import { AddressFacade } from '../../../settings/_state/address.facade';
 import { filter, map, Observable } from 'rxjs';
+import { ToastService } from '../../../../core/services/toast.service';
+import { CartFacade } from '../../../cart/_state/cart.facade';
 
 @Component({
   selector: 'app-shipping-billing',
@@ -32,6 +34,8 @@ import { filter, map, Observable } from 'rxjs';
 export class ShippingBillingComponent implements OnInit {
   private confirmDialogService = inject(ConfirmDialogService);
   private addressFacade = inject(AddressFacade);
+  private toastService = inject(ToastService);
+  private cartFacade = inject(CartFacade);
 
   @Input() hideRemoveOption: boolean = false;
   @Output() addNewAddressClicked = new EventEmitter<any>();
@@ -61,11 +65,15 @@ export class ShippingBillingComponent implements OnInit {
   @Output() continue = new EventEmitter<void>();
 
   ngOnInit() {
-    this.addressFacade.loadAddresses().subscribe();
+    this.addressFacade.loadAddresses().subscribe(() => {
+      const defaultAddr = this.addressFacade.addresses().find(a => a.isDefault);
+      if (defaultAddr?.id) {
+        this.onEstimateShipping(defaultAddr.id);
+      }
+    });
   }
 
-  openAddressDialog(mode: 'edit' | 'add',addressItem?: Address) {
-    console.log('openAddressDialog', mode, addressItem);
+  openAddressDialog(mode: 'edit' | 'add', addressItem?: Address) {
     const emitPayload = { mode: mode, isClicked: true, selectedAddress: addressItem };
     this.addNewAddressClicked.emit(emitPayload);
     return;
@@ -86,7 +94,12 @@ export class ShippingBillingComponent implements OnInit {
   }
 
   selectAddress(id: number): void {
-    this.addressFacade.setDefault(id).subscribe();
+    const userSelectedAddress = this.addresses().find(address => address.id === id)!;
+    userSelectedAddress.isDefault = true;
+    const apiPayload = serializeAddress(userSelectedAddress);
+
+    this.addressFacade.updateAddress(id, apiPayload).subscribe();
+    this.onEstimateShipping(id)
   }
 
   setAsDefault(id: number) {
@@ -98,4 +111,34 @@ export class ShippingBillingComponent implements OnInit {
       this.continue.emit();
     }
   }
+
+  onEstimateShipping(addressId: string | number): void {
+    if (!addressId) {
+      this.toastService.showError('Please select an address');
+      return;
+    }
+
+    this.cartFacade.loadShippingEstimate({ address_id: addressId.toString() });
+  }
+
+  // private getShippingEstimatePayload():
+  //   | { address_id: string }
+  //   | { pincode: string; city: string; state: string; country: string }
+  //   | null {
+
+  //   if (this.defaultAddress.id) {
+  //     return { address_id: this.defaultAddress.id.toString() };
+  //   }
+
+  //   if (this.pincode && this.city && this.state && this.country) {
+  //     return {
+  //       pincode: this.pincode,
+  //       city: this.city,
+  //       state: this.state,
+  //       country: this.country
+  //     };
+  //   }
+
+  //   return null;
+  // }
 }

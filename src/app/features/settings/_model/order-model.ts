@@ -1,34 +1,18 @@
-export interface OrderItem {
-  id?: number;
-  productId?: number;
-  productName?: string;
-  image?: string;
-  color?: string;
-  price?: number;
-  quantity?: number;
-  isRated?: boolean;
-  status?: 'Delivered' | 'Pending' | 'Cancelled';
-  deliveryDate?: string
-}
-
-export interface Order {
-  id: number;
-  total: number;
-  date: string; // ISO string
-  deliveryDate: string; // ISO string
-  status: 'Delivered' | 'Pending' | 'Cancelled';
-  shippingAddress: string;
-  items: OrderItem[];
-}
-
+// This file defines the IOrder interface for the order model.
 export interface IOrder {
   order_id: number;
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'; // Add more as needed
+  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'; // adjust if backend adds more
   total_amount: number;
   coupon_code: string | null;
   coupon_discount: number;
-  created_at: string; // ISO string format
-  delivery_date: string | null; // ISO string or null
-  delivery_status: string | null;
+  created_at: string;           // ISO 8601 string
+  delivery_date: string | null; // ISO or null if not delivered yet
+  delivery_status: string | null; // Optional, e.g. "in_transit", "failed", etc.
+  product_name?: string;
+  image?: string;
+  is_rated?: boolean;
+  color?: string;
+  quantity?: number;
 }
+
 

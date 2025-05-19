@@ -7,6 +7,26 @@
         <span class="section-title">My Cart</span>
       </div>
 
+      <!-- 📍 Default Address Display Block -->
+      <!-- <div class="cart-address-box">
+        <h4 class="address-title">Delivery Address</h4>
+
+        <div class="default-address" *ngIf="defaultAddress">
+          <p>
+            {{ defaultAddress.fullName }}, {{ defaultAddress.phone }}, {{ defaultAddress.city }}, {{ defaultAddress.pincode }}
+            <br />
+            {{ defaultAddress.state }}, {{ defaultAddress.country }}
+          </p>
+          <button class="btn small-link" (click)="openEstimateDialog()">Change / Estimate Delivery</button>
+        </div>
+
+        <div *ngIf="!defaultAddress">
+          <p class="text-muted">No address selected.</p>
+          <button class="btn small-link" (click)="openEstimateDialog()">Add Address & Estimate</button>
+        </div>
+      </div> -->
+
+
       <div class="cart-item-wrapper" *ngFor="let item of cartItemsSignal()">
         <img [src]="getImagePath(item.product?.images![0].image)" alt="{{ item.product?.name }}"
           (error)="onImageError($event)" />
@@ -66,7 +86,5 @@
       <button class="browse-btn" routerLink="/">Continue Shopping</button>
     </div>
   </ng-template>
-
-
 
 </div>

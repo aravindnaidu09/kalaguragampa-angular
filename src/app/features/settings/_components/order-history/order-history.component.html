@@ -1,26 +1,34 @@
 <div class="order-history">
   <h2 class="title">
-    Your Orders <span class="order-count">{{ orders ? orders.length : 0 }}</span>
+    Your Orders <span class="order-count">{{ ordersSignal()?.length ?? 0 }}</span>
   </h2>
 
-  <!-- Skeleton loader -->
-  <ng-container *ngIf="loading">
+  <!-- 🦴 Skeleton loader -->
+  <ng-container *ngIf="loadingSignal()">
     <div class="skeleton-card" *ngFor="let _ of [1, 2, 3]"></div>
   </ng-container>
 
-  <!-- Actual order cards -->
-  <ng-container *ngIf="!loading">
-    <ng-container *ngFor="let item of orders">
-      <app-order-card [@fadeInUp]></app-order-card>
+  <!-- 📦 Order cards -->
+  <ng-container *ngIf="!loadingSignal() && ordersSignal()?.length! > 0; else noOrders">
+    <ng-container *ngFor="let item of paginatedOrders">
+      <app-order-card [item]="item" [@fadeInUp]></app-order-card>
     </ng-container>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+      <span class="page-indicator">Page {{ currentPage }}</span>
+      <button class="page-btn" (click)="nextPage()" [disabled]="(currentPage * pageSize) >= ordersSignal()?.length!">
+        Next
+      </button>
+    </div>
   </ng-container>
 
-
-  <!-- Pagination -->
-  <div class="pagination">
-    <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
-    <span class="page-indicator">Page {{ currentPage }}</span>
-    <button class="page-btn" (click)="nextPage()"
-      [disabled]="(currentPage * pageSize) >= filteredOrders.length">Next</button>
-  </div>
+  <!-- 🙅 No Orders -->
+  <ng-template #noOrders>
+    <div class="empty-state">
+      <img src="assets/images/no-orders.png" alt="No Orders" />
+      <p>You haven’t placed any orders yet.</p>
+    </div>
+  </ng-template>
 </div>

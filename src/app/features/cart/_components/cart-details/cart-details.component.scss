@@ -344,3 +344,32 @@ $primary-brown: #682f12;
     }
   }
 }
+
+.cart-address-box {
+  background: #f9f9f9;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 16px;
+
+  .address-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .default-address {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .btn.small-link {
+    margin-top: 8px;
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    padding: 0;
+    font-size: 13px;
+  }
+}
+

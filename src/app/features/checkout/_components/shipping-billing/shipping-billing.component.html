@@ -4,25 +4,25 @@
     <button class="add-address-btn" (click)="openAddressDialog('add', {})">Add New Address</button>
   </div>
 
-  <div *ngFor="let address of addresses()" class="address-card" [class.selected]="selectedAddressId() === address.id" [@moveToTop]>
+  <div *ngFor="let address of addresses()" class="address-card" [class.selected]="selectedAddressId() === address.id"
+    [@moveToTop]>
 
     <div class="address-header">
       <div class="radio-label">
         <input type="radio" name="address" [checked]="address.isDefault" (click)="selectAddress(address.id!)" />
-        <strong>{{ address.fullName }},  {{ address.phone }}</strong>
+        <strong>{{ address.fullName }}, {{ address.phone }}</strong>
         <span class="default-tag" *ngIf="address.isDefault">Default</span>
       </div>
     </div>
 
     <div class="address-body">
-      <p>{{ address.street }}<span *ngIf="address.street2">, {{ address.street2 }}, {{ address.city }}, {{ address.state }} - {{ address.pincode }}, {{ address.country }}</span></p>
-      <!-- <p></p> -->
-      <!-- <p></p> -->
-      <!-- <p></p> -->
+      <p>{{ address.street }}<span *ngIf="address.street2">, {{ address.street2 }}, {{ address.city }}, {{ address.state
+          }} - {{ address.pincode }}, {{ address.country }}</span></p>
     </div>
 
     <div class="address-actions">
-      <button *ngIf="!hideRemoveOption" type="button" class="btn outline" (click)="confirmDelete(address.id!)">Remove</button>
+      <button *ngIf="!hideRemoveOption" type="button" class="btn outline"
+        (click)="confirmDelete(address.id!)">Remove</button>
       <button type="button" class="btn outline" (click)="openAddressDialog('edit', address)">Edit</button>
       <button *ngIf="!address.isDefault" type="button" class="btn set-default" (click)="setAsDefault(address.id!)">
         Set as Default
@@ -30,8 +30,8 @@
     </div>
   </div>
 
-   <!-- ✅ CONTINUE BUTTON: Shown only from accordion -->
-   <div *ngIf="showContinueButton" class="continue-btn-wrapper">
+  <!-- ✅ CONTINUE BUTTON: Shown only from accordion -->
+  <div *ngIf="showContinueButton" class="continue-btn-wrapper">
     <button class="btn primary continue-btn" (click)="emitContinue()">Continue →</button>
   </div>
 </div>

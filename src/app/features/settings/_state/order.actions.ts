@@ -1,4 +1,4 @@
-import { IOrder, Order } from "../_model/order-model";
+import { IOrder } from "../_model/order-model";
 
 // ✅ order.actions.ts
 export class LoadOrders {

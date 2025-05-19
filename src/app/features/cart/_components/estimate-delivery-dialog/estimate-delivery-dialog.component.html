@@ -1,0 +1,64 @@
+<h2 class="dialog-title">Estimate Delivery</h2>
+
+<!-- Tabs -->
+<div class="tab-header">
+  <button [class.active]="tabIndex === 0" (click)="tabIndex = 0">Saved Addresses</button>
+  <button [class.active]="tabIndex === 1" (click)="tabIndex = 1">Enter Manually</button>
+</div>
+
+<!-- Tab Content -->
+<div class="tab-content">
+
+  <!-- 🔘 Tab 0: Saved Addresses -->
+  <ng-container *ngIf="tabIndex === 0">
+    <div class="address-selector-scroll-wrapper" *ngIf="addresses().length > 0; else noAddresses">
+      <div *ngFor="let addr of addresses()" class="address-option" [class.selected]="selectedAddressId() === addr?.id?.toString()">
+        <label>
+          <input type="radio" name="selectedAddress" [value]="addr.id" [(ngModel)]="selectedAddressId" />
+          <div class="address-content">
+            <strong>{{ addr.fullName }}</strong>, {{ addr.city }}, <b>{{ addr.pincode }}</b>
+            <div class="address-meta">({{ addr.state }}, {{ addr.country }})</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <ng-template #noAddresses>
+      <p class="text-muted">No saved addresses found.</p>
+    </ng-template>
+  </ng-container>
+
+
+  <!-- ✍️ Tab 1: Manual Entry -->
+  <ng-container *ngIf="tabIndex === 1">
+    <form [formGroup]="form" class="manual-form">
+      <div class="form-field">
+        <label for="pincode">Pincode</label>
+        <input type="text" id="pincode" formControlName="pincode" placeholder="Enter Pincode" />
+      </div>
+
+      <div class="form-field">
+        <label for="city">City</label>
+        <input type="text" id="city" formControlName="city" placeholder="Enter City" />
+      </div>
+
+      <div class="form-field">
+        <label for="state">State</label>
+        <input type="text" id="state" formControlName="state" placeholder="Enter State" />
+      </div>
+
+      <div class="form-field">
+        <label for="country">Country</label>
+        <select id="country" formControlName="country">
+          <option *ngFor="let c of countries" [value]="c">{{ c }}</option>
+        </select>
+      </div>
+    </form>
+  </ng-container>
+</div>
+
+<!-- Actions -->
+<div class="dialog-actions">
+  <button class="btn cancel" (click)="onCancel()">Cancel</button>
+  <button class="btn primary" (click)="onEstimate()">Check Shipping Fee</button>
+</div>

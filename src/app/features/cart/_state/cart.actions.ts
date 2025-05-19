@@ -20,3 +20,16 @@ export class RemoveCartItem {
   static readonly type = '[Cart] Remove Cart Item';
   constructor(public id: number) {}
 }
+
+export class LoadShippingEstimate {
+  static readonly type = '[Cart] Load Shipping Estimate';
+  constructor(public payload: {
+    address_id?: number | string;
+    city?: string;
+    country?: string;
+    country_code?: string;
+    pincode?: string;
+    state?: string;
+  }) {}
+}
+

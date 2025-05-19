@@ -5,7 +5,7 @@ import { Store } from '@ngxs/store';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { CartState } from './cart.state';
-import { AddToCart, ClearCart, LoadCart, RemoveCartItem, UpdateCartItems } from './cart.actions';
+import { AddToCart, ClearCart, LoadCart, LoadShippingEstimate, RemoveCartItem, UpdateCartItems } from './cart.actions';
 import { CartResponseItem } from '../_models/cart-item-model';
 import { ToastService } from '../../../core/services/toast.service';
 
@@ -18,6 +18,10 @@ export class CartFacade {
   readonly loadingSignal = this.store.selectSignal(CartState.loading);
 
   readonly countSignal = computed(() => this.cartSignal()?.items?.length ?? 0);
+
+  readonly shippingFeeSignal = this.store.selectSignal((state) => state.cart.shippingFee ?? 0);
+  readonly courierNameSignal = this.store.selectSignal((state) => state.cart.courierName ?? '');
+  readonly estimatedDeliveryDaysSignal = this.store.selectSignal((state) => state.cart.estimatedDeliveryDays ?? '');
 
   loadCart(): void {
     this.store.dispatch(new LoadCart());
@@ -62,6 +66,17 @@ export class CartFacade {
         return of(false);
       })
     );
+  }
+
+  loadShippingEstimate(payload: {
+    address_id?: number | string;
+    city?: string;
+    country?: string;
+    country_code?: string;
+    pincode?: string;
+    state?: string;
+  }) {
+    this.store.dispatch(new LoadShippingEstimate(payload));
   }
 }
 

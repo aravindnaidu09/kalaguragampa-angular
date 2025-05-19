@@ -1,6 +1,6 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { IOrder, Order } from '../_model/order-model';
+import { IOrder } from '../_model/order-model';
 import { OrderService } from '../_services/order.service';
 import { LoadOrders, LoadOrdersSuccess, LoadOrdersFail } from './order.actions';
 import { tap, catchError } from 'rxjs/operators';

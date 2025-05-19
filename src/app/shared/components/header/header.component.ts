@@ -295,7 +295,7 @@ export class HeaderComponent implements OnInit {
   goToCartPage() {
     this.checkMenuDropdownIsOpen();
     if (!(this.cartFacade.countSignal() > 0)) {
-      this.toastService.showError('Add products to your cart to view them.');
+      this.toastService.showWarning('Add products to your cart to view them.');
       return;
     }
     this.router.navigate(['/cart']);
@@ -304,7 +304,7 @@ export class HeaderComponent implements OnInit {
   goToWishlistPage() {
     this.checkMenuDropdownIsOpen();
     if (!(this.wCount() > 0)) {
-      this.toastService.showError('Add products to your wishlist to view them.');
+      this.toastService.showWarning('Add products to your wishlist to view them.');
       return;
     }
     this.router.navigate(['/wishlist']);

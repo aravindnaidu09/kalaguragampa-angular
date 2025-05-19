@@ -1,22 +1,30 @@
 import { catchError, map, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { ToastService } from '../../../core/services/toast.service';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Selector, Action, StateContext, State } from '@ngxs/store';
 import { CartResponseItem } from '../_models/cart-item-model';
 import { CartService } from '../_services/cart.service';
-import { LoadCart, ClearCart, AddToCart, RemoveCartItem, UpdateCartItems } from './cart.actions';
+import { LoadCart, ClearCart, AddToCart, RemoveCartItem, UpdateCartItems, LoadShippingEstimate } from './cart.actions';
+import { DeliveryService } from '../../../core/services/delivery.service';
 
 export interface CartStateModel {
   cart: CartResponseItem | null;
   loading: boolean;
+  shippingFee?: number;
+  courierName?: string;
+  estimatedDeliveryDays?: string;
 }
+
 
 @State<CartStateModel>({
   name: 'cart',
   defaults: {
     cart: null,
-    loading: false
+    loading: false,
+    shippingFee: 0,
+    courierName: '',
+    estimatedDeliveryDays: ''
   }
 })
 @Injectable()
@@ -121,4 +129,36 @@ export class CartState {
       })
     );
   }
+
+  @Action(LoadShippingEstimate)
+  loadShippingEstimate(ctx: StateContext<CartStateModel>, action: LoadShippingEstimate) {
+    const deliveryService = inject(DeliveryService);
+
+    return deliveryService.getShippingEstimate(action.payload).pipe(
+      tap((estimate) => {
+        if (estimate) {
+          ctx.patchState({
+            shippingFee: estimate.shipping_cost,
+            courierName: estimate.courier_name,
+            estimatedDeliveryDays: estimate.estimated_delivery
+          });
+        } else {
+          ctx.patchState({
+            shippingFee: 0,
+            courierName: '',
+            estimatedDeliveryDays: ''
+          });
+        }
+      }),
+      catchError((err) => {
+        ctx.patchState({
+          shippingFee: 0,
+          courierName: '',
+          estimatedDeliveryDays: ''
+        });
+        return of(err);
+      })
+    );
+  }
+
 }

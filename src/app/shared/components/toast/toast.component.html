@@ -1,0 +1,17 @@
+<div class="toast-wrapper" [ngClass]="data.type">
+  <mat-icon class="icon">
+    {{ data.type === 'success' ? 'check_circle' :
+    data.type === 'error' ? 'error' :
+    data.type === 'warning' ? 'warning' : 'info' }}
+  </mat-icon>
+
+  <span class="message">{{ data.message }}</span>
+
+  <button *ngIf="data.actionText" mat-button class="action" (click)="handleAction()">
+    {{ data.actionText }}
+  </button>
+
+  <button (click)="close()" class="close">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>

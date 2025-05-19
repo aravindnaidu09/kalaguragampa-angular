@@ -63,7 +63,7 @@ $primary-brown: #682f12;
 
   .place-order-btn {
     margin-top: 1.5rem;
-    background-color: #99663d;;
+    background-color: #99663d;
     color: white;
     border: none;
     width: 100%;
@@ -77,4 +77,13 @@ $primary-brown: #682f12;
       background-color: color.scale(#7b4e2f, $lightness: -5%);
     }
   }
+
+  .info-icon {
+    width: 14px;
+    height: 14px;
+    margin-left: 4px;
+    vertical-align: middle;
+    cursor: help;
+  }
+
 }

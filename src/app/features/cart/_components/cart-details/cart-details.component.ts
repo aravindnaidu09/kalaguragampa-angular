@@ -10,11 +10,18 @@ import { debounceTime, Subject } from 'rxjs';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 import { PriceSummaryComponent } from '../price-summary/price-summary.component';
 import { IProduct } from '../../../product/_models/product-model';
+import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../../../core/services/toast.service';
+import { MatDialog } from '@angular/material/dialog';
+import { EstimateDeliveryDialogComponent } from '../estimate-delivery-dialog/estimate-delivery-dialog.component';
+import { AddressFacade } from '../../../settings/_state/address.facade';
+import { Address } from '../../../settings/_model/address-model';
 
 @Component({
   selector: 'app-cart-details',
   imports: [
     CommonModule,
+    FormsModule,
     PriceSummaryComponent
   ],
   templateUrl: './cart-details.component.html',
@@ -23,6 +30,7 @@ import { IProduct } from '../../../product/_models/product-model';
 export class CartDetailsComponent implements OnInit, OnDestroy {
   private cartFacade = inject(CartFacade);
   private productService = inject(ProductService);
+  private addressFacade = inject(AddressFacade);
   private dialogService = inject(ConfirmDialogService);
 
   @Input() showCartTitle: boolean = true;
@@ -50,16 +58,34 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
   @Output() continue = new EventEmitter<void>();
   @Output() back = new EventEmitter<void>();
 
+  pincode: string = '';
+  country: string = 'India';
+  state: string = '';
+  city: string = '';
+  countries = ['India', 'USA', 'Australia', 'UK', 'Canada', 'Singapore', 'Europe'];
+
+  defaultAddress: Address = {};
+
 
 
   private quantityChangeSubjectMap: { [key: number]: Subject<number> } = {};
   private loadingItems: Set<number> = new Set();
 
-  constructor(private readonly router: Router) { }
+  constructor(private readonly router: Router,
+    private readonly toastService: ToastService,
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit() {
     this.fetchCartList();
     this.fetchCategories();
+
+
+    this.addressFacade.loadAddresses().subscribe(() => {
+      const all = this.addressFacade.addresses();
+      this.defaultAddress = all.find(a => a.isDefault)! ?? null;
+      this.onEstimateShipping();
+    });
   }
 
   fetchCartList() {
@@ -157,6 +183,56 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
   navigateToProductPage(pItem: IProduct) {
     this.router.navigate([`/product/${pItem.name}/${pItem.id}`]);
 
+  }
+
+  onEstimateShipping(): void {
+    const payload = this.getShippingEstimatePayload();
+
+    if (!payload) {
+      this.toastService.showError('Please select an address or fill in all required fields');
+      return;
+    }
+
+    this.cartFacade.loadShippingEstimate(payload);
+  }
+
+  private getShippingEstimatePayload():
+    | { address_id: string }
+    | { pincode: string; city: string; state: string; country: string }
+    | null {
+
+    if (this.defaultAddress.id) {
+      return { address_id: this.defaultAddress.id.toString() };
+    }
+
+    if (this.pincode && this.city && this.state && this.country) {
+      return {
+        pincode: this.pincode,
+        city: this.city,
+        state: this.state,
+        country: this.country
+      };
+    }
+
+    return null;
+  }
+
+
+
+  openEstimateDialog() {
+    this.dialog.open(EstimateDeliveryDialogComponent, {
+      width: '500px'
+    }).afterClosed().subscribe(result => {
+      if (result) {
+        this.cartFacade.loadShippingEstimate(result);
+
+        // If user selected a saved address, update UI
+        if (result.address_id) {
+          const all = this.addressFacade.addresses();
+          this.defaultAddress = all.find(a => a.id === result.address_id)!;
+        }
+      }
+    });
   }
 
   onContinue() {

@@ -15,5 +15,5 @@ export class OrderFacade {
   }
 
   orderById = (id: number) =>
-    computed(() => this.ordersSignal().find(order => order.id === id));
+    computed(() => this.ordersSignal().find(order => order.order_id === id));
 }

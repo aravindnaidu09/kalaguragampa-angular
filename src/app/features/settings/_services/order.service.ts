@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { IOrder, Order } from '../_model/order-model';
+import { IOrder } from '../_model/order-model';
 import { APP_SETTINGS } from '../../../core/constants/app-settings';
 import { ORDER_API_URLS } from '../../../core/constants/order-urls';
 import { ApiResponse } from '../../../core/models/api-response.model';
+import { deserializeOrders } from '../_model/order.adapter';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -16,8 +17,8 @@ export class OrderService {
    * ✅ Get all user orders
    */
   getUserOrders(): Observable<IOrder[]> {
-    return this.http.get<ApiResponse<IOrder[]>>(`${this.baseUrl}`).pipe(
-      map(res => res.data)
+    return this.http.get<IOrder[]>(`${this.baseUrl}`).pipe(
+      map(res => deserializeOrders(res))
     );
   }
 

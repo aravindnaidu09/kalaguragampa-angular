@@ -1,0 +1,42 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #444;
+  flex-wrap: wrap;
+
+  .breadcrumb-link {
+    color: #007bff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .breadcrumb-text {
+    color: #555;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .breadcrumb-current {
+    font-weight: 600;
+    color: #222;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .separator {
+    margin: 0 8px;
+    color: #999;
+  }
+
+  .breadcrumb-icon {
+    font-size: 16px;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+}

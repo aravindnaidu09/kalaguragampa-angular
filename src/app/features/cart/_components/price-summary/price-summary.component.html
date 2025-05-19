@@ -26,12 +26,22 @@
       Shipping Fee
       <img src="assets/images/icons8-info-50.png" alt="Info" class="info-icon" />
     </span>
-    <span class="green">{{ isShippingFree ? 'FREE' : '₹' + cart?.shippingAmount }}</span>
+    <span class="green">{{ isShippingFree ? 'FREE' : '₹' + shippingFeeSignal() }}</span>
   </div>
+
+  <div class="summary-row" *ngIf="estimatedDeliveryDaysSignal()">
+    <span>Estimated Delivery</span>
+    <span>
+      Arrives in {{ estimatedDeliveryDaysSignal() }}–{{ estimatedDeliveryEndRange() }} business days
+      <img src="assets/images/icons8-info-50.png" alt="Info"
+        title="Estimated delivery depends on your location and courier service." class="info-icon" />
+    </span>
+  </div>
+
 
   <div class="summary-total">
     <span>Total Amount</span>
-    <span>₹{{ cart?.totalAmount }}</span>
+    <span>₹{{ finalAmountSignal() }}</span>
   </div>
 
   <ng-container *ngIf="showPlaceOrderButton">

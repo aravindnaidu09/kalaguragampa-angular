@@ -1,13 +1,16 @@
+import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import type { HttpInterceptorFn } from '@angular/common/http';
-import { HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
-import { Store } from '@ngxs/store';
 import { Router } from '@angular/router';
-import { AuthState, SetToken, ClearToken } from '../../features/auth/_state/auth.state';
-import { ToastService } from '../services/toast.service';
+import { Store } from '@ngxs/store';
+import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
+import { filter, take, catchError, switchMap } from 'rxjs/operators';
 import { AuthService } from '../../features/auth/_services/auth.service';
+import { AuthState, ClearToken, SetToken } from '../../features/auth/_state/auth.state';
+import { ToastService } from '../services/toast.service';
+
+// ⚡ Locking state to prevent multiple refresh token calls
+let isRefreshing = false;
+let refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
   const store = inject(Store);
@@ -15,13 +18,10 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
   const authService = inject(AuthService);
   const toastService = inject(ToastService);
 
-  // ✅ Retrieve Access Token Synchronously
-  const accessToken = store.selectSnapshot(AuthState.getAccessToken) ? store.selectSnapshot(AuthState.getAccessToken) : localStorage.getItem('accessToken')!;
-  const refreshToken = store.selectSnapshot(AuthState.getRefreshToken) ? store.selectSnapshot(AuthState.getRefreshToken) : localStorage.getItem('refreshToken')!;
+  const accessToken = store.selectSnapshot(AuthState.getAccessToken) ?? localStorage.getItem('accessToken')!;
+  const refreshToken = store.selectSnapshot(AuthState.getRefreshToken) ?? localStorage.getItem('refreshToken')!;
 
   let clonedRequest = req;
-
-  // ✅ Attach Authorization Header if Token Exists
   if (accessToken) {
     clonedRequest = req.clone({
       setHeaders: { Authorization: `Bearer ${accessToken}` }
@@ -30,34 +30,50 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
 
   return next(clonedRequest).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
+      // Only intercept 401s (not for refresh token call itself)
+      if (error.status === 401 && !req.url.includes('/auth/api/v1/token/refresh/')) {
 
         if (!refreshToken) {
           store.dispatch(new ClearToken());
-          // router.navigate(['/login']);
           return throwError(() => new Error('Session expired. Please log in again.'));
         }
 
-        // ✅ Call AuthService to Get a New Access Token
-        return authService.refreshAccessToken().pipe(
-          switchMap((newTokens) => {
+        if (!isRefreshing) {
+          isRefreshing = true;
+          refreshTokenSubject.next(null); // reset
 
-            // ✅ Update Tokens in NGXS Store
-            store.dispatch(new SetToken(newTokens.access, newTokens.refresh));
+          return authService.refreshAccessToken().pipe(
+            switchMap((newTokens) => {
+              isRefreshing = false;
+              store.dispatch(new SetToken(newTokens.access, newTokens.refresh));
+              refreshTokenSubject.next(newTokens.access);
 
-            // ✅ Retry the Original Request with the New Token
-            const updatedRequest = req.clone({
-              setHeaders: { Authorization: `Bearer ${newTokens.access}` }
-            });
+              const updatedRequest = req.clone({
+                setHeaders: { Authorization: `Bearer ${newTokens.access}` }
+              });
+              return next(updatedRequest);
+            }),
+            catchError(err => {
+              isRefreshing = false;
+              store.dispatch(new ClearToken());
+              refreshTokenSubject.next(null);
+              return throwError(() => new Error('Session expired. Please log in again.'));
+            })
+          );
 
-            return next(updatedRequest);
-          }),
-          catchError(err => {
-            store.dispatch(new ClearToken());
-            // router.navigate(['/login']);
-            return throwError(() => new Error('Session expired. Please log in again.'));
-          })
-        );
+        } else {
+          // Wait until the refresh is done
+          return refreshTokenSubject.pipe(
+            filter(token => !!token),
+            take(1),
+            switchMap((newAccessToken) => {
+              const updatedRequest = req.clone({
+                setHeaders: { Authorization: `Bearer ${newAccessToken}` }
+              });
+              return next(updatedRequest);
+            })
+          );
+        }
       }
 
       let errorMessage = 'An unexpected error occurred';

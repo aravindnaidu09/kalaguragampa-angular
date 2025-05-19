@@ -1,20 +1,34 @@
-<div class="order-item-card">
-  <div class="order-info">
-    <img [src]="item.image" alt="{{ item.productName }}" />
-    <div class="details">
-      <h3 class="product-name">{{ item.productName }}</h3>
-      <p class="price">₹{{ item.price }} × {{ item.quantity }}</p>
+<div class="order-card">
+  <!-- Header Row -->
+  <div class="order-header">
+    <div>
+      <div class="order-id">Order #{{ item.order_id }}
+        <button class="copy-btn" (click)="copyOrderId(item.order_id)" title="Copy Order ID">
+          📋
+        </button>
+      </div>
+      <div class="order-date">Placed on {{ item.created_at | date: 'd MMMM y' }}</div>
     </div>
+    <button class="link-btn" (click)="goToInvoice(item.order_id)">View Invoice</button>
   </div>
 
-  <div class="order-status">
-    <span class="status-dot" [ngClass]="statusClass(item.status!)"></span>
-    <span class="status-text">
-      {{ item.status === 'Delivered' ? 'Delivered on ' + item.deliveryDate : 'Awaiting Delivery' }}
-    </span>
-  </div>
+  <!-- Content Row -->
+  <div class="order-content">
+    <div class="left-info">
+      <div class="amount">₹{{ item.total_amount }}</div>
+      <div class="status">
+        <span class="badge" [ngClass]="item.status">{{ item.status }}</span>
+        <span class="delivery">
+          {{ item.delivery_date ? ('Delivered on ' + (item.delivery_date | date: 'd MMM y')) : 'Awaiting Delivery' }}
+        </span>
+      </div>
+    </div>
 
-  <div class="review-action" *ngIf="!item.isRated">
-    <button (click)="reviewProduct(item)" class="review-btn">★ Rate & Review Product</button>
+    <div class="right-actions">
+      <button class="primary-btn" (click)="goToTrack(item.order_id)">Track Order</button>
+      <button *ngIf="!item.is_rated" class="review-btn" (click)="reviewProduct(item)">
+        ★ Rate & Review Product
+      </button>
+    </div>
   </div>
 </div>

@@ -63,12 +63,12 @@ export class CheckoutDetailsComponent implements OnInit {
     // this.fetchDeliveryOptions();
   }
 
-  fetchDeliveryOptions(): void {
-    this.deliveryService.getDeliveryOptions().subscribe({
-      next: (options) => this.deliveryOptions = options,
-      error: () => console.error('Failed to fetch delivery options')
-    });
-  }
+  // fetchDeliveryOptions(): void {
+  //   this.deliveryService.getDeliveryOptions().subscribe({
+  //     next: (options) => this.deliveryOptions = options,
+  //     error: () => console.error('Failed to fetch delivery options')
+  //   });
+  // }
 
   selectDeliveryOption(option: DeliveryOption) {
     this.selectedDeliveryOption = option;

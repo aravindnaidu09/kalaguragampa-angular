@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { APP_SETTINGS } from '../../../core/constants/app-settings';
 import { AUTH_API_URLS } from '../../../core/constants/auth-api-urls';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { AuthState, ClearToken, SetToken } from '../_state/auth.state';
@@ -27,24 +27,39 @@ export class AuthService {
 
   refreshAccessToken(): Observable<{ access: string; refresh: string }> {
     let refreshToken = this.store.selectSnapshot(AuthState.getRefreshToken);
+
     if (!refreshToken) {
-      // return throwError(() => new Error('No refresh token available.'));
       refreshToken = localStorage.getItem('refreshToken')!;
     }
 
+    if (!refreshToken) {
+      return throwError(() => new Error('Refresh token missing'));
+    }
+
     return this.httpClient.post<{ access: string; refresh: string }>(
-      `${this.baseUrl}/${AUTH_API_URLS.auth.tokenRefresh}`, { refresh: refreshToken }
+      `${this.baseUrl}/${AUTH_API_URLS.auth.tokenRefresh}`,
+      { refresh: refreshToken }
     ).pipe(
-      map(response => {
-        this.store.dispatch(new SetToken(response.access, response.refresh));
-        return response;
+      map((response) => {
+        if (response?.access && response?.refresh) {
+          this.store.dispatch(new SetToken(response.access, response.refresh));
+          return response;
+        } else {
+          throw new Error('Invalid token response');
+        }
       }),
-      catchError(error => {
-        this.store.dispatch(new ClearToken());
-        return throwError(() => new Error('Refresh token expired, please log in again.'));
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          this.store.dispatch(new ClearToken());
+          return throwError(() => new Error('Refresh token expired'));
+        }
+
+        // Let the interceptor decide what to do with other errors
+        return throwError(() => error);
       })
     );
   }
+
 
   register(userData: any): Observable<any> {
     const payload = {
