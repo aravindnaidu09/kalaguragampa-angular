@@ -1,11 +1,11 @@
 <div class="filters-container">
   <h3 class="filter-title">
-    🛍️ Filter & Refine
+    Filter & Refine
   </h3>
 
   <!-- 📌 CATEGORY FILTER -->
   <div class="filter-section category-section">
-    <h4>📂 Category</h4>
+    <h4>Category</h4>
     <div class="category-list">
       <label *ngFor="let category of categories" class="category-item">
         <input type="checkbox" [checked]="selectedCategory() === category.id" (change)="toggleCategory(category.id)" />
@@ -17,7 +17,7 @@
 
   <!-- 📌 PRICE FILTER (₹ Input Fields) -->
   <div class="filter-section">
-    <h4>💰 Price (₹)</h4>
+    <h4>Price (₹)</h4>
     <div class="price-inputs">
       <input type="number" min="0" max="100000" [ngModel]="minPrice()" (ngModelChange)="onPriceChange('min', $event)"
         placeholder="Min ₹">
@@ -30,7 +30,7 @@
 
   <!-- 📌 RATING FILTER -->
   <div class="filter-section">
-    <h4>⭐ Rating</h4>
+    <h4>Rating</h4>
     <div class="stars">
       <span *ngFor="let star of [1, 2, 3, 4, 5]" (click)="setRating(star)"
         [class.selected]="selectedRating() === star">⭐</span>
@@ -39,7 +39,7 @@
 
   <!-- 📌 SORT BY DATE -->
   <div class="filter-section">
-    <h4>📅 Sort by Date</h4>
+    <h4>Sort by Date</h4>
     <select [(ngModel)]="sortBy" class="sort-dropdown">
       <option value="latest">Latest</option>
       <option value="oldest">Oldest</option>

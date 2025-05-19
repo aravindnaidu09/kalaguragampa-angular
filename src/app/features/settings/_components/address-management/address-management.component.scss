@@ -44,7 +44,7 @@
 
   &.default {
     background: #fdf7f4;
-    border: 2px solid #682f12;
+    border: 2px solid #e79b75;
   }
 
   .default-badge {
@@ -127,4 +127,64 @@
     }
   }
 }
+
+.address-skeleton-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .address-skeleton-card {
+  background: #f8f8f8;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  animation: pulse 1.5s infinite ease-in-out;
+
+  .skeleton-line {
+    height: 12px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    margin-bottom: 10px;
+
+    &.short {
+      width: 30%;
+    }
+
+    &.full {
+      width: 90%;
+    }
+  }
+
+  .skeleton-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+
+    .skeleton-btn {
+      width: 100px;
+      height: 28px;
+      background: #e0e0e0;
+      border-radius: 6px;
+
+      &.small {
+        width: 70px;
+      }
+    }
+  }
+}
+}
+
+@keyframes pulse {
+  0% {
+    background-color: #eeeeee;
+  }
+  50% {
+    background-color: #dddddd;
+  }
+  100% {
+    background-color: #eeeeee;
+  }
+}
+
 

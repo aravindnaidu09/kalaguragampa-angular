@@ -10,6 +10,7 @@ import { AuthService } from '../../../auth/_services/auth.service';
 import { WishlistFacade } from '../../../cart/_state/wishlist.facade';
 import { ToastService } from '../../../../core/services/toast.service';
 import { IWishlist } from '../../_models/wishlist-model';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 @Component({
   selector: 'app-detailed-product-list',
@@ -37,7 +38,8 @@ export class DetailedProductListComponent implements OnInit, OnChanges {
     private readonly router: Router,
     private readonly authService: AuthService,
     private readonly wishlistFacade: WishlistFacade,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    public currencyService: CurrencyService
   ) { }
 
   ngOnInit(): void {

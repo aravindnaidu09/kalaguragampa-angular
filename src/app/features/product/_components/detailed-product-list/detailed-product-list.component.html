@@ -12,7 +12,7 @@
       <h3 class="product-name" [title]="product.name" (click)="navigateToProductPage(product)">{{ product.name }}</h3>
 
       <div class="product-meta">
-        <span class="price">₹{{ product.price }}</span>
+        <span class="price">{{ currencyService.getSymbol() }}{{ currencyService.convertPrice(product.price) }}</span>
         <span class="rating">(4.1) ⭐ | 200</span>
       </div>
 

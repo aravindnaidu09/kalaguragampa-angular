@@ -18,7 +18,7 @@ import { NetworkBannerComponent } from './shared/components/network-banner/netwo
     HeaderComponent,
     FooterComponent,
     NetworkBannerComponent
-],
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -60,6 +60,12 @@ export class AppComponent {
 
       this.showHeader = !isCheckout;
       this.showFooter = !isCheckout;
+
+      this.router.events
+        .pipe(filter(event => event instanceof NavigationEnd))
+        .subscribe(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' }); // 👈 scrolls to top
+        });
     });
   }
 

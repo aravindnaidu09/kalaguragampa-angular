@@ -171,6 +171,7 @@
   .related-products-skeleton {
     display: flex;
     gap: 16px;
+    max-width: 100% !important;
 
     .skeleton-card {
       width: 220px;
@@ -180,10 +181,6 @@
       background-size: 200% 100%;
       animation: shimmer 1.4s ease infinite;
     }
-  }
-
-  .related-products-wrapper {
-    max-width: 100%;
   }
 
   .related-products-scroll {

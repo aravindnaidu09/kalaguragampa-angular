@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Address, serializeAddress } from '../../_model/address-model';
@@ -36,7 +36,9 @@ export class AddressManagementComponent {
 
   accordionOpen = false;
   // isEditing = false;
-  editingData: Partial<Address> = {};
+  editingData: Partial<Address | null> = {};
+
+  loadingAddresses = this.addressFacade.loading;
 
   ngOnInit(): void {
     this.initializeForm();
@@ -70,16 +72,12 @@ export class AddressManagementComponent {
       this.addressFacade.updateAddress(payload.id, payload).subscribe(success => {
         if (success) {
           this.resetForm(true);
-          this.accordionOpen = false;
-
         }
       });
     } else {
       this.addressFacade.createAddress(payload).subscribe(success => {
         if (success) {
           this.resetForm(true);
-          this.accordionOpen = false;
-
         }
       });
     }
@@ -130,10 +128,10 @@ export class AddressManagementComponent {
   }
 
   resetForm(isCancel: boolean): void {
+    this.accordionOpen = false;
     this.isEditing = false;
     this.selectedAddressId = null;
-    this.editingData = {};
-    this.accordionOpen = false;
+    this.editingData = null;
     this.addressForm.reset({ country: 'India', isDefault: false });
     if (!isCancel) {
       this.addressFacade.loadAddresses();

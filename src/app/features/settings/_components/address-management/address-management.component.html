@@ -10,41 +10,52 @@
 <!-- 📦 Accordion Form -->
 <ng-container *ngIf="accordionOpen">
   <div class="accordion-form" [@fadeIn]>
-    <app-address-form [initialData]="editingData" [formMode]="isEditing ? 'edit' : 'add'"
+    <app-address-form [initialData]="editingData!" [formMode]="isEditing ? 'edit' : 'add'"
       (save)="handleAddressSave($event)" (cancel)="resetForm(false)"></app-address-form>
   </div>
 </ng-container>
 
 <!-- ✅ Address Cards -->
-<div *ngFor="let address of addressesSignal()">
-  <div class="address-card" [class.default]="address.isDefault" @fadeIn>
-    <!-- ✅ Optional default tag -->
-    <div *ngIf="address.isDefault" class="default-badge">Default</div>
-
-    <!-- ✅ Name + Phone -->
-    <div class="name-phone">
-      <strong>{{ address.fullName }}</strong>
-      <span class="phone">{{ address.phone }}</span>
-    </div>
-
-    <!-- ✅ Full Address -->
-    <div class="address-line">
-      {{ address.street }}<span *ngIf="address.street2">, {{ address.street2 }}</span>,
-      {{ address.city }}, {{ address.state }}, {{ address.country }} -
-      <strong>{{ address.pincode }}</strong>
-    </div>
-
-    <!-- ✅ Bottom: Set as Default and Actions -->
-    <div class="card-footer">
-      <button *ngIf="!address.isDefault" class="set-default" (click)="setDefaultAddress(address.id!, address)">
-        Set as Default
-      </button>
-
-      <div class="action-buttons">
-        <button class="edit" (click)="editAddress(address)">Edit</button>
-        <button class="delete" (click)="deleteAddress(address.id!)">Delete</button>
+<!-- 🔄 Skeleton Loader -->
+<ng-container *ngIf="loadingAddresses(); else addressList">
+  <div class="address-skeleton-wrapper">
+    <div class="address-skeleton-card" *ngFor="let i of [1, 2, 3]">
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-line full"></div>
+      <div class="skeleton-line full"></div>
+      <div class="skeleton-footer">
+        <div class="skeleton-btn"></div>
+        <div class="skeleton-btn small"></div>
+        <div class="skeleton-btn small"></div>
       </div>
     </div>
   </div>
+</ng-container>
 
-</div>
+<!-- ✅ Actual Address List -->
+<ng-template #addressList>
+  <div *ngFor="let address of addressesSignal()">
+    <div class="address-card" [class.default]="address.isDefault" @fadeIn>
+      <div *ngIf="address.isDefault" class="default-badge">Default</div>
+      <div class="name-phone">
+        <strong>{{ address.fullName }}</strong>
+        <span class="phone">{{ address.phone }}</span>
+      </div>
+      <div class="address-line">
+        {{ address.street }}<span *ngIf="address.street2">, {{ address.street2 }}</span>,
+        {{ address.city }}, {{ address.state }}, {{ address.country }} -
+        <strong>{{ address.pincode }}</strong>
+      </div>
+      <div class="card-footer">
+        <button *ngIf="!address.isDefault" class="set-default" (click)="setDefaultAddress(address.id!, address)">
+          Set as Default
+        </button>
+        <div class="action-buttons">
+          <button class="edit" (click)="editAddress(address)">Edit</button>
+          <button class="delete" (click)="deleteAddress(address.id!)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
