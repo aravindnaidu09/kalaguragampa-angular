@@ -15,6 +15,7 @@
       }
     ],
     "axe/aria": "off",
-    "button-type": "off"
+    "button-type": "off",
+    "compat-api/css": "off"
   }
 }

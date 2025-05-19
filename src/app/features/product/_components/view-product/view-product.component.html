@@ -1,12 +1,13 @@
 <div class="product-container" *ngIf="!isLoading(); else loading">
   <!-- ✅ Product Image -->
   <div class="product-image">
-    <img [src]="getImagePath(product()?.images![imageIndex].image)" [alt]="product()?.name" (error)="onImageError($event)" />
+    <img [src]="getImagePath(product()?.images![imageIndex].image)" [alt]="product()?.name"
+      (error)="onImageError($event)" />
 
     <!-- ✅ Product Thumbnail Images -->
     <div class="thumbnail-container" *ngIf="product()?.images!.length > 1">
-      <img *ngFor="let image of product()?.images; let i = index" [src]="getImagePath(image.image)" [alt]="product()?.name"
-        (error)="onImageError($event)" (click)="showClickedSpecificImage(i)" />
+      <img *ngFor="let image of product()?.images; let i = index" [src]="getImagePath(image.image)"
+        [alt]="product()?.name" (error)="onImageError($event)" (click)="showClickedSpecificImage(i)" />
     </div>
   </div>
 
@@ -15,7 +16,7 @@
     <h2>{{ product()?.name }}</h2>
 
     <div class="product-price">
-      <span>Rs. {{ product()?.price }}</span>
+      <span>{{ currencyService.getSymbol() }}{{ currencyService.convertPrice( product()?.price) }}</span>
     </div>
 
     <div class="product-rating">
@@ -28,12 +29,25 @@
       <div class="product-quantity">
         <button class="quantity-btn" (click)="decreaseQuantity()">-</button>
         <label>{{ quantity() }}</label>
-        <button class="quantity-btn" [disabled]="quantity() === product()?.maxQuantity" (click)="increaseQuantity()">+</button>
+        <button class="quantity-btn" [disabled]="quantity() === product()?.maxQuantity"
+          (click)="increaseQuantity()">+</button>
       </div>
 
-      <div class="stock-info">
-        <p><span class="stock-count">{{ product()?.stockStatus }}</span></p>
+      <div class="stock-info" *ngIf="product()?.stockStatus === 'Out of Stock'; else inStock">
+        <div class="stock-out">
+          <span>Out of Stock</span>
+          <label class="notify-checkbox">
+            <input type="checkbox" [(ngModel)]="notify" (change)="notifyMe(product()?.id)" />
+            <span>Notify Me</span>
+          </label>
+        </div>
       </div>
+
+      <ng-template #inStock>
+        <p class="stock-in">{{ product()?.stockStatus }}</p>
+      </ng-template>
+
+
     </div>
 
     <!-- ✅ Add to Cart & Buy Now Buttons -->
@@ -47,6 +61,29 @@
   <div class="product-reviews-wrapper">
     <app-review-container [productId]="product()?.id!"></app-review-container>
   </div>
+
+  <div class="related-products-wrapper">
+    <h3>Related Products</h3>
+
+    <!-- Skeleton Loader -->
+    <div class="related-products-skeleton" *ngIf="relatedLoading()">
+      <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5]"></div>
+    </div>
+
+    <!-- Error or Empty -->
+    <p *ngIf="relatedError()" class="related-error">{{ relatedError() }}</p>
+
+    <!-- Scrollable Related Products -->
+    <div class="related-products-scroll" *ngIf="!relatedLoading() && relatedProducts().length">
+      <button class="scroll-btn left" (click)="scrollLeft()">&#8249;</button>
+      <div class="scroll-container" #scrollContainer>
+        <app-product *ngFor="let relatedProduct of relatedProducts()" [product]="relatedProduct"
+          [wishlistItems]="wishlistItems" (wishlistToggle)="addToWishlist($event)"></app-product>
+      </div>
+      <button class="scroll-btn right" (click)="scrollRight()">&#8250;</button>
+    </div>
+  </div>
+
 </div>
 
 <!-- ✅ Skeleton Loader for Product -->

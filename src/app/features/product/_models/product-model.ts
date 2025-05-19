@@ -4,7 +4,8 @@ export interface IProduct {
   id?: number;
   name?: string;
   sku?: string;
-  category?: number;
+  categoryName?: string;
+  categoryId?: number;
   description?: string;
   shortDescription?: string;
   weight?: number;
@@ -25,7 +26,8 @@ export function deserializeProducts(data: any[]): IProduct[] {
     id: product.id,
     name: product.name,
     sku: product.sku,
-    category: product.category,
+    categoryName: product.category,
+    categoryId: product.category_id,
     description: product.description,
     shortDescription: product.short_description,
     weight: Number(product.weight),
@@ -47,7 +49,8 @@ export function deserializeProduct(data: any): IProduct {
     id: data.id,
     name: data.name,
     sku: data.sku,
-    category: data.category,
+    categoryName: data.category,
+    categoryId: data.category_id,
     description: data.description,
     shortDescription: data.short_description,
     weight: Number(data.weight),

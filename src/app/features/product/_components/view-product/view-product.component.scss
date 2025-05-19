@@ -83,7 +83,7 @@
   padding: 14px 0;
   font-size: 1rem;
   font-weight: 600;
-  border-radius: 30px;
+  border-radius: 10px;
   transition: all 0.25s ease;
   border: 2px solid transparent;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -91,26 +91,172 @@
 }
 
 .buy-now {
-  background-color: #682f12;
-  color: #fff;
-  border-color: #682f12;
+  background-color: transparent;
+  color: #682f12;
 
   &:hover {
-    background-color: #4e200d;
+    // background-color: #4e200d;
     box-shadow: 0 4px 12px rgba(104, 47, 18, 0.4);
   }
 }
 
 .add-to-cart {
-  background-color: #d97c1e; // new terracotta
-  color: #fff;
-  border-color: #d97c1e;
+  background-color: transparent; // new terracotta
+  color: #d97c1e;
 
   &:hover {
-    background-color: #b56213;
+    // background-color: #b56213;
     box-shadow: 0 4px 12px rgba(217, 124, 30, 0.4);
   }
 }
+
+.stock-info {
+  margin-top: 12px;
+
+  .stock-out {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-weight: 600;
+    font-size: 16px;
+    color: #ff7600;
+
+    span:first-child {
+      color: #ff7600;
+    }
+
+    .notify-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      cursor: pointer;
+
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: #ff7600;
+        cursor: pointer;
+      }
+
+      span {
+        user-select: none;
+        color: #682f12;
+      }
+    }
+  }
+
+  .stock-in {
+    color: #1a8f3b;
+    font-weight: 600;
+    font-size: 16px;
+  }
+}
+
+.related-products-wrapper {
+  margin-top: 40px;
+
+  h3 {
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: #682f12;
+  }
+
+  .related-error {
+    color: #b71c1c;
+    font-weight: 500;
+    margin-top: 10px;
+  }
+
+  .related-products-skeleton {
+    display: flex;
+    gap: 16px;
+
+    .skeleton-card {
+      width: 220px;
+      height: 300px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #eaeaea 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s ease infinite;
+    }
+  }
+
+  .related-products-wrapper {
+    max-width: 100%;
+  }
+
+  .related-products-scroll {
+    position: relative;
+    max-width: 100%; // ✅ restrict to viewport
+    overflow: hidden; // ✅ prevent outer scroll
+
+    .scroll-container {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding: 12px 0;
+      scroll-behavior: smooth;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(255, 255, 255, 0.85);
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+
+      &:hover {
+        background-color: #99663D;
+        color: #fff;
+
+        span {
+          transform: scale(1.2);
+        }
+      }
+
+      &.left {
+        left: 0; // 📍 stick to left edge
+        left: 5px;
+
+      }
+
+      &.right {
+        right: 0; // 📍 stick to right edge
+        right: 5px;
+      }
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+
+
 
 
 /* ✅ Skeleton Loader */
