@@ -23,6 +23,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 import { Signal } from '@angular/core';
 import { IWishlist } from '../../_models/wishlist-model';
 import { Router } from '@angular/router';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 @Component({
   selector: 'app-product',
@@ -43,6 +44,7 @@ export class ProductComponent {
   private toastService = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+  currencyService = inject(CurrencyService);
 
   @Input() product!: IProduct;
   @Input() wishlistItems!: Signal<IWishlist[]>;

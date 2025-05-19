@@ -92,7 +92,8 @@ export class MenuService {
     this.store.dispatch(new ClearCart());
     this.wishlistFacade.clear();
 
-    this.toastService.showSuccess('Logged Out successful!')
+    this.toastService.showSuccess('Logged Out successful!');
+    this.router.navigate(['/']);
   }
 
   removeTokens() {

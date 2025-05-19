@@ -16,6 +16,8 @@ import { ProfileComponent } from './features/settings/_components/profile/profil
 import { AddressManagementComponent } from './features/settings/_components/address-management/address-management.component';
 import { NotificationPreferencesComponent } from './features/settings/_components/notification-preferences/notification-preferences.component';
 import { OrderHistoryComponent } from './features/settings/_components/order-history/order-history.component';
+import { TrackOrderComponent } from './features/orders/_components/track-order/track-order.component';
+import { ChangePasswordComponent } from './features/auth/_components/change-password/change-password.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -29,6 +31,8 @@ export const routes: Routes = [
   { path: 'shipping-policy', component: ShipmentPolicyComponent },
   { path: 'terms-services', component: TermsComponent },
   { path: 'detail-view', component: ProductsPageComponent },
+  { path: 'track-order/:delivery_id', component: TrackOrderComponent },
+  { path: 'review-product/:product_id', component: AddReviewContainerComponent },
   {
     path: 'settings',
     component: UserSettingsComponent,
@@ -37,6 +41,7 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent, data: { animation: 'profile' } },
       { path: 'address', component: AddressManagementComponent, data: { animation: 'address' } },
       { path: 'orders', component: OrderHistoryComponent, data: { animation: 'orders' } },
+      { path: 'change-password', component: ChangePasswordComponent },
       { path: 'notifications', component: NotificationPreferencesComponent, data: { animation: 'notifications' } }
     ]
   },
@@ -45,4 +50,4 @@ export const routes: Routes = [
 
   // 🚨 Catch-all fallback route — should always be last
   { path: '**', component: PageNotFoundComponent },
-  ];
+];

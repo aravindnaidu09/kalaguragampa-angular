@@ -17,6 +17,7 @@ import { WishlistState } from '../../../features/cart/_state/wishlist.state';
 import { WishlistFacade } from '../../../features/cart/_state/wishlist.facade';
 import { AuthService } from '../../../features/auth/_services/auth.service';
 import { CartFacade } from '../../../features/cart/_state/cart.facade';
+import { CurrencyService } from '../../../core/services/currency.service';
 
 @Component({
   selector: 'app-header',
@@ -54,7 +55,7 @@ export class HeaderComponent implements OnInit {
   menuItems!: Signal<MenuItem[]>;
 
   selectedLanguage: any = 1;
-  selectedCountry: string = 'IN';
+  selectedCountry: string = 'INR';
   isDropdownOpen = false;
 
   selectedMenuItem: any;
@@ -68,13 +69,13 @@ export class HeaderComponent implements OnInit {
   hashRoute: string = '';
 
   countryOptions = [
-    { label: 'Australia', value: 'AUS' },
-    { label: 'Canada', value: 'CAN' },
+    { label: 'Australia', value: 'AUD' },
+    { label: 'Canada', value: 'CAD' },
     { label: 'Europe', value: 'EUR' },
-    { label: 'India', value: 'IN' },
-    { label: 'UK', value: 'UK' },
-    { label: 'USA', value: 'US' },
-    { label: 'Singapore', value: 'sing' }
+    { label: 'India', value: 'INR' },
+    { label: 'UK', value: 'GBP' },
+    { label: 'USA', value: 'USD' },
+    { label: 'Singapore', value: 'SGD' }
   ];
 
   // Close dropdown if clicked outside
@@ -114,7 +115,8 @@ export class HeaderComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly authService: AuthService,
     readonly cartFacade: CartFacade,
-    private location: Location
+    private location: Location,
+    private readonly currencyService: CurrencyService,
   ) {
     this.searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(query => {
       if (query.length >= 2) {
@@ -312,5 +314,9 @@ export class HeaderComponent implements OnInit {
 
   checkMenuDropdownIsOpen() {
     this.isMenuOpen = false;
+  }
+
+  onCurrencyChange(code: string) {
+    this.currencyService.setCurrency(code);
   }
 }

@@ -17,7 +17,7 @@
   </div>
   <div class="top-bar-right">
     <div class="location-dropdown">
-      <select [(ngModel)]="selectedCountry">
+      <select [(ngModel)]="selectedCountry" (change)="onCurrencyChange(selectedCountry)">
         @for (item of countryOptions; track item.value) {
         <option [ngValue]="item.value">{{ item.label }}</option>
         }

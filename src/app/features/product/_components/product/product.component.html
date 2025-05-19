@@ -17,7 +17,7 @@
       <h4 [title]="product.name">{{ product.name }}</h4>
     </div>
 
-    <div class="product-price">₹{{ product.price }}</div>
+    <div class="product-price">{{ currencyService.getSymbol() }}{{ currencyService.convertPrice(product.price) }}</div>
 
     <div class="rating-cart-wrapper">
       <div class="product-rating">

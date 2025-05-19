@@ -45,7 +45,7 @@ export class OrderCardComponent {
   }
 
   goToTrack(orderId: number): void {
-    this.router.navigate(['/order', orderId, 'track']);
+    this.router.navigate(['/track-order/', orderId]);
   }
 
   formatDate(date?: string | null): string {
@@ -66,7 +66,9 @@ export class OrderCardComponent {
     }
   }
 
-  reviewProduct(item: IOrder) {}
+  reviewProduct(item: IOrder) {
+    this.router.navigate(['/review-product', item.order_id]);
+  }
 
   copyOrderId(orderId: number): void {
     navigator.clipboard.writeText(orderId.toString()).then(() => {

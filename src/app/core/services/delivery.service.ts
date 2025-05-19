@@ -49,7 +49,7 @@ export class DeliveryService {
   // }
 
   // ✅ Track a Delivery by ID
-  trackDelivery(deliveryId: string): Observable<any> {
+  trackDelivery(deliveryId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}${this.deliveryUrlPaths.track(deliveryId)}`);
   }
 }

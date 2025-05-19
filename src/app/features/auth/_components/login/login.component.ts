@@ -11,6 +11,7 @@ import { take } from 'rxjs';
 import { MenuService } from '../../../../core/services/menu.service';
 import { SigninComponent } from "../signin/signin.component";
 import { ChangePasswordComponent } from "../change-password/change-password.component";
+import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,7 @@ import { ChangePasswordComponent } from "../change-password/change-password.comp
     ReactiveFormsModule,
     SignUpComponent,
     SigninComponent,
-    ChangePasswordComponent
+    ForgotPasswordComponent
 ],
 })
 export class LoginComponent {

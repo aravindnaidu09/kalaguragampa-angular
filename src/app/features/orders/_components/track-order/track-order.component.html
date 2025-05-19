@@ -1,0 +1,32 @@
+<ng-container *ngIf="trackingSignal() as tracking; else loadingOrError">
+  <div class="track-order-wrapper">
+    <h2>Track Order #{{ tracking.delivery_id }}</h2>
+    <p>Status: <span class="status">{{ tracking.status }}</span></p>
+    <p>Estimated Delivery: {{ tracking.etd | date: 'longDate' }}</p>
+
+    <div class="timeline" *ngIf="tracking.tracking_history?.length > 0; else noEvents">
+      <div class="timeline-event" *ngFor="let event of tracking.tracking_history">
+        <div class="dot"></div>
+        <div class="details">
+          <div class="timestamp">{{ event.timestamp | date: 'medium' }}</div>
+          <div class="status">{{ event.status }}</div>
+          <div class="desc">{{ event.description }}</div>
+          <div class="location">{{ event.location }}</div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noEvents>
+      <p class="no-tracking">Tracking details not available for this order.</p>
+    </ng-template>
+  </div>
+</ng-container>
+
+<!-- 🛠️ Define this template -->
+<ng-template #loadingOrError>
+  <p *ngIf="loadingSignal()">Loading tracking info...</p>
+  <div class="empty-state" *ngIf="!loadingSignal()">
+    <img src="../../../../../assets/images/empty-truck.webp" alt="No Tracking" class="empty-state-img" />
+    <p class="empty-state-text">No tracking info available.</p>
+  </div>
+</ng-template>

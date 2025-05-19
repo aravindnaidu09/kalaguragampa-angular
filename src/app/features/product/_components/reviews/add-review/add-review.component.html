@@ -12,8 +12,8 @@
   <!-- Right: Review Form -->
   <section class="form-section">
     <div class="product-meta">
-      <span class="product-name">JBL Wave Buds TWS, 32H...</span>
-      <img src="assets/sample-product.jpg" alt="Product" />
+      <span class="product-name">{{ product?.name }}</span>
+      <img [src]="product?.image" alt="{{ product?.name }}" />
     </div>
 
     <app-star-rating [(rating)]="formData.rating" />
