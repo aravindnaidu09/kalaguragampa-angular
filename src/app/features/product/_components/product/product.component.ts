@@ -40,8 +40,6 @@ import { CurrencyService } from '../../../../core/services/currency.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductComponent {
-  private authService = inject(AuthService);
-  private toastService = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   currencyService = inject(CurrencyService);
@@ -60,9 +58,22 @@ export class ProductComponent {
 
 
   onWishlistClick(): void {
-    this.wishlistToggle.emit(this.product.id!);
+    const wishlistId = this.getWishlistId();
+
+    if (wishlistId) {
+      this.wishlistToggle.emit(wishlistId);
+    } else {
+      this.wishlistToggle.emit(this.product.id!);
+    }
+
     this.cdr.markForCheck();
   }
+
+  private getWishlistId(): number | undefined {
+    return this.wishlistItems()
+      ?.find(item => item.productDetails?.id === this.product.id)?.id;
+  }
+
 
   onImageError(event: Event): void {
     (event.target as HTMLImageElement).src = `${environment.apiBaseUrl}/media/KG_LOGO.png`;

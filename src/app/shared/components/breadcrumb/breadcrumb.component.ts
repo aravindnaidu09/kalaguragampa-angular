@@ -20,7 +20,6 @@ export interface BreadcrumbItem {
   styleUrl: './breadcrumb.component.scss'
 })
 export class BreadcrumbComponent {
-  @Input() items: BreadcrumbItem[] = [];
-  @Input() separator: string = '/';
-  @Input() showIcons: boolean = false;
+   readonly breadcrumbs = this.breadcrumbFacade.breadcrumbs;
+  constructor(private breadcrumbFacade: BreadcrumbFacade) {}
 }

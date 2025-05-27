@@ -1,24 +1,7 @@
-<nav class="breadcrumb" aria-label="breadcrumb">
-  <ng-container *ngFor="let item of items; let last = last; let i = index">
-    <ng-container *ngIf="!last">
-      <a [routerLink]="item.route" *ngIf="item.route; else plainText" class="breadcrumb-link">
-        <mat-icon *ngIf="showIcons && item.icon" class="breadcrumb-icon">{{ item.icon }}</mat-icon>
-        {{ item.label }}
-      </a>
-      <ng-template #plainText>
-        <span class="breadcrumb-text">
-          <mat-icon *ngIf="showIcons && item.icon" class="breadcrumb-icon">{{ item.icon }}</mat-icon>
-          {{ item.label }}
-        </span>
-      </ng-template>
-      <span class="separator">{{ separator }}</span>
-    </ng-container>
-
-    <ng-container *ngIf="last">
-      <span class="breadcrumb-current">
-        <mat-icon *ngIf="showIcons && item.icon" class="breadcrumb-icon">{{ item.icon }}</mat-icon>
-        {{ item.label }}
-      </span>
-    </ng-container>
+<!-- breadcrumb.component.html -->
+<nav class="breadcrumb-nav">
+  <ng-container *ngFor="let crumb of breadcrumbs(); let last = last">
+    <a [routerLink]="crumb.url" *ngIf="!last">{{ crumb.label }}</a>
+    <span *ngIf="last">{{ crumb.label }}</span>
   </ng-container>
 </nav>

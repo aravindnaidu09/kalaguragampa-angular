@@ -32,7 +32,7 @@
           (error)="onImageError($event)" />
 
         <div class="product-info">
-          <div class="brand-name">{{ getCategoryNameOfProduct(item.product?.category!) }}</div>
+          <div class="brand-name">{{ getCategoryNameOfProduct(item.product?.categoryId!) }}</div>
           <div class="product-title" (click)="navigateToProductPage(item.product!)">{{ item.product?.name }}</div>
 
           <!-- Quantity Selectors -->
