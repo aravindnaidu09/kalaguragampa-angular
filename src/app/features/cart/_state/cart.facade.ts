@@ -5,7 +5,7 @@ import { Store } from '@ngxs/store';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { CartState } from './cart.state';
-import { AddToCart, ClearCart, LoadCart, LoadShippingEstimate, RemoveCartItem, UpdateCartItems } from './cart.actions';
+import { AddToCart, ClearCart, LoadCart, LoadShippingEstimate, RemoveCartItems, UpdateCartItems } from './cart.actions';
 import { CartResponseItem } from '../_models/cart-item-model';
 import { ToastService } from '../../../core/services/toast.service';
 
@@ -57,16 +57,17 @@ export class CartFacade {
     );
   }
 
-  removeCartItem(id: number): Observable<boolean> {
-    return this.store.dispatch(new RemoveCartItem(id)).pipe(
-      tap(() => this.toast.showSuccess('Item removed from cart')),
+  removeCartItems(itemIds: number[], countryCode: string = 'IND'): Observable<boolean> {
+    return this.store.dispatch(new RemoveCartItems(itemIds, countryCode)).pipe(
+      tap(() => this.toast.showSuccess('Selected items removed from cart')),
       map(() => true),
       catchError(() => {
-        this.toast.showError('Failed to remove item');
+        this.toast.showError('Failed to remove selected items');
         return of(false);
       })
     );
   }
+
 
   loadShippingEstimate(payload: {
     address_id?: number | string;

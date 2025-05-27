@@ -111,8 +111,20 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
       cancelText: 'Cancel'
     }).subscribe((confirmed: boolean) => {
       if (confirmed) {
-        // this.cartItems = this.cartItems.filter(item => item.id !== itemId);
-        this.cartFacade.removeCartItem(itemId);
+        this.cartFacade.removeCartItems([itemId]);
+      }
+    });
+  }
+
+  deleteAllItems() {
+    this.dialogService.confirm({
+      title: 'Remove Item',
+      message: 'Are you sure you want to remove this item from the cart?',
+      confirmText: 'Remove',
+      cancelText: 'Cancel'
+    }).subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.cartFacade.removeCartItems([]);
       }
     });
   }

@@ -25,16 +25,17 @@ export class AddressFormComponent implements OnInit {
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
+    const data = this.initialData ?? {};
     this.addressForm = this.fb.group({
-      fullName: [this.initialData.fullName || '', Validators.required],
-      street: [this.initialData.street || '', Validators.required],
-      street2: [this.initialData.street2 || ''],
-      pincode: [this.initialData.pincode || '', [Validators.required, Validators.pattern(/^\d{6}$/)]],
-      city: [this.initialData.city || '', Validators.required],
-      state: [this.initialData.state || '', Validators.required],
-      country: [this.initialData.country || '', Validators.required],
-      phone: [this.initialData.phone || '', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      isDefault: [this.initialData.isDefault || false]
+      fullName: [data.fullName || '', Validators.required],
+      street: [data.street || '', Validators.required],
+      street2: [data.street2 || ''],
+      pincode: [data.pincode || '', [Validators.required, Validators.pattern(/^\d{6}$/)]],
+      city: [data.city || '', Validators.required],
+      state: [data.state || '', Validators.required],
+      country: [data.country || '', Validators.required],
+      phone: [data.phone || '', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      isDefault: [data.isDefault || false]
     });
   }
 

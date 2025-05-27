@@ -2,10 +2,10 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { ToastService } from '../../../core/services/toast.service';
 import { inject, Injectable } from '@angular/core';
-import { Selector, Action, StateContext, State } from '@ngxs/store';
+import { Selector, Action, StateContext, State, Store } from '@ngxs/store';
 import { CartResponseItem } from '../_models/cart-item-model';
 import { CartService } from '../_services/cart.service';
-import { LoadCart, ClearCart, AddToCart, RemoveCartItem, UpdateCartItems, LoadShippingEstimate } from './cart.actions';
+import { LoadCart, ClearCart, AddToCart, UpdateCartItems, LoadShippingEstimate, RemoveCartItems } from './cart.actions';
 import { DeliveryService } from '../../../core/services/delivery.service';
 
 export interface CartStateModel {
@@ -31,7 +31,8 @@ export interface CartStateModel {
 export class CartState {
   constructor(
     private cartService: CartService,
-    private toast: ToastService
+    private toast: ToastService,
+    private store: Store
   ) { }
 
   @Selector()
@@ -78,6 +79,7 @@ export class CartState {
       })
     );
   }
+
   @Action(AddToCart)
   addToCart(ctx: StateContext<CartStateModel>, action: AddToCart): Observable<boolean> {
     return this.cartService.addToCart(action.productId, action.quantity).pipe(
@@ -112,23 +114,25 @@ export class CartState {
     );
   }
 
-  @Action(RemoveCartItem)
-  removeCartItem(ctx: StateContext<CartStateModel>, action: RemoveCartItem) {
-    return this.cartService.removeCartItem(action.id).pipe(
+  @Action(RemoveCartItems)
+  removeCartItems(ctx: StateContext<CartStateModel>, action: RemoveCartItems) {
+
+    return this.cartService.removeCartItems(action.itemIds, action.countryCode ?? 'IND').pipe(
       tap((res) => {
         if (res?.data) {
           ctx.patchState({ cart: res.data });
-          // this.toast.showSuccess('Item removed from cart.');
+          this.store.dispatch(new LoadCart());
         } else {
-          // this.toast.showError('Failed to remove item.');
+          // this.toast.showError('Failed to remove selected items.');
         }
       }),
       catchError((err) => {
-        // this.toast.showError('Error removing item from cart.');
+        // this.toast.showError('Error removing selected items from cart.');
         return of(err);
       })
     );
   }
+
 
   @Action(LoadShippingEstimate)
   loadShippingEstimate(ctx: StateContext<CartStateModel>, action: LoadShippingEstimate) {

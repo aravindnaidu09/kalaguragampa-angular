@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, map } from "rxjs";
 import { APP_SETTINGS } from "../../../core/constants/app-settings";
@@ -64,12 +64,25 @@ export class CartService {
   /**
    * ✅ Remove an item from the cart
    */
-  removeCartItem(id: number): Observable<ApiResponse<CartResponseItem>> {
-    return this.httpClient.delete<ApiResponse<any>>(`${this.baseUrl}${CART_API_URLS.cart.removeItem(id)}`).pipe(
-      map((response) => ({
+  removeCartItems(itemIds: number[], countryCode: string = 'IND'): Observable<ApiResponse<CartResponseItem>> {
+    let params = new HttpParams();
+      // .set('country_code', countryCode);
+
+    // Append multiple item_ids
+    itemIds.forEach(id => {
+      params = params.append('item_ids', id.toString());
+    });
+    params = params.append('country_code', countryCode);
+
+    return this.httpClient.delete<ApiResponse<any>>(
+      `${this.baseUrl}${CART_API_URLS.cart.removeItem}`,
+      { params }
+    ).pipe(
+      map(response => ({
         ...response,
         data: deserializeCartResponse(response.data)
       }))
     );
   }
+
 }

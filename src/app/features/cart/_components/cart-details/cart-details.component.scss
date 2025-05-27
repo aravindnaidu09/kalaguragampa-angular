@@ -244,6 +244,33 @@ $primary-brown: #682f12;
     }
   }
 
+  .cart-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 0 20px;
+
+    .delete-all-btn {
+      background-color: transparent;
+      border: 1px solid #b71c1c;
+      color: #b71c1c;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #ffecec;
+        transform: scale(1.03);
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
+    }
+  }
+
+
 
   .qty-controls {
     display: flex;
@@ -372,4 +399,3 @@ $primary-brown: #682f12;
     font-size: 13px;
   }
 }
-

@@ -80,8 +80,8 @@ export class AuthService {
     return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.user.changePassword}`, data);
   }
 
-  forgotPassword(email: string): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.user.passwordReset}`, { email });
+  forgotPassword(payload: any): Observable<any> {
+    return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.user.passwordReset}`, payload);
   }
 
   /** ✅ Check if the user is authenticated */

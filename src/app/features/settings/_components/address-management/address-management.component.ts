@@ -84,21 +84,6 @@ export class AddressManagementComponent {
 
   }
 
-  saveAddress(): void {
-    if (this.addressForm.invalid) return;
-    const payload = this.addressForm.value;
-
-    if (this.isEditing && this.selectedAddressId !== null) {
-      this.addressFacade.updateAddress(this.selectedAddressId, payload).subscribe(() => {
-        this.resetForm(true);
-      });
-    } else {
-      this.addressFacade.createAddress(payload).subscribe(success => {
-        if (success) this.resetForm(true);
-      });
-    }
-  }
-
   editAddress(address: Address): void {
     this.isEditing = true;
     this.selectedAddressId = address.id!;

@@ -16,8 +16,8 @@
     </div>
 
     <div class="address-body">
-      <p>{{ address.street }}<span *ngIf="address.street2">, {{ address.street2 }}, {{ address.city }}, {{ address.state
-          }} - {{ address.pincode }}, {{ address.country }}</span></p>
+      <p>{{ address.street }}, <span *ngIf="address.street2">{{ address.street2 }},</span> {{ address.city }}, {{ address.state
+          }} - {{ address.pincode }}, {{ address.country }}</p>
     </div>
 
     <div class="address-actions">

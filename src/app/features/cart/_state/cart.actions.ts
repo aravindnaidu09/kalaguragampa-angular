@@ -16,9 +16,9 @@ export class UpdateCartItems {
   constructor(public items: { id: number; quantity: number }[]) {}
 }
 
-export class RemoveCartItem {
-  static readonly type = '[Cart] Remove Cart Item';
-  constructor(public id: number) {}
+export class RemoveCartItems {
+  static readonly type = '[Cart] Remove Multiple Cart Items';
+  constructor(public itemIds: number[], public countryCode?: string) {}
 }
 
 export class LoadShippingEstimate {
