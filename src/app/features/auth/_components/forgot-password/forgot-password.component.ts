@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../_services/auth.service';
@@ -27,6 +27,9 @@ export class ForgotPasswordComponent {
   hideConfirm = signal(true);
 
   form!: FormGroup;
+
+  isRegisterPage = signal<boolean>(false);
+  @Output() showRegisterPage = new EventEmitter<boolean>(false);
 
   constructor(
     private fb: FormBuilder,
@@ -82,7 +85,10 @@ export class ForgotPasswordComponent {
         this.step.set('reset');
         this.startCooldown();
       },
-      error: (err: any) => this.toast.showError(err?.error?.message || 'Failed to send OTP'),
+      error: (err: any) => {
+        this.toast.showError(err?.error?.message || 'Failed to send OTP');
+        this.loading.set(false);
+      },
       complete: () => this.loading.set(false)
     });
   }
@@ -113,13 +119,20 @@ export class ForgotPasswordComponent {
     this.authService.forgotPassword(payload).subscribe({
       next: () => {
         this.toast.showSuccess('Password reset successful!');
+        this.resetForm();
         // this.router.navigate(['/login']); // optionally redirect
       },
-      error: (err: any) => this.toast.showError(err?.error?.message || 'Reset failed'),
+      error: (err: any) => {
+        this.toast.showError(err?.error?.message || 'Reset failed');
+        this.loading.set(false);
+      },
       complete: () => this.loading.set(false)
     });
   }
 
+  resetForm() {
+    this.form.reset();
+  }
 
   startCooldown() {
     this.cooldown.set(30);
@@ -141,6 +154,11 @@ export class ForgotPasswordComponent {
 
   toggleHideConfirm() {
     this.hideConfirm.set(!this.hideConfirm());
+  }
+
+  goBackToLogin() {
+    this.isRegisterPage.set(true);
+    this.showRegisterPage.emit(this.isRegisterPage());
   }
 
 }

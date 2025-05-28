@@ -18,13 +18,13 @@
 
   <div class="summary-row">
     <span>Coupon Discount</span>
-    <span class="apply-link">Apply Coupon</span>
+    <span class="apply-link" (click)="openCouponDialog()">Apply Coupon</span>
   </div>
 
   <div class="summary-row">
     <span class="label-with-icon">
       Shipping Fee
-      <img src="assets/images/icons8-info-50.png" alt="Info" class="info-icon" />
+      <img src="assets/images/icons8-info-50.png" alt="Info" title="Shipping charges vary based on your location and order value." class="info-icon" />
     </span>
     <span class="green">{{ isShippingFree ? 'FREE' : '₹' + shippingFeeSignal() }}</span>
   </div>

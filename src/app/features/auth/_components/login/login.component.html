@@ -21,7 +21,7 @@
       </ng-container>
 
       <ng-template #forgotPasswordBlock>
-        <app-forgot-password></app-forgot-password>
+        <app-forgot-password (showRegisterPage)="showPasswordLoginMethod()"></app-forgot-password>
       </ng-template>
     </ng-template>
   </div>

@@ -1,0 +1,31 @@
+<div class="dialog-container">
+  <h2>Apply Coupon</h2>
+
+  <!-- Manual Entry -->
+  <div class="form-group">
+    <label for="coupon">Enter Coupon Code</label>
+    <input
+      id="coupon"
+      type="text"
+      placeholder="Enter coupon code"
+      formControlName="code"
+      [formControl]="codeControl"
+    />
+  </div>
+
+  <!-- Available Coupons -->
+  <div class="coupon-list">
+    <p class="list-title">Available Coupons:</p>
+    <ul>
+      <li *ngFor="let coupon of availableCoupons" (click)="selectCoupon(coupon)">
+        {{ coupon }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn cancel" (click)="cancel()">Cancel</button>
+    <button class="btn apply" [disabled]="form.invalid" (click)="applyCoupon()">Apply</button>
+  </div>
+</div>

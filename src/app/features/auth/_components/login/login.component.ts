@@ -51,4 +51,10 @@ export class LoginComponent {
     this.isRegistering.set(false);
     this.isForgotPassword.set(event);
   }
+
+  showPasswordLoginMethod() {
+    this.activeLoginMethod = 'password';
+    this.isRegistering.set(false);
+    this.isForgotPassword.set(false);
+  }
 }
