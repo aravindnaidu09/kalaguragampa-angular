@@ -3,13 +3,17 @@ import { Component, computed, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '../../../../core/services/toast.service';
 import { AuthService } from '../../_services/auth.service';
+import { MatIconModule } from '@angular/material/icon';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-change-password',
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './change-password.component.html',
   styleUrl: './change-password.component.scss'
@@ -34,11 +38,13 @@ export class ChangePasswordComponent {
     };
   });
 
+  loading = false;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private toast: ToastService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.changePasswordForm = this.fb.group({
@@ -89,24 +95,38 @@ export class ChangePasswordComponent {
 
 
 
-  // 🔐 Submit password change
   onSubmit(): void {
     if (this.changePasswordForm.invalid) {
       this.changePasswordForm.markAllAsTouched();
       return;
     }
 
-    const { currentPassword, newPassword } = this.changePasswordForm.value;
+    const {
+      currentPassword,
+      newPassword,
+      confirmPassword
+    } = this.changePasswordForm.value;
 
-    // this.authService.changePassword(currentPassword, newPassword).subscribe({
-    //   next: () => {
-    //     this.toast.showSuccess('Password changed successfully');
-    //     this.changePasswordForm.reset();
-    //     this.passwordStrength.set('weak');
-    //   },
-    //   error: () => {
-    //     this.toast.showError('Password change failed. Please try again.');
-    //   }
-    // });
+    this.loading = true;
+
+    this.authService.changePassword({
+      current_password: currentPassword,
+      new_password: newPassword,
+      confirm_password: confirmPassword
+    }).subscribe({
+      next: () => {
+        this.toast.showSuccess('Password changed successfully');
+        this.changePasswordForm.reset();
+        this.passwordStrength.set('weak');
+
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Change password error:', err);
+        this.toast.showError(err || 'Failed to change password');
+        this.loading = false;
+      }
+    });
   }
+
 }

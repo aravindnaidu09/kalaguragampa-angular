@@ -34,7 +34,7 @@ export class ForgotPasswordComponent {
     private toast: ToastService,
     private cdRef: ChangeDetectorRef,
     private otpService: OtpService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -61,17 +61,21 @@ export class ForgotPasswordComponent {
 
   sendOtp() {
     const { otp_type, email, mobile } = this.form.value;
+
     if (otp_type === 'email' && !email) {
       this.toast.showWarning('Please enter a valid email');
       return;
     }
+
     if (otp_type === 'mobile' && !mobile) {
       this.toast.showWarning('Please enter a valid mobile number');
       return;
     }
 
     this.loading.set(true);
+
     const identifier = otp_type === 'email' ? email : mobile;
+
     this.otpService.sendOtp(identifier, otp_type, 'IND').subscribe({
       next: () => {
         this.toast.showSuccess('OTP sent successfully');
@@ -89,16 +93,33 @@ export class ForgotPasswordComponent {
       return;
     }
 
+    const { otp_type, email, mobile, otp, password, confirm_password } = this.form.value;
+
+    // Construct payload based on selected OTP type
+    const payload: any = {
+      otp_type,
+      otp,
+      password,
+      confirm_password
+    };
+
+    if (otp_type === 'email') {
+      payload.email = email;
+    } else if (otp_type === 'mobile') {
+      payload.mobile = mobile;
+    }
+
     this.loading.set(true);
-    this.authService.forgotPassword(this.form.value).subscribe({
+    this.authService.forgotPassword(payload).subscribe({
       next: () => {
         this.toast.showSuccess('Password reset successful!');
-        // Optionally navigate to login
+        // this.router.navigate(['/login']); // optionally redirect
       },
       error: (err: any) => this.toast.showError(err?.error?.message || 'Reset failed'),
       complete: () => this.loading.set(false)
     });
   }
+
 
   startCooldown() {
     this.cooldown.set(30);

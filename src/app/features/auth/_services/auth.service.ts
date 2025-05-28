@@ -76,7 +76,7 @@ export class AuthService {
     return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.user.register}`, payload);
   }
 
-  changePassword(data: { oldPassword: string; newPassword: string }): Observable<any> {
+  changePassword(data: { current_password: string; new_password: string; confirm_password: string }): Observable<any> {
     return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.user.changePassword}`, data);
   }
 

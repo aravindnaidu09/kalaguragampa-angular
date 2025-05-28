@@ -49,42 +49,42 @@
     <div class="loader-spinner" *ngIf="isLoading()" aria-label="Loading..."></div>
 
     <!-- ✅ Live Search Suggestions -->
-    <div class="search-suggestions" *ngIf="showSuggestions() && (products$ | async) ?? []!.length > 0;">
-      <ul>
-        <li *ngFor="let product of products$ | async; let i = index" (click)="goToProductDetails(product)"
-          [ngClass]="{ 'highlighted': i === selectedIndex() }">
-          <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" class="product-img"
-            (error)="onImageError($event)" />
-          <div class="product-info">
-            <span class="product-name">{{ product.name }}</span>
-            <span class="product-price">₹{{ product.price }}</span>
-          </div>
-        </li>
-      </ul>
+    <div class="search-suggestions" *ngIf="showSuggestions()">
+      <ng-container *ngIf="(products$ | async)?.length! > 0; else noResults">
+        <ul>
+          <li *ngFor="let product of products$ | async; let i = index" (click)="goToProductDetails(product)"
+            [ngClass]="{ 'highlighted': i === selectedIndex() }">
+            <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" class="product-img"
+              (error)="onImageError($event)" />
+            <div class="product-info">
+              <span class="product-name">{{ product.name }}</span>
+              <span class="product-price">₹{{ product.price }}</span>
+            </div>
+          </li>
+        </ul>
+      </ng-container>
+      <ng-template #noResults>
+        <div class="no-results">No products found</div>
+      </ng-template>
     </div>
   </div>
 
-
-
   <div class="header-actions" *ngIf="!compact">
     <div class="account-wrapper" (click)="toggleMenu()" aria-haspopup="true">
-      <!-- Account Section -->
       <div class="action-item account-item">
         <img src="../../../../assets/images/Account.png" width="20" height="20" alt="Account Icon" />
         <span>Account</span>
       </div>
-
-      <!-- Dropdown Menu -->
       <app-menu-dropdown *ngIf="isMenuOpen" [menuItems]="menuItems()" (menuAction)="onMenuAction($event)"
         aria-label="Account Dropdown Menu"></app-menu-dropdown>
     </div>
-
 
     <div class="action-item" (click)="goToWishlistPage()">
       <img class="wishlist-image" src="../../../../assets/images/Wishlist.png" width="20" height="20" />
       <span>Wishlist</span>
       <div class="wishlist-badge" *ngIf="wCount() > 0">{{ wCount() }}</div>
     </div>
+
     <div class="action-item" (click)="goToCartPage()">
       <img class="cart-image" src="../../../../assets/images/cart-48.png" width="20" height="20" />
       <span>Cart</span>

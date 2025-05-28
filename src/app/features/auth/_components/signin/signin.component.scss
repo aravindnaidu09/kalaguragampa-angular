@@ -1,13 +1,12 @@
 .title {
   font-size: 1.8rem; // Reduced by 2px
   color: #682f12;
-  margin-bottom: 10px;
 }
 
 .subtitle {
   font-size: 0.9rem; // Reduced by 2px
   color: #999;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
   font-weight: 700;
 }
 
@@ -106,7 +105,6 @@
   }
 }
 
-
 .login-options {
   display: flex;
   justify-content: space-between;
@@ -156,14 +154,45 @@
   margin-bottom: 15px;
 
   input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
     width: 18px;
     height: 18px;
+    border: 2px solid #844026;
+    border-radius: 4px;
+    position: relative;
     cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    background-color: #fff;
+
+    &:checked {
+      background-color: #844026;
+      border-color: #844026;
+    }
+
+    &:checked::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 5px;
+      width: 4px;
+      height: 8px;
+      border: solid #fff;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(132, 64, 38, 0.3);
+    }
   }
+
 
   label {
     font-size: 14px;
     color: #555;
+    padding-top: 5px;
   }
 }
 

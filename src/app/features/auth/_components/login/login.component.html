@@ -6,16 +6,16 @@
 
   <!-- Right Section Wrapper -->
   <div class="right-section">
-    <!-- 👤 Login View -->
     <ng-container *ngIf="!isRegistering() && !isForgotPassword(); else showOtherContent">
-      <app-signin [activeLoginMethod]="activeLoginMethod" (isRegisterClicked)="showRegisterPage($event)"
-        (forgotPassword)="showForgotPassword($event)" (closeLoginDialog)="closeDialog($event)"></app-signin>
+      <app-signin
+        [activeLoginMethod]="activeLoginMethod"
+        (isRegisterClicked)="showRegisterPage($event)"
+        (forgotPassword)="showForgotPassword($event)"
+        (closeLoginDialog)="closeDialog($event)">
+      </app-signin>
     </ng-container>
-  </div>
 
-  <!-- 📦 Other Conditional Views -->
-  <ng-template #showOtherContent>
-    <div class="right-section">
+    <ng-template #showOtherContent>
       <ng-container *ngIf="isRegistering(); else forgotPasswordBlock">
         <app-sign-up (showLoginPage)="showLoginPage($event)"></app-sign-up>
       </ng-container>
@@ -23,6 +23,6 @@
       <ng-template #forgotPasswordBlock>
         <app-forgot-password></app-forgot-password>
       </ng-template>
-    </div>
-  </ng-template>
+    </ng-template>
+  </div>
 </div>

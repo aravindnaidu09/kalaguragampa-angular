@@ -117,7 +117,6 @@ export class CheckoutDetailsComponent implements OnInit {
   }
 
   updateAddress(payload: any) {
-    console.log('payload', payload);
     this.addressFacade.updateAddress(payload.id, payload).subscribe(success => {
       if (success) {
         this.goToStep(0); // move back to delivery list
@@ -151,8 +150,10 @@ export class CheckoutDetailsComponent implements OnInit {
     const totalAmount = Number(this.cartFacade.cartSignal()?.totalAmount || 0);
     const countryCode = 'IND';
 
+    const shippingFee = this.cartFacade.shippingFeeSignal() || 0;
+
     const payload = {
-      total_amount: totalAmount,
+      total_amount: totalAmount + shippingFee,
       address_id: addressId,
       courier_company_id: '0',
       country_code: countryCode
@@ -160,7 +161,6 @@ export class CheckoutDetailsComponent implements OnInit {
 
     this.paymentService.createOrder(payload).subscribe({
       next: (response) => {
-        console.log('Order Created:', response);
         this.launchRazorpay(response.data);
         this.isProcessingPayment = false; // ✅ Stop loader once Razorpay is shown
       },
