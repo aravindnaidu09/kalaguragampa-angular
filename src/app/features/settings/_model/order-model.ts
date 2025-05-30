@@ -8,11 +8,21 @@ export interface IOrder {
   created_at: string;           // ISO 8601 string
   delivery_date: string | null; // ISO or null if not delivered yet
   delivery_status: string | null; // Optional, e.g. "in_transit", "failed", etc.
+  delivery_id?: number;
   product_name?: string;
   image?: string;
   is_rated?: boolean;
   color?: string;
   quantity?: number;
+  product: IOrderProduct[];
 }
 
-
+export interface IOrderProduct {
+  id: number;
+  name: string;
+  sku: string;
+  image?: string;
+  quantity?: number;
+  color?: string;
+  is_rated?: boolean;
+}

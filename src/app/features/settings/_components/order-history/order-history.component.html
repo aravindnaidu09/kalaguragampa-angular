@@ -1,15 +1,57 @@
+<!-- 🔍 Filter Controls -->
+<div class="order-filters">
+  <!-- Status Filter -->
+  <div class="filter-group">
+    <label>Status:</label>
+    <button
+      *ngFor="let status of statuses"
+      (click)="selectStatus(status)"
+      [class.active]="selectedStatus === status">
+      {{ status | titlecase }}
+    </button>
+  </div>
+
+  <!-- Time Filter -->
+  <div class="filter-group">
+    <label>Time:</label>
+    <select [(ngModel)]="selectedTime" (change)="onTimeFilterChange()">
+      <option value="3">Last 3 Months</option>
+      <option value="6">Last 6 Months</option>
+      <option value="12">Last 1 Year</option>
+      <option value="2024">Year: 2024</option>
+      <option value="2023">Year: 2023</option>
+    </select>
+  </div>
+</div>
+
+<!-- 💬 Active Filter Summary -->
+<div class="active-filters" *ngIf="selectedStatus !== 'all' || selectedTime !== '3'">
+  <span *ngIf="selectedStatus !== 'all'" class="chip">
+    Status: {{ selectedStatus | titlecase }}
+    <button (click)="clearStatus()">✕</button>
+  </span>
+  <span *ngIf="selectedTime !== '3'" class="chip">
+    Time: {{ getTimeLabel(selectedTime) }}
+    <button (click)="clearTime()">✕</button>
+  </span>
+
+  <button class="reset-btn" (click)="resetFilters()">Reset Filters</button>
+</div>
+
+
+<!-- 📦 Order List -->
 <div class="order-history">
   <h2 class="title">
-    Your Orders <span class="order-count">{{ ordersSignal()?.length ?? 0 }}</span>
+    Your Orders <span class="order-count">{{ filteredOrders.length }}</span>
   </h2>
 
-  <!-- 🦴 Skeleton loader -->
+  <!-- 🦴 Skeleton Loader -->
   <ng-container *ngIf="loadingSignal()">
     <div class="skeleton-card" *ngFor="let _ of [1, 2, 3]"></div>
   </ng-container>
 
-  <!-- 📦 Order cards -->
-  <ng-container *ngIf="!loadingSignal() && ordersSignal()?.length! > 0; else noOrders">
+  <!-- 📋 Order Cards -->
+  <ng-container *ngIf="!loadingSignal() && filteredOrders.length > 0; else noOrders">
     <ng-container *ngFor="let item of paginatedOrders">
       <app-order-card [item]="item" [@fadeInUp]></app-order-card>
     </ng-container>
@@ -18,13 +60,16 @@
     <div class="pagination">
       <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
       <span class="page-indicator">Page {{ currentPage }}</span>
-      <button class="page-btn" (click)="nextPage()" [disabled]="(currentPage * pageSize) >= ordersSignal()?.length!">
+      <button
+        class="page-btn"
+        (click)="nextPage()"
+        [disabled]="(currentPage * pageSize) >= filteredOrders.length">
         Next
       </button>
     </div>
   </ng-container>
 
-  <!-- 🙅 No Orders -->
+  <!-- 🙅 No Orders Fallback -->
   <ng-template #noOrders>
     <div class="empty-state">
       <img src="../../../../../assets/images/no-orders.jpeg" alt="No Orders" />

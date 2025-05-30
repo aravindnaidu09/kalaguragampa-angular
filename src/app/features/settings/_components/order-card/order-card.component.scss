@@ -1,10 +1,15 @@
 .order-card {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 16px;
-  background: #fff;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  background: #ffffff;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  }
 }
 
 .order-header {
@@ -107,4 +112,88 @@
 .review-btn {
   background-color: transparent;
   color: #4d7ee9;
+}
+
+.order-collapse-toggle {
+  text-align: center;
+  margin-top: 1rem;
+  cursor: pointer;
+
+  .toggle-label {
+    font-weight: 600;
+    color: #682f12;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+
+    .toggle-icon {
+      font-size: 20px;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.order-products {
+  border-top: 1px dashed #ddd;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  animation: fadeIn 0.3s ease-in-out;
+
+  .product-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f3f3f3;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .product-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-right: 1rem;
+    }
+
+    .product-details {
+      flex-grow: 1;
+
+      .product-name {
+        font-weight: 600;
+        color: #222;
+        font-size: 14px;
+      }
+
+      .product-meta {
+        font-size: 13px;
+        color: #888;
+      }
+    }
+
+    .product-actions {
+      .review-btn {
+        background-color: #f0f4ff;
+        color: #2c61e2;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+
+        &:hover {
+          background-color: #e0e8ff;
+        }
+      }
+    }
+  }
 }

@@ -16,6 +16,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class ApplyCouponDialogComponent {
   form: FormGroup;
   availableCoupons: string[] = ['KGNEW100', 'FREESHIP', 'SAVE10', 'LOYALTY20'];
+  errorMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -28,9 +29,22 @@ export class ApplyCouponDialogComponent {
   }
 
   applyCoupon() {
-    if (this.form.valid) {
-      this.dialogRef.close(this.form.value.code);
+    this.errorMessage = null;
+
+    if (this.form.invalid) return;
+
+    const enteredCode = this.codeControl.value?.trim();
+
+    // 🔁 Local validation
+    if (!this.availableCoupons.includes(enteredCode)) {
+      this.errorMessage = 'Invalid coupon code. Please select a valid one.';
+      return;
     }
+
+    // Or use API call here:
+    // this.couponService.validateCode(enteredCode).subscribe(...)
+
+    this.dialogRef.close(enteredCode);
   }
 
   cancel() {

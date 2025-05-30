@@ -17,7 +17,7 @@
     <div class="left-info">
       <div class="amount">₹{{ item.total_amount }}</div>
       <div class="status">
-        <span class="badge" [ngClass]="item.status">{{ item.status }}</span>
+        <span class="badge" [ngClass]="item.delivery_status">{{ item.delivery_status }}</span>
         <span class="delivery">
           {{ item.delivery_date ? ('Delivered on ' + (item.delivery_date | date: 'd MMM y')) : 'Awaiting Delivery' }}
         </span>
@@ -25,10 +25,41 @@
     </div>
 
     <div class="right-actions">
-      <button class="primary-btn" (click)="goToTrack(item.order_id)">Track Order</button>
-      <button *ngIf="!item.is_rated" class="review-btn" (click)="reviewProduct(item)">
+      <button class="primary-btn" (click)="goToTrack(item.delivery_id!)">Track Order</button>
+      <!-- <button *ngIf="!item.is_rated" class="review-btn" (click)="reviewProduct(item)">
         ★ Rate & Review Product
-      </button>
+      </button> -->
     </div>
   </div>
+
+  <!-- Product List -->
+  <!-- Expand/Collapse Toggle -->
+  <div class="order-collapse-toggle" (click)="toggleCollapse(item.order_id)">
+    <span class="toggle-label">
+      {{ isCollapsed(item.order_id) ? 'Show Products' : 'Hide Products' }}
+      <mat-icon class="toggle-icon">
+        {{ isCollapsed(item.order_id) ? 'expand_more' : 'expand_less' }}
+      </mat-icon>
+    </span>
+  </div>
+
+  <!-- Product List (Collapsible) -->
+  <div *ngIf="!isCollapsed(item.order_id)" class="order-products" [@fadeExpand]>
+    <div *ngFor="let product of item.product" class="product-item">
+      <img *ngIf="product.image" [src]="product.image" alt="{{ product.name }}" class="product-img" />
+
+      <div class="product-details">
+        <div class="product-name">{{ product.name }}</div>
+        <div class="product-meta">SKU: {{ product.sku }}</div>
+      </div>
+
+      <div class="product-actions">
+        <button *ngIf="!product.is_rated" class="review-btn" (click)="reviewProduct(product)">
+          ★ Rate & Review
+        </button>
+      </div>
+    </div>
+  </div>
+
+
 </div>

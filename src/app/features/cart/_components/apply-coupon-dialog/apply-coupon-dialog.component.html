@@ -4,23 +4,21 @@
   <!-- Manual Entry -->
   <div class="form-group">
     <label for="coupon">Enter Coupon Code</label>
-    <input
-      id="coupon"
-      type="text"
-      placeholder="Enter coupon code"
-      formControlName="code"
-      [formControl]="codeControl"
-    />
+    <input id="coupon" type="text" placeholder="Enter coupon code" formControlName="code" [formControl]="codeControl" />
+    <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
   </div>
 
   <!-- Available Coupons -->
   <div class="coupon-list">
     <p class="list-title">Available Coupons:</p>
-    <ul>
-      <li *ngFor="let coupon of availableCoupons" (click)="selectCoupon(coupon)">
-        {{ coupon }}
-      </li>
-    </ul>
+    <div class="coupon-scroll">
+      <ul>
+        <li *ngFor="let coupon of availableCoupons" (click)="selectCoupon(coupon)">
+          {{ coupon }}
+        </li>
+      </ul>
+    </div>
+
   </div>
 
   <!-- Actions -->

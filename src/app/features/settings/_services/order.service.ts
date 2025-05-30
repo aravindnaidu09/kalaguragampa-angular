@@ -18,7 +18,7 @@ export class OrderService {
    */
   getUserOrders(): Observable<IOrder[]> {
     return this.http.get<IOrder[]>(`${this.baseUrl}`).pipe(
-      map(res => deserializeOrders(res))
+      map((res: any) => deserializeOrders(res.data))
     );
   }
 
