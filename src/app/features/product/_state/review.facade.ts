@@ -4,10 +4,11 @@ import { Observable } from 'rxjs';
 import {
   SubmitReview,
   ResetReviewState,
-  LoadProductById
+  LoadProductById,
+  SetReviewProduct
 } from './review.actions';
 import { ReviewState } from './review.state';
-import { ReviewFormData } from '../_models/add-review.model';
+import { ReviewFormData, ReviewProductInfo } from '../_models/add-review.model';
 
 @Injectable({ providedIn: 'root' })
 export class ReviewFacade {
@@ -29,5 +30,9 @@ export class ReviewFacade {
 
   loadProductById(id: string) {
     this.store.dispatch(new LoadProductById(id));
+  }
+
+  setProduct(product: ReviewProductInfo) {
+    this.store.dispatch(new SetReviewProduct(product));
   }
 }

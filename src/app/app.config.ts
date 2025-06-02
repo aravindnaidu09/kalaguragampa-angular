@@ -21,6 +21,7 @@ import { OrderState } from './features/settings/_state/order.state';
 import { provideServiceWorker } from '@angular/service-worker';
 import { ProfileState } from './features/settings/_state/profile.state';
 import { TrackState } from './features/orders/_state/track.state';
+import { ReviewState } from './features/product/_state/review.state';
 
 
 export const appConfig: ApplicationConfig = {
@@ -30,7 +31,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withHashLocation()),
     provideAnimationsAsync(),
     provideHttpClient(),
-    provideStore([AuthState, OtpState, SearchState, WishlistState, CartState, AddressState, OrderState, ProfileState, TrackState],
+    provideStore([AuthState, OtpState, SearchState, WishlistState, CartState, AddressState, OrderState, ProfileState, TrackState, ReviewState],
       withNgxsReduxDevtoolsPlugin(),
       // withNgxsFormPlugin(),
       withNgxsLoggerPlugin(),

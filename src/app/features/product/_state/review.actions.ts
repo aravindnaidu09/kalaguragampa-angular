@@ -1,5 +1,10 @@
 import { ReviewFormData, ReviewProductInfo } from "../_models/add-review.model";
 
+export class SetReviewProduct {
+  static readonly type = '[Review] Set Product';
+  constructor(public product: ReviewProductInfo) {}
+}
+
 export class SubmitReview {
   static readonly type = '[Review] Submit Review';
   constructor(public id: number, public payload: ReviewFormData) {}

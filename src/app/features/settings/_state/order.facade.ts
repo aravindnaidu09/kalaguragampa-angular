@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, inject } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { OrderState } from './order.state';
 import { LoadOrders } from './order.actions';
@@ -9,9 +9,16 @@ export class OrderFacade {
 
   readonly ordersSignal = this.store.selectSignal(OrderState.orders);
   readonly loadingSignal = this.store.selectSignal(OrderState.loading);
+  readonly totalCountSignal = this.store.selectSignal(OrderState.totalCount);
 
-  loadOrders() {
-    this.store.dispatch(new LoadOrders());
+  loadOrdersWithFilters(filters: {
+    limit: number;
+    offset: number;
+    range?: string;
+    year?: string;
+    status?: string;
+  }) {
+    return this.store.dispatch(new LoadOrders(filters));
   }
 
   orderById = (id: number) =>

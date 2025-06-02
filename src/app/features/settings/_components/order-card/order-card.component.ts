@@ -5,6 +5,9 @@ import { IOrder, IOrderProduct } from '../../_model/order-model';
 import { ToastService } from '../../../../core/services/toast.service';
 import { MatIconModule } from '@angular/material/icon';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { ReviewProductInfo } from '../../../product/_models/add-review.model';
+import { ReviewFacade } from '../../../product/_state/review.facade';
+import { environment } from '../../../../../environments/environment.dev';
 
 @Component({
   selector: 'app-order-card',
@@ -30,6 +33,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 export class OrderCardComponent {
   private router = inject(Router);
   private toast = inject(ToastService);
+  private reviewFacade = inject(ReviewFacade);
 
   @Input() item!: IOrder;
 
@@ -84,6 +88,14 @@ export class OrderCardComponent {
   }
 
   reviewProduct(item: IOrderProduct) {
+    const reviewProductInfo: ReviewProductInfo = {
+      id: item.id,
+      name: item.name,
+      image: item.images && item.images.length > 0 ? item.images[0] : '', // use first image if available
+      // add any other relevant fields if needed
+    };
+
+    this.reviewFacade.setProduct(reviewProductInfo);
     this.router.navigate(['/review-product', item.id]);
   }
 
@@ -106,5 +118,16 @@ export class OrderCardComponent {
   isCollapsed(orderId: number): boolean {
     return this.collapsedOrders.has(orderId);
   }
+
+  getImagePath(imagePath?: string): string {
+    return imagePath?.trim()
+      ? `${environment.apiBaseUrl}${imagePath}`
+      : `${environment.apiBaseUrl}/media/KG_LOGO.png`;
+  }
+
+  onImageError(event: Event): void {
+    (event.target as HTMLImageElement).src = `${environment.apiBaseUrl}/media/KG_LOGO.png`;
+  }
+
 
 }

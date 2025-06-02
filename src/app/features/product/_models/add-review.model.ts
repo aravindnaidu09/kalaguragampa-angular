@@ -5,7 +5,7 @@ export interface ReviewFormData {
 }
 
 export interface ReviewProductInfo {
-  id: string;
-  name: string;
-  image: string;
+  id?: number;
+  name?: string;
+  image?: string;
 }

@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../_services/order.service';
 import { ToastService } from '../../../../core/services/toast.service';
-import { IOrder } from '../../_model/order-model';
 import { OrderCardComponent } from '../order-card/order-card.component';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { OrderFacade } from '../../_state/order.facade';
@@ -27,28 +26,48 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class OrderHistoryComponent {
   private orderFacade = inject(OrderFacade);
-  private toastService = inject(ToastService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
   ordersSignal = this.orderFacade.ordersSignal;
   loadingSignal = this.orderFacade.loadingSignal;
+  totalCountSignal = this.orderFacade.totalCountSignal;
 
   currentPage = 1;
   pageSize = 5;
 
-  statuses = ['all', 'paid', 'pending', 'delivered', 'cancelled'];
+  statuses = ['all', 'pending', 'delivered', 'cancelled'];
   selectedStatus = 'all';
   selectedTime: string = '3';
 
-  ngOnInit(): void {
-    this.orderFacade.loadOrders();
+  paginatedOrders = computed(() => {
+    const orders = this.ordersSignal();
+    const start = (this.currentPage - 1) * this.pageSize;
+    return orders.slice(start, start + this.pageSize);
+  });
 
+  ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.selectedStatus = params['status'] || 'all';
       this.selectedTime = params['time'] || '3';
       this.currentPage = +(params['page'] || 1);
+      this.loadOrders();
     });
+  }
+
+  private buildFilters() {
+    const offset = (this.currentPage - 1) * this.pageSize;
+    return {
+      limit: this.pageSize,
+      offset,
+      status: this.selectedStatus !== 'all' ? this.selectedStatus : undefined,
+      range: ['3', '6', '12'].includes(this.selectedTime) ? `${this.selectedTime}m` : undefined,
+      year: !['3', '6', '12'].includes(this.selectedTime) ? this.selectedTime : undefined
+    };
+  }
+
+  private loadOrders(): void {
+    this.orderFacade.loadOrdersWithFilters(this.buildFilters());
   }
 
   updateUrlQuery(): void {
@@ -63,68 +82,53 @@ export class OrderHistoryComponent {
     });
   }
 
-
-  get filteredOrders(): IOrder[] {
-    const now = new Date();
-    const timeFilter = this.selectedTime;
-
-    return (
-      this.ordersSignal()
-        ?.filter(order => {
-          const created = new Date(order.created_at);
-
-          const matchesStatus =
-            this.selectedStatus === 'all' || order.status === this.selectedStatus;
-
-          const matchesTime = (() => {
-            if (!timeFilter) return true;
-            if (+timeFilter <= 12) {
-              const monthsAgo = new Date(now);
-              monthsAgo.setMonth(now.getMonth() - +timeFilter);
-              return created >= monthsAgo;
-            } else {
-              return created.getFullYear().toString() === timeFilter;
-            }
-          })();
-
-          return matchesStatus && matchesTime;
-        }) ?? []
-    );
-  }
-
-  get paginatedOrders(): IOrder[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    const end = this.currentPage * this.pageSize;
-    const orders = this.filteredOrders;
-
-    // Reset page if out of bounds due to filtering
-    if (orders.length > 0 && start >= orders.length) {
-      this.currentPage = 1;
-      return orders.slice(0, this.pageSize);
-    }
-
-    return orders.slice(start, end);
-  }
-
   nextPage(): void {
-    if ((this.currentPage * this.pageSize) < this.filteredOrders.length) {
-      this.currentPage++;
-    }
+    this.currentPage++;
+    this.updateUrlQuery();
+    this.loadOrders();
   }
 
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.updateUrlQuery();
+      this.loadOrders();
     }
   }
 
   selectStatus(status: string): void {
     this.selectedStatus = status;
     this.currentPage = 1;
+    this.updateUrlQuery();
+    this.loadOrders();
   }
 
   onTimeFilterChange(): void {
     this.currentPage = 1;
+    this.updateUrlQuery();
+    this.loadOrders();
+  }
+
+  clearStatus(): void {
+    this.selectedStatus = 'all';
+    this.currentPage = 1;
+    this.updateUrlQuery();
+    this.loadOrders();
+  }
+
+  clearTime(): void {
+    this.selectedTime = '3';
+    this.currentPage = 1;
+    this.updateUrlQuery();
+    this.loadOrders();
+  }
+
+  resetFilters(): void {
+    this.selectedStatus = 'all';
+    this.selectedTime = '3';
+    this.currentPage = 1;
+    this.updateUrlQuery();
+    this.loadOrders();
   }
 
   getTimeLabel(value: string): string {
@@ -135,24 +139,4 @@ export class OrderHistoryComponent {
       default: return `Year: ${value}`;
     }
   }
-
-  clearStatus(): void {
-    this.selectedStatus = 'all';
-    this.currentPage = 1;
-    this.updateUrlQuery();
-  }
-
-  clearTime(): void {
-    this.selectedTime = '3';
-    this.currentPage = 1;
-    this.updateUrlQuery();
-  }
-
-  resetFilters(): void {
-    this.selectedStatus = 'all';
-    this.selectedTime = '3';
-    this.currentPage = 1;
-    this.updateUrlQuery();
-  }
-
 }

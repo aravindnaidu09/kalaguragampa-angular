@@ -24,7 +24,7 @@
   </div>
 </div>
 
-<!-- 💬 Active Filter Summary -->
+<!-- 💬 Active Filter Summary Chips -->
 <div class="active-filters" *ngIf="selectedStatus !== 'all' || selectedTime !== '3'">
   <span *ngIf="selectedStatus !== 'all'" class="chip">
     Status: {{ selectedStatus | titlecase }}
@@ -38,11 +38,11 @@
   <button class="reset-btn" (click)="resetFilters()">Reset Filters</button>
 </div>
 
-
 <!-- 📦 Order List -->
 <div class="order-history">
   <h2 class="title">
-    Your Orders <span class="order-count">{{ filteredOrders.length }}</span>
+    Your Orders
+    <span class="order-count">{{ totalCountSignal() }}</span>
   </h2>
 
   <!-- 🦴 Skeleton Loader -->
@@ -51,19 +51,23 @@
   </ng-container>
 
   <!-- 📋 Order Cards -->
-  <ng-container *ngIf="!loadingSignal() && filteredOrders.length > 0; else noOrders">
-    <ng-container *ngFor="let item of paginatedOrders">
+  <ng-container *ngIf="!loadingSignal() && paginatedOrders().length > 0; else noOrders">
+    <ng-container *ngFor="let item of paginatedOrders()">
       <app-order-card [item]="item" [@fadeInUp]></app-order-card>
     </ng-container>
 
-    <!-- Pagination -->
+    <!-- 📄 Pagination -->
     <div class="pagination">
-      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+      <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+        Previous
+      </button>
+
       <span class="page-indicator">Page {{ currentPage }}</span>
+
       <button
         class="page-btn"
         (click)="nextPage()"
-        [disabled]="(currentPage * pageSize) >= filteredOrders.length">
+        [disabled]="(currentPage * pageSize) >= totalCountSignal()">
         Next
       </button>
     </div>

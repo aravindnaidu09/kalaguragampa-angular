@@ -21,7 +21,7 @@ export interface IOrderProduct {
   id: number;
   name: string;
   sku: string;
-  image?: string;
+  images?: string[];
   quantity?: number;
   color?: string;
   is_rated?: boolean;

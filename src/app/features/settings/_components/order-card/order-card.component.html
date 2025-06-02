@@ -46,7 +46,7 @@
   <!-- Product List (Collapsible) -->
   <div *ngIf="!isCollapsed(item.order_id)" class="order-products" [@fadeExpand]>
     <div *ngFor="let product of item.product" class="product-item">
-      <img *ngIf="product.image" [src]="product.image" alt="{{ product.name }}" class="product-img" />
+      <img *ngIf="product.images?.length! > 0" [src]="getImagePath(product.images![0])" alt="{{ product.name }}" loading="lazy" class="product-img" (error)="onImageError($event)" />
 
       <div class="product-details">
         <div class="product-name">{{ product.name }}</div>

@@ -10,10 +10,11 @@
   </aside>
 
   <!-- Right: Review Form -->
-  <section class="form-section">
+  <section class="form-section" *ngIf="product$ | async as product">
     <div class="product-meta">
       <span class="product-name">{{ product?.name }}</span>
-      <img [src]="product?.image" alt="{{ product?.name }}" />
+      <img [src]="getImagePath(product?.image)" alt="{{ product.name }}" loading="lazy"
+      (error)="onImageError($event)" />
     </div>
 
     <app-star-rating [(rating)]="formData.rating" />

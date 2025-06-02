@@ -4,7 +4,8 @@ import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import {
   SubmitReview, SubmitReviewFailure, SubmitReviewSuccess, ResetReviewState,
-  LoadProductById, LoadProductByIdSuccess, LoadProductByIdFailure
+  LoadProductById, LoadProductByIdSuccess, LoadProductByIdFailure,
+  SetReviewProduct
 } from './review.actions';
 import { ReviewProductInfo } from '../_models/add-review.model';
 import { ReviewService } from '../_services/review.service';
@@ -27,7 +28,7 @@ export interface ReviewStateModel {
 })
 @Injectable()
 export class ReviewState {
-  constructor(private reviewService: ReviewService) {}
+  constructor(private reviewService: ReviewService) { }
 
   @Selector()
   static isLoading(state: ReviewStateModel) {
@@ -74,6 +75,12 @@ export class ReviewState {
   @Action(ResetReviewState)
   reset(ctx: StateContext<ReviewStateModel>) {
     ctx.setState({ loading: false, error: null, submitted: false, product: null });
+  }
+
+  // Add this inside the @State class:
+  @Action(SetReviewProduct)
+  setProduct(ctx: StateContext<ReviewStateModel>, action: SetReviewProduct) {
+    ctx.patchState({ product: action.product });
   }
 
   // @Action(LoadProductById)
