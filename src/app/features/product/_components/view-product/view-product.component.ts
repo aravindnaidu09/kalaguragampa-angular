@@ -53,6 +53,10 @@ export class ViewProductComponent implements OnInit {
   relatedError = signal<string | null>(null);
   wishlistItems: Signal<IWishlist[]> = signal([]);
 
+  addToCartLoading = signal(false);
+  buyNowLoading = signal(false);
+
+
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
 
   reviews = signal([
@@ -166,8 +170,11 @@ export class ViewProductComponent implements OnInit {
       this.toastService.showWarning('Please log in to add items!');
       return;
     }
+
+    this.addToCartLoading.set(true);
+
     this.tryAddToCart().subscribe((success) => {
-      console.log('checking-cart: ', success);
+      this.addToCartLoading.set(false);
       if (success) {
         // this.toastService.showSuccess('Item added to cart!');
       }
@@ -180,8 +187,11 @@ export class ViewProductComponent implements OnInit {
       this.toastService.showWarning('Please log in to add items!');
       return;
     }
+
+    this.buyNowLoading.set(true);
+
     this.tryAddToCart().subscribe((success) => {
-      console.log('checking-buy-now-option: ', success);
+      this.buyNowLoading.set(false);
       if (success) {
         this.router.navigate(['/checkout']);
       }

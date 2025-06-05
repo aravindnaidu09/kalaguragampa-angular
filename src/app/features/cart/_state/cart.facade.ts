@@ -23,8 +23,8 @@ export class CartFacade {
   readonly courierNameSignal = this.store.selectSignal((state) => state.cart.courierName ?? '');
   readonly estimatedDeliveryDaysSignal = this.store.selectSignal((state) => state.cart.estimatedDeliveryDays ?? '');
 
-  loadCart(): void {
-    this.store.dispatch(new LoadCart());
+  loadCart(): Observable<any> {
+    return this.store.dispatch(new LoadCart());
   }
 
   clearCart(): void {

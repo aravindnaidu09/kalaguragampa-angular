@@ -52,8 +52,22 @@
 
     <!-- ✅ Add to Cart & Buy Now Buttons -->
     <div class="product-actions">
-      <button class="btn buy-now" (click)="goToCheckoutPage()">Buy Now</button>
-      <button class="btn add-to-cart" (click)="addToCart()">Add to Cart</button>
+      <!-- Buy Now Button -->
+      <button class="btn buy-now" [disabled]="buyNowLoading()" (click)="goToCheckoutPage()">
+        <ng-container *ngIf="!buyNowLoading(); else buyNowLoader">Buy Now</ng-container>
+        <ng-template #buyNowLoader>
+          <span class="button-spinner"></span>
+        </ng-template>
+      </button>
+
+      <!-- Add to Cart Button -->
+      <button class="btn add-to-cart" [disabled]="addToCartLoading()" (click)="addToCart()">
+        <ng-container *ngIf="!addToCartLoading(); else addToCartLoader">Add to Cart</ng-container>
+        <ng-template #addToCartLoader>
+          <span class="button-spinner"></span>
+        </ng-template>
+      </button>
+
     </div>
   </div>
 

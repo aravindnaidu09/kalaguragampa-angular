@@ -46,9 +46,13 @@ export class ProductComponent {
 
   @Input() product!: IProduct;
   @Input() wishlistItems!: Signal<IWishlist[]>;
+  @Input() isUpdatingWishlist = false;
+
 
   @Output() wishlistToggle = new EventEmitter<number>();
   @Output() addToCart = new EventEmitter<number>();
+
+  isWishlistUpdating = false;
 
   readonly isWishlistedSignal = computed(() =>
     this.wishlistItems()?.some(
@@ -56,18 +60,25 @@ export class ProductComponent {
     )
   );
 
-
   onWishlistClick(): void {
+    if (this.isWishlistUpdating) return;
+
+    this.isWishlistUpdating = true;
+
     const wishlistId = this.getWishlistId();
 
-    if (wishlistId) {
-      this.wishlistToggle.emit(wishlistId);
-    } else {
-      this.wishlistToggle.emit(this.product.id!);
-    }
+    const emittedId = wishlistId || this.product.id!;
+    this.wishlistToggle.emit(emittedId);
 
     this.cdr.markForCheck();
   }
+
+  public resetWishlistLoader(): void {
+    this.isWishlistUpdating = false;
+    this.cdr.markForCheck();
+  }
+
+
 
   private getWishlistId(): number | undefined {
     return this.wishlistItems()

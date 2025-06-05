@@ -29,6 +29,11 @@ export class WishlistComponent implements OnInit {
   wishlistItems = this.wishlistFacade.wishlistSignal;
   isLoading = this.wishlistFacade.isLoading;
 
+  removingItemIds = new Set<number>();
+  movingItemIds = new Set<number>();
+  isBulkClearing = false;
+  isBulkAdding = false;
+
   constructor(
     private readonly cartService: CartService,
     private readonly router: Router,
@@ -46,6 +51,7 @@ export class WishlistComponent implements OnInit {
     const products = this.wishlistItems();
     if (!products.length) return;
 
+    this.isBulkAdding = true;
     let completed = 0;
     let failed = 0;
 
@@ -64,9 +70,9 @@ export class WishlistComponent implements OnInit {
     });
   }
 
-  // ✅ Small helper to check completion state
   private checkAllComplete(done: number, total: number, failed: number) {
     if (done === total) {
+      this.isBulkAdding = false;
       if (failed > 0) {
         this.toastService.showError(`${failed} items failed to add`);
       } else {
@@ -75,6 +81,7 @@ export class WishlistComponent implements OnInit {
       this.wishlistFacade.fetch();
     }
   }
+
 
   toggleView(): void {
     this.gridView.set(!this.gridView());
@@ -89,8 +96,13 @@ export class WishlistComponent implements OnInit {
     }).subscribe((confirmed: boolean) => {
       if (confirmed) {
         // this.cartItems = this.cartItems.filter(item => item.id !== itemId);
-        this.wishlistFacade.remove(productId).subscribe(() => {
-          this.wishlistFacade.fetch();
+        this.removingItemIds.add(productId);
+        this.wishlistFacade.remove(productId).subscribe({
+          next: () => {
+            this.removingItemIds.delete(productId);
+            this.wishlistFacade.fetch();
+          },
+          error: () => this.removingItemIds.delete(productId)
         });
       }
     });
@@ -98,14 +110,15 @@ export class WishlistComponent implements OnInit {
   }
 
   addToCart(product: IWishlist): void {
+    const id = product.id!;
+    this.movingItemIds.add(id);
+
     this.cartFacade.addToCart(product.productDetails.id!).subscribe({
       next: () => {
-        // this.toastService.showSuccess(`${product.productDetails.name} added to cart`);
-        this.wishlistFacade.fetch(); // ✅ Refresh the wishlist after successful add
+        this.movingItemIds.delete(id);
+        this.wishlistFacade.fetch();
       },
-      error: () => {
-        // this.toastService.showError(`Failed to add ${product.productDetails.name} to cart`);
-      }
+      error: () => this.movingItemIds.delete(id)
     });
   }
 
@@ -139,19 +152,28 @@ export class WishlistComponent implements OnInit {
         const products = this.wishlistItems();
         if (!products.length) return;
 
+        this.isBulkClearing = true;
         let removed = 0;
+
         products.forEach(product => {
-          this.wishlistFacade.remove(product.id!).subscribe(() => {
-            removed++;
-            if (removed === products.length) {
-              // this.toastService.showSuccess('Wishlist cleared');
-              this.wishlistFacade.fetch();
+          this.wishlistFacade.remove(product.id!).subscribe({
+            next: () => {
+              removed++;
+              if (removed === products.length) {
+                this.isBulkClearing = false;
+                this.wishlistFacade.fetch();
+              }
+            },
+            error: () => {
+              removed++;
+              if (removed === products.length) this.isBulkClearing = false;
             }
           });
         });
       }
     });
   }
+
 
   trackById(index: number, item: IWishlist): number | string {
     return item.id;

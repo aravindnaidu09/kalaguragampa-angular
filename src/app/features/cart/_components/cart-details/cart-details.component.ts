@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CartResponseItem, Item } from '../../_models/cart-item-model';
 import { CartFacade } from '../../_state/cart.facade';
 import { environment } from '../../../../../environments/environment.dev';
@@ -22,6 +22,7 @@ import { Address } from '../../../settings/_model/address-model';
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     PriceSummaryComponent
   ],
   templateUrl: './cart-details.component.html',
@@ -66,7 +67,9 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
 
   defaultAddress: Address = {};
 
-
+  isCartLoading = true;
+  deletingItemIds = new Set<number>();
+  isDeletingAll = false;
 
   private quantityChangeSubjectMap: { [key: number]: Subject<number> } = {};
   private loadingItems: Set<number> = new Set();
@@ -79,8 +82,23 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.fetchCartList();
     this.fetchCategories();
+  }
 
+  fetchCartList() {
 
+    this.isCartLoading = true;
+    this.cartFacade.loadCart().subscribe({
+      next: () => {
+        this.isCartLoading = false
+        if (this.cartItemsSignal()?.length > 0) {
+          this.loadAddressAndEstimateShipping();
+        }
+      },
+      error: () => this.isCartLoading = false
+    });
+  }
+
+  private loadAddressAndEstimateShipping(): void {
     this.addressFacade.loadAddresses().subscribe(() => {
       const all = this.addressFacade.addresses();
       this.defaultAddress = all.find(a => a.isDefault)! ?? null;
@@ -88,9 +106,6 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
-  fetchCartList() {
-    this.cartFacade.loadCart();
-  }
 
   fetchCategories() {
     this.productService.getCategories().subscribe((response: any) => {
@@ -110,8 +125,12 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
       confirmText: 'Remove',
       cancelText: 'Cancel'
     }).subscribe((confirmed: boolean) => {
+      this.deletingItemIds.add(itemId);
       if (confirmed) {
-        this.cartFacade.removeCartItems([itemId]);
+        this.cartFacade.removeCartItems([itemId]).subscribe({
+          next: () => this.deletingItemIds.delete(itemId),
+          error: () => this.deletingItemIds.delete(itemId)
+        });;
       }
     });
   }
@@ -124,7 +143,11 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
       cancelText: 'Cancel'
     }).subscribe((confirmed: boolean) => {
       if (confirmed) {
-        this.cartFacade.removeCartItems([]);
+        this.isDeletingAll = true;
+        this.cartFacade.removeCartItems([]).subscribe({
+          next: () => this.isDeletingAll = false,
+          error: () => this.isDeletingAll = false
+        });
       }
     });
   }

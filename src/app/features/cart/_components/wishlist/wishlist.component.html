@@ -2,13 +2,15 @@
   <!-- ✅ Wishlist Header -->
   <div class="wishlist-header">
     <h2>Your Wishlist</h2>
-    <button *ngIf="wishlistItems().length > 0" class="clear-wishlist-btn" (click)="clearWishlist()">🗑️ Clear All</button>
+    <button *ngIf="wishlistItems().length > 0" class="clear-wishlist-btn" (click)="clearWishlist()">🗑️ Clear
+      All</button>
   </div>
 
 
   <ng-container *ngIf="!(wishlistItems().length > 0)">
     <div (click)="goToHomePage()" class="d-flex justify-content-center">
-      <img style="cursor: pointer;" src="../../../../../assets/images/empty-wishlist.webp" width="auto" height="400px" />
+      <img style="cursor: pointer;" src="../../../../../assets/images/empty-wishlist.webp" width="auto"
+        height="400px" />
     </div>
   </ng-container>
 
@@ -42,24 +44,43 @@
             {{ product.productDetails.name | slice:0:30 }}<span
               *ngIf="product.productDetails?.name!.length > 30">...</span>
           </h3>
-          <p class="wishlist-price">{{ currencyService.getSymbol() }}{{ currencyService.convertPrice(product.productDetails.price)  }}</p>
+          <p class="wishlist-price">{{ currencyService.getSymbol() }}{{
+            currencyService.convertPrice(product.productDetails.price) }}</p>
         </div>
 
         <!-- ✅ Actions -->
         <div class="wishlist-card-footer">
           <button class="wishlist-remove" title="Remove" (click)="removeFromWishlist(product.id)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="red"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6L18 20H6L5 6"></path>
-              <line x1="10" y1="11" x2="10" y2="17"></line>
-              <line x1="14" y1="11" x2="14" y2="17"></line>
-              <path d="M9 6V3h6v3"></path>
-            </svg>
+
+            <ng-container *ngIf="removingItemIds.has(product.id!); else removeIcon">
+              <div class="spinner mini"></div>
+            </ng-container>
+            <ng-template #removeIcon>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6L18 20H6L5 6"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+                <path d="M9 6V3h6v3"></path>
+              </svg>
+            </ng-template>
           </button>
-          <button class="wishlist-cart" title="Move to Cart" (click)="addToCart(product)">🛒</button>
+
+          <!-- Move to Cart Button -->
+          <button class="wishlist-cart" title="Move to Cart" (click)="addToCart(product)">
+            <ng-container *ngIf="movingItemIds.has(product.id!); else cartIcon">
+              <div class="spinner mini"></div>
+            </ng-container>
+            <ng-template #cartIcon>🛒</ng-template>
+          </button>
         </div>
       </div>
+    </div>
+
+    <!-- Overlay Loader for bulk actions -->
+    <div class="overlay-loader" *ngIf="isBulkClearing || isBulkAdding">
+      <div class="spinner"></div>
     </div>
 
     <!-- ✅ Add All to Cart Button -->

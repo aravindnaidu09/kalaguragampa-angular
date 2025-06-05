@@ -1,9 +1,16 @@
 <div class="product-card">
   <!-- ❤️ Wishlist Icon -->
   <div class="wishlist-icon" (click)="onWishlistClick()">
-    <span *ngIf="isWishlistedSignal(); else notWishlisted">❤️</span>
-    <ng-template #notWishlisted><span>🤍</span></ng-template>
+    <ng-container *ngIf="!isUpdatingWishlist; else wishlistLoader">
+      <span *ngIf="isWishlistedSignal(); else notWishlisted">❤️</span>
+      <ng-template #notWishlisted><span>🤍</span></ng-template>
+    </ng-container>
+    <ng-template #wishlistLoader>
+      <div class="spinner mini"></div>
+    </ng-template>
   </div>
+
+
 
   <!-- 📦 Product Image -->
   <div class="product-image" (click)="navigateViewProduct(product.name!, product.id!)">

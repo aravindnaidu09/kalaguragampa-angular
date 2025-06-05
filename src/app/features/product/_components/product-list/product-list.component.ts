@@ -45,11 +45,17 @@ export class ProductListComponent implements OnInit {
   isWeekTopSellersLoading = signal(true);
   isNewArrivalsLoading = signal(true);
 
+  wishlistUpdatingIds = new Set<number>();
+  wishlistUpdatingMap = signal<Map<number, boolean>>(new Map());
+
   @ViewChild('scrollContainer', { static: false }) scrollContainer!: ElementRef;
   @ViewChild('categoryScrollRef', { static: false }) categoryScrollRef!: ElementRef;
   @ViewChild('topSellersScroll') topSellersScroll!: ElementRef;
   @ViewChild('weekTopSellersScroll') weekTopSellersScroll!: ElementRef;
   @ViewChild('newArrivalsScroll') newArrivalsScroll!: ElementRef;
+
+  @ViewChild('productCard') productCardComponent!: ProductComponent;
+
 
   constructor(
     private readonly productService: ProductService,
@@ -73,46 +79,46 @@ export class ProductListComponent implements OnInit {
   }
 
   /** ✅ Fetch Top Sellers */
-private getTopSellers(): void {
-  this.isTopSellersLoading.set(true);
+  private getTopSellers(): void {
+    this.isTopSellersLoading.set(true);
 
-  this.productService
-    .getRankedProducts('top_sellers', 10)
-    .pipe(take(1))
-    .subscribe({
-      next: (res) => this.topSellers.set(res),
-      error: () => this.toastService.showError('Failed to load top sellers.'),
-      complete: () => this.isTopSellersLoading.set(false),
-    });
-}
+    this.productService
+      .getRankedProducts('top_sellers', 10)
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => this.topSellers.set(res),
+        error: () => this.toastService.showError('Failed to load top sellers.'),
+        complete: () => this.isTopSellersLoading.set(false),
+      });
+  }
 
-/** ✅ Fetch Weekly Top Sellers */
-private getWeekTopSellers(): void {
-  this.isWeekTopSellersLoading.set(true);
+  /** ✅ Fetch Weekly Top Sellers */
+  private getWeekTopSellers(): void {
+    this.isWeekTopSellersLoading.set(true);
 
-  this.productService
-    .getRankedProducts('weekly_top_sellers', 10)
-    .pipe(take(1))
-    .subscribe({
-      next: (res) => this.weekTopSellers.set(res),
-      error: () => this.toastService.showError('Failed to load weekly top sellers.'),
-      complete: () => this.isWeekTopSellersLoading.set(false),
-    });
-}
+    this.productService
+      .getRankedProducts('weekly_top_sellers', 10)
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => this.weekTopSellers.set(res),
+        error: () => this.toastService.showError('Failed to load weekly top sellers.'),
+        complete: () => this.isWeekTopSellersLoading.set(false),
+      });
+  }
 
-/** ✅ Fetch New Arrivals */
-private getNewArrivals(): void {
-  this.isNewArrivalsLoading.set(true);
+  /** ✅ Fetch New Arrivals */
+  private getNewArrivals(): void {
+    this.isNewArrivalsLoading.set(true);
 
-  this.productService
-    .getRankedProducts('new_arrivals', 10)
-    .pipe(take(1))
-    .subscribe({
-      next: (res) => this.newArrivals.set(res),
-      error: () => this.toastService.showError('Failed to load new arrivals.'),
-      complete: () => this.isNewArrivalsLoading.set(false),
-    });
-}
+    this.productService
+      .getRankedProducts('new_arrivals', 10)
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => this.newArrivals.set(res),
+        error: () => this.toastService.showError('Failed to load new arrivals.'),
+        complete: () => this.isNewArrivalsLoading.set(false),
+      });
+  }
 
 
   /** ✅ Preload top categories */
@@ -166,24 +172,38 @@ private getNewArrivals(): void {
 
   /** ✅ Handle wishlist toggling */
   addToWishlist(productId: number): void {
-    if (!(this.authService.isAuthenticated())) {
+    if (!this.authService.isAuthenticated()) {
       this.toastService.showWarning('Please log in to add items!');
       return;
     }
+
     const isWishlisted = this.wishlistFacade.isInWishlistSignal(productId)();
+    const map = new Map(this.wishlistUpdatingMap());
 
-    if (isWishlisted) {
-      this.wishlistFacade.remove(productId).subscribe();
-      this.cdr.markForCheck();
-    } else {
-      this.wishlistFacade.add(productId).subscribe();''
-      this.cdr.markForCheck();
-    }
+    map.set(productId, true);
+    this.wishlistUpdatingMap.set(map);
 
-    if (this.selectedCategoryId) {
-      this.fetchProductList(this.selectedCategoryId);
-    }
+    const operation$ = isWishlisted
+      ? this.wishlistFacade.remove(productId)
+      : this.wishlistFacade.add(productId);
+
+    operation$.subscribe({
+      next: () => {
+        map.set(productId, false);
+        this.wishlistUpdatingMap.set(new Map(map));
+      },
+      error: () => {
+        map.set(productId, false);
+        this.toastService.showError('Failed to update wishlist');
+        this.wishlistUpdatingMap.set(new Map(map));
+      }
+    });
   }
+
+  isUpdatingWishlist(productId: number): boolean {
+    return this.wishlistUpdatingMap().get(productId) === true;
+  }
+
 
   /** ✅ Navigate to full listing */
   navigateToProductPage(): void {
