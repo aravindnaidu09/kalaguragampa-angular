@@ -64,6 +64,17 @@
   cursor: pointer;
   font-size: 16px;
   padding: 5px;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+
+  &:hover:not(.disabled) {
+    transform: scale(1.1);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 }
 
 .stock-count {
@@ -455,4 +466,10 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.quantity-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }

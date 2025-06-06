@@ -1,25 +1,29 @@
 .breadcrumb-nav {
   display: flex;
-  gap: 6px;
+  align-items: center;
   font-size: 14px;
-  color: #682f12;
+  color: #5a5a5a;
+  padding-left: 5px;
+  margin-bottom: 5px;
 
-  a {
+  a.breadcrumb-link {
+    color: #555;
     text-decoration: none;
-    color: inherit;
+    margin-right: 4px;
+    transition: color 0.2s ease;
 
     &:hover {
-      text-decoration: underline;
+      color: #682f12; // Kalagura Gampa brown
     }
   }
 
-  span {
-    font-weight: 600;
+  .breadcrumb-separator {
+    margin: 0 6px;
+    color: #999;
   }
 
-  &::before {
-    content: '/';
-    padding: 0 6px;
-    color: #999;
+  .breadcrumb-current {
+    font-weight: 600;
+    color: #682f12; // Highlight last item
   }
 }

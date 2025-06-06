@@ -1,3 +1,5 @@
+<app-breadcrumb></app-breadcrumb>
+
 <div class="product-container" *ngIf="!isLoading(); else loading">
   <!-- ✅ Product Image -->
   <div class="product-image">
@@ -27,9 +29,13 @@
     <!-- ✅ Quantity Selector & Stock Info -->
     <div class="product-quantity-stock-info-wrapper">
       <div class="product-quantity">
-        <button class="quantity-btn" (click)="decreaseQuantity()">-</button>
+        <button class="quantity-btn" (click)="decreaseQuantity()"
+          [disabled]="quantity() === 1 || product()?.stockStatus === 'Out of Stock'"
+          [class.disabled]="quantity() === 1 || product()?.stockStatus === 'Out of Stock'">-</button>
         <label>{{ quantity() }}</label>
-        <button class="quantity-btn" [disabled]="quantity() === product()?.maxQuantity"
+        <button class="quantity-btn"
+          [disabled]="quantity() === product()?.maxQuantity || product()?.stockStatus === 'Out of Stock'"
+          [class.disabled]="quantity() === product()?.maxQuantity || product()?.stockStatus === 'Out of Stock'"
           (click)="increaseQuantity()">+</button>
       </div>
 

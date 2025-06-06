@@ -36,7 +36,12 @@
 
       <div class="input-container" *ngIf="isMobileOtpSent && !isMobileVerified">
         <input type="text" formControlName="mobileOtp" placeholder="Enter OTP" />
-        <a (click)="verifyMobileOtp()">Verify OTP</a>
+        <ng-container *ngIf="!verifyMobileOtpLoading; else loadingTpl">
+          <a (click)="verifyMobileOtp()">Verify OTP</a>
+        </ng-container>
+        <ng-template #loadingTpl>
+          <span class="loader mini"></span>
+        </ng-template>
       </div>
     </div>
 
@@ -159,5 +164,3 @@
 
   </form>
 </ng-container>
-
-

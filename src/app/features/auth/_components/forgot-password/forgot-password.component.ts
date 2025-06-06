@@ -79,7 +79,7 @@ export class ForgotPasswordComponent {
 
     const identifier = otp_type === 'email' ? email : mobile;
 
-    this.otpService.sendOtp(identifier, otp_type, 'IND').subscribe({
+    this.otpService.sendOtp(identifier, otp_type, '91').subscribe({
       next: () => {
         this.toast.showSuccess('OTP sent successfully');
         this.step.set('reset');

@@ -7,6 +7,8 @@ import { AuthService } from '../../_services/auth.service';
 import { OtpService } from '../../_services/otp.service';
 import { SetToken } from '../../_state/auth.state';
 import { CommonModule } from '@angular/common';
+import { ToastService } from '../../../../core/services/toast.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-signin',
@@ -14,6 +16,7 @@ import { CommonModule } from '@angular/common';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    MatIconModule
   ],
   templateUrl: './signin.component.html',
   styleUrl: './signin.component.scss',
@@ -47,13 +50,15 @@ export class SigninComponent implements OnInit, OnDestroy {
   isResendBlocked = false; // Flag to block resending
 
   isRegistering = signal<boolean>(false);
+  isPhoneEditable = true;
 
   constructor(
     private fb: FormBuilder,
     private readonly otpService: OtpService,
     private readonly authService: AuthService,
     private readonly menuService: MenuService,
-    private readonly store: Store
+    private readonly store: Store,
+    private readonly toastService: ToastService
   ) {
     this.loginOtpForm = this.fb.group({
       mobileNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
@@ -70,10 +75,6 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() { }
-
-  ngOnDestroy() {
-    clearInterval(this.otpInterval);
-  }
 
   onMobileNumberInput(event: any): void {
     const inputValue = event.target.value;
@@ -118,18 +119,26 @@ export class SigninComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     const mobileNumber = mobileControl.value;
 
-    this.otpService.sendOtp(mobileNumber, 'mobile', '91').subscribe(
-      () => {
-        this.isOtpSent = true;
-        this.isLoading = false;
-        this.resendAttempts = 0; // Reset attempts on a fresh OTP send
-        this.startOtpCooldown();
-      },
-      () => {
-        this.isLoading = false;
-      }
-    );
+    this.otpService.sendOtp(mobileNumber, 'mobile', '91', 'login')
+      .pipe(take(1))
+      .subscribe({
+        next: (response: any) => {
+          this.toastService.showInfo(response.message);
+          this.isOtpSent = true;
+          this.isPhoneEditable = false; // 🔒 lock the phone number
+          this.resendAttempts = 0;
+          this.startOtpCooldown();
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.toastService.showError(error.error?.message || 'Failed to send OTP. Please try again.');
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+      });
   }
+
 
   /**
    * ✅ Handles the "Resend OTP" API call.
@@ -139,7 +148,7 @@ export class SigninComponent implements OnInit, OnDestroy {
 
     const mobileControl = this.loginOtpForm.get('mobileNumber');
     if (!mobileControl?.value) {
-      mobileControl?.markAsTouched(); // Show validation message
+      mobileControl?.markAsTouched();
       return;
     }
 
@@ -153,22 +162,28 @@ export class SigninComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     const mobileNumber = mobileControl.value;
 
-    this.otpService.resendOtp(mobileNumber, 'mobile', '91').subscribe(
-      () => {
-        this.isLoading = false;
-        this.resendAttempts++;
-
-        if (this.resendAttempts >= this.maxResendAttempts) {
-          this.blockResendFor5Minutes();
-        } else {
-          this.startOtpCooldown();
+    this.otpService.resendOtp(mobileNumber, 'mobile', '91')
+      .pipe(take(1))
+      .subscribe({
+        next: (response: any) => {
+          this.toastService.showInfo(response.message);
+          this.resendAttempts++;
+          if (this.resendAttempts >= this.maxResendAttempts) {
+            this.blockResendFor5Minutes();
+          } else {
+            this.startOtpCooldown();
+          }
+        },
+        error: (error) => {
+          console.error('Resend OTP Failed:', error);
+          this.toastService.showError(error.error?.message || 'Failed to resend OTP. Please try again.');
+        },
+        complete: () => {
+          this.isLoading = false;
         }
-      },
-      () => {
-        this.isLoading = false;
-      }
-    );
+      });
   }
+
 
   /**
    * ✅ Start 30s Countdown for Resend OTP
@@ -215,78 +230,37 @@ export class SigninComponent implements OnInit, OnDestroy {
 
     this.isSignInLoading = true;
 
-    const mobileNumber = this.loginOtpForm.get('mobileNumber')?.value;
-    const otp = this.loginOtpForm.get('otp')?.value;
+    const { mobileNumber, otp } = this.loginOtpForm.value;
 
     this.authService.login(true, mobileNumber, otp)
-      .pipe(take(1)) // ✅ Ensures one-time execution
-      .subscribe(
-        (response: any) => {
-          if (response?.access && response?.refresh) {
-            this.store.dispatch(new SetToken(response.access, response.refresh));
-
-            localStorage.setItem('accessToken', response.access);
-            localStorage.setItem('refreshToken', response.refresh);
-
-            const userName = response?.user?.name || 'User';
-            localStorage.setItem('userName', userName);
-
-            // ✅ Update Menu in HeaderComponent
-            this.menuService.updateMenu(userName);
-
-          }
-          this.isSignInLoading = false;
-          this.closeLoginDialog.emit(true);
-          this.isLoginSuccess.emit(true);
-        },
-        () => {
-          this.isSignInLoading = false;
-          this.isLoginSuccess.emit(false);
-        }
-      );
+      .pipe(take(1))
+      .subscribe({
+        next: (response) => this.handleLoginResponse(response),
+        error: (error) => this.handleLoginError(error),
+        complete: () => this.isSignInLoading = false
+      });
   }
+
 
   /**
   * Handle password-based login
   */
   onSubmitPassword(): void {
-    if (this.loginPasswordForm.valid) {
-      this.isSignInLoading = true;
+    if (this.loginPasswordForm.invalid) return;
 
-      const mobileOrEmail = this.loginPasswordForm.get('emailOrMobile')?.value;
-      const password = this.loginPasswordForm.get('password')?.value;
+    this.isSignInLoading = true;
 
-      this.authService
-        .login(false, mobileOrEmail, password)
-        .pipe(take(1))
-        .subscribe(
-          (response: any) => {
-            if (response?.access && response?.refresh) {
-              this.store.dispatch(new SetToken(response.access, response.refresh));
+    const { emailOrMobile, password } = this.loginPasswordForm.value;
 
-              localStorage.setItem('accessToken', response.access);
-              localStorage.setItem('refreshToken', response.refresh);
-
-              const userName = response?.user?.name || 'User';
-              localStorage.setItem('userName', userName);
-
-              // ✅ Update Menu in HeaderComponent
-              this.menuService.updateMenu(userName);
-
-            }
-
-            this.isSignInLoading = false;
-            this.closeLoginDialog.emit(true);
-            this.isLoginSuccess.emit(true);
-          },
-          (error: any) => { // ✅ Add proper error handling
-            console.error('Login Failed:', error);
-            this.isSignInLoading = false;
-            this.isLoginSuccess.emit(false);
-          }
-        );
-    }
+    this.authService.login(false, emailOrMobile, password)
+      .pipe(take(1))
+      .subscribe({
+        next: (response) => this.handleLoginResponse(response),
+        error: (error) => this.handleLoginError(error),
+        complete: () => this.isSignInLoading = false
+      });
   }
+
 
   /**
    * Trigger Forgot Password action
@@ -302,5 +276,54 @@ export class SigninComponent implements OnInit, OnDestroy {
   onRegister(): void {
     this.isRegistering.set(true);
     this.isRegisterClicked.emit(this.isRegistering());
+  }
+
+  // 🔽 Place this at the bottom of the class
+  private handleLoginSuccess(response: any): void {
+    this.store.dispatch(new SetToken(response.access, response.refresh));
+
+    localStorage.setItem('accessToken', response.access);
+    localStorage.setItem('refreshToken', response.refresh);
+
+    const userName = response?.user?.name || 'User';
+    localStorage.setItem('userName', userName);
+
+    this.menuService.updateMenu(userName);
+
+    window.location.reload(); // Reload the page to reflect changes
+  }
+
+  private handleLoginResponse(response: any): void {
+    if (response?.access && response?.refresh) {
+      this.handleLoginSuccess(response);
+      this.closeLoginDialog.emit(true);
+      this.isLoginSuccess.emit(true);
+    }
+  }
+
+  private handleLoginError(error: any): void {
+    console.error('Login Failed:', error);
+    this.toastService.showError(error.error?.message || 'Login failed. Please try again.');
+    this.isSignInLoading = false;
+    this.isLoginSuccess.emit(false);
+  }
+
+  changePhoneNumber(): void {
+    this.isOtpSent = false;
+    this.isOtpResendEnabled = false;
+    this.isResendBlocked = false;
+    this.resendAttempts = 0;
+    this.otpCooldown = 30;
+    this.resendCooldown = 300;
+    this.isPhoneEditable = true;
+    this.loginOtpForm.reset(); // optionally retain phone if needed
+    clearInterval(this.otpInterval);
+  }
+
+
+  ngOnDestroy() {
+    if (this.otpInterval) {
+      clearInterval(this.otpInterval);
+    }
   }
 }

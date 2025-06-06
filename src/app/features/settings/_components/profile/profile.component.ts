@@ -61,8 +61,8 @@ export class ProfileComponent implements OnInit {
     const lastName = lastParts.join(' ');
 
     this.profileForm = this.fb.group({
-      firstName: [firstName || '', Validators.required],
-      lastName: [lastName || '', Validators.required],
+      firstName: [user.first_name || '', Validators.required],
+      lastName: [user.last_name || '', Validators.required],
       gender: [user.gender || '', Validators.required],
       email: [user.email || '', [Validators.required, Validators.email]],
       phone: [user.mobile || '', [Validators.required, Validators.pattern(/^\d{10}$/)]],
@@ -78,6 +78,8 @@ export class ProfileComponent implements OnInit {
     const fullName = `${this.profileForm.get('firstName')?.value} ${this.profileForm.get('lastName')?.value}`;
     const payload: Partial<ProfileModel> = {
       full_name: fullName,
+      first_name: this.profileForm.get('firstName')?.value,
+      last_name: this.profileForm.get('lastName')?.value,
       gender: this.profileForm.get('gender')?.value,
       email: this.profileForm.get('email')?.value,
       mobile: this.profileForm.get('phone')?.value

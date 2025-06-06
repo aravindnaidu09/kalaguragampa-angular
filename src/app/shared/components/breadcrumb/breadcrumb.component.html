@@ -1,7 +1,10 @@
 <!-- breadcrumb.component.html -->
-<nav class="breadcrumb-nav">
+<nav class="breadcrumb-nav" aria-label="breadcrumb">
   <ng-container *ngFor="let crumb of breadcrumbs(); let last = last">
-    <a [routerLink]="crumb.url" *ngIf="!last">{{ crumb.label }}</a>
-    <span *ngIf="last">{{ crumb.label }}</span>
+    <ng-container *ngIf="!last">
+      <a [routerLink]="crumb.url" class="breadcrumb-link">{{ crumb.label }}</a>
+      <span class="breadcrumb-separator">/</span>
+    </ng-container>
+    <span *ngIf="last" class="breadcrumb-current">{{ crumb.label }}</span>
   </ng-container>
 </nav>

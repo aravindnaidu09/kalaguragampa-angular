@@ -38,6 +38,7 @@ export class SignUpComponent {
   mobileOtpCooldown = 30;
   emailOtpCooldown = 30;
   isLoginPage = signal<boolean>(false);
+  verifyMobileOtpLoading = signal(false);
 
   constructor(
     private fb: FormBuilder,
@@ -110,30 +111,30 @@ export class SignUpComponent {
   }
 
   /** ✅ Resend OTP for Mobile */
-resendMobileOtp() {
-  if (!this.registerForm.get('mobileNumber')?.valid) {
-    this.toastService.showError('Please enter a valid mobile number before resending OTP.');
-    return;
-  }
-
-  this.isLoadingMobileOtp = true;
-
-  this.otpService.resendOtp(this.registerForm.value.mobileNumber, 'mobile', '91').subscribe({
-    next: () => {
-      this.isLoadingMobileOtp = false;
-      this.startCooldown('mobile');
-      this.toastService.showSuccess('OTP has been resent successfully. Check your messages.');
-    },
-    error: (err) => {
-      this.isLoadingMobileOtp = false;
-      console.error('OTP Resend Error:', err);
-
-      // ✅ Provide a user-friendly error message
-      const errorMessage = err.error?.message || 'Failed to resend OTP. Please try again later.';
-      this.toastService.showError(errorMessage);
+  resendMobileOtp() {
+    if (!this.registerForm.get('mobileNumber')?.valid) {
+      this.toastService.showError('Please enter a valid mobile number before resending OTP.');
+      return;
     }
-  });
-}
+
+    this.isLoadingMobileOtp = true;
+
+    this.otpService.resendOtp(this.registerForm.value.mobileNumber, 'mobile', '91').subscribe({
+      next: () => {
+        this.isLoadingMobileOtp = false;
+        this.startCooldown('mobile');
+        this.toastService.showSuccess('OTP has been resent successfully. Check your messages.');
+      },
+      error: (err) => {
+        this.isLoadingMobileOtp = false;
+        console.error('OTP Resend Error:', err);
+
+        // ✅ Provide a user-friendly error message
+        const errorMessage = err.error?.message || 'Failed to resend OTP. Please try again later.';
+        this.toastService.showError(errorMessage);
+      }
+    });
+  }
 
 
   /** ✅ Send OTP for Mobile */
@@ -143,16 +144,16 @@ resendMobileOtp() {
       return;
     }
     this.isLoadingMobileOtp = true;
-    this.otpService.sendOtp(this.getFieldValue('mobileNumber'), 'mobile', '91').subscribe({
+    this.otpService.sendOtp(this.getFieldValue('mobileNumber'), 'mobile', '91', 'register').subscribe({
       next: () => {
         this.isMobileOtpSent = true;
         this.isLoadingMobileOtp = false;
         this.startCooldown('mobile');
         this.toastService.showSuccess('OTP sent to mobile successfully.');
       },
-      error: () => {
+      error: (err: any) => {
         this.isLoadingMobileOtp = false;
-        this.toastService.showError('Failed to send mobile OTP. Try again.');
+        this.toastService.showError(err.error?.message || 'Failed to send mobile OTP. Try again.');
       }
     });
   }
@@ -164,63 +165,67 @@ resendMobileOtp() {
       return;
     }
     this.isLoadingEmailOtp = true;
-    this.otpService.sendOtp(this.getFieldValue('email'), 'email').subscribe({
+    this.otpService.sendOtp(this.getFieldValue('email'), 'email', '', 'register').subscribe({
       next: () => {
         this.isEmailOtpSent = true;
         this.isLoadingEmailOtp = false;
         this.startCooldown('email');
         this.toastService.showSuccess('OTP sent to email successfully.');
       },
-      error: () => {
+      error: (err: any) => {
         this.isLoadingEmailOtp = false;
-        this.toastService.showError('Failed to send email OTP. Try again.');
+        this.toastService.showError(err.error?.message || 'Failed to send email OTP. Try again.');
       }
     });
   }
 
   /** ✅ Resend OTP for Email */
-resendEmailOtp() {
-  if (!this.isEmailOtpSent) {
-    this.toastService.showError('OTP has not been sent yet. Please request an OTP first.');
-    return;
-  }
-
-  if (!this.canResendEmailOtp) {
-    this.toastService.showWarning(`Please wait ${this.emailOtpCooldown} seconds before resending OTP.`);
-    return;
-  }
-
-  this.isLoadingEmailOtp = true;
-
-  this.otpService.resendOtp(this.registerForm.value.email, 'email').subscribe({
-    next: () => {
-      this.isLoadingEmailOtp = false;
-      this.startCooldown('email');
-      this.toastService.showSuccess('Email OTP has been resent successfully. Check your inbox.');
-    },
-    error: (err) => {
-      this.isLoadingEmailOtp = false;
-      console.error('Email OTP Resend Error:', err);
-
-      // ✅ Provide a user-friendly error message
-      const errorMessage = err.error?.message || 'Failed to resend Email OTP. Please try again later.';
-      this.toastService.showError(errorMessage);
+  resendEmailOtp() {
+    if (!this.isEmailOtpSent) {
+      this.toastService.showError('OTP has not been sent yet. Please request an OTP first.');
+      return;
     }
-  });
-}
+
+    if (!this.canResendEmailOtp) {
+      this.toastService.showWarning(`Please wait ${this.emailOtpCooldown} seconds before resending OTP.`);
+      return;
+    }
+
+    this.isLoadingEmailOtp = true;
+
+    this.otpService.resendOtp(this.registerForm.value.email, 'email').subscribe({
+      next: () => {
+        this.isLoadingEmailOtp = false;
+        this.startCooldown('email');
+        this.toastService.showSuccess('Email OTP has been resent successfully. Check your inbox.');
+      },
+      error: (err) => {
+        this.isLoadingEmailOtp = false;
+        console.error('Email OTP Resend Error:', err);
+
+        // ✅ Provide a user-friendly error message
+        const errorMessage = err.error?.message || 'Failed to resend Email OTP. Please try again later.';
+        this.toastService.showError(errorMessage);
+      }
+    });
+  }
 
 
   /** ✅ Verify OTP for Mobile */
   verifyMobileOtp() {
     if (!this.getFieldValue('mobileOtp')) return;
-    this.otpService.verifyOtp(this.getFieldValue('mobileNumber'), this.getFieldValue('mobileOtp'), 'mobile').subscribe({
+    this.verifyMobileOtpLoading.set(true);
+    this.otpService.verifyOtp(this.getFieldValue('mobileNumber'), this.getFieldValue('mobileOtp'), 'mobile', '', 'register').subscribe({
       next: () => {
         this.isMobileVerified = true;
         this.enableFields();
         this.toastService.showSuccess('Mobile OTP verified successfully.');
       },
-      error: () => {
-        this.toastService.showError('Invalid mobile OTP. Try again.');
+      error: (err: any) => {
+        this.toastService.showError(err.error?.message || 'Invalid mobile OTP. Try again.');
+      },
+      complete: () => {
+        this.verifyMobileOtpLoading.set(false);
       }
     });
   }
@@ -228,14 +233,14 @@ resendEmailOtp() {
   /** ✅ Verify OTP for Email */
   verifyEmailOtp() {
     if (!this.getFieldValue('emailOtp')) return;
-    this.otpService.verifyOtp(this.getFieldValue('email'), this.getFieldValue('emailOtp'), 'email').subscribe({
+    this.otpService.verifyOtp(this.getFieldValue('email'), this.getFieldValue('emailOtp'), 'email', '', 'register').subscribe({
       next: () => {
         this.isEmailVerified = true;
         this.enableFields();
         this.toastService.showSuccess('Email OTP verified successfully.');
       },
-      error: () => {
-        this.toastService.showError('Invalid email OTP. Try again.');
+      error: (err: any) => {
+        this.toastService.showError(err.error?.message || 'Invalid email OTP. Try again.');
       }
     });
   }
@@ -299,9 +304,9 @@ resendEmailOtp() {
         // ✅ Optionally, redirect to login page
         this.goBackToLogin();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isLoadingRegister = false;
-        console.error('Registration Error:', err);
+        console.error('Registration Error:', err.error?.message);
 
         // ✅ Provide user-friendly error messages
         const errorMessage = err.error?.message || 'Registration failed. Please try again.';

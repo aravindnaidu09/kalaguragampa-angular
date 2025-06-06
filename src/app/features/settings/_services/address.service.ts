@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { filter, map, Observable, take } from 'rxjs';
 import { Address, deserializeAddress, serializeAddress } from '../_model/address-model';
 import { APP_SETTINGS } from '../../../core/constants/app-settings';
 import { ADDRESS_API_URLS } from '../../../core/constants/address-urls';
@@ -29,10 +29,13 @@ export class AddressService {
 
   // ✅ Add New Address (Deserialize single object)
   addAddress(address: Address): Observable<Address> {
-    return this.http.post<any>(`${this.baseUrl}${ADDRESS_API_URLS.address.create}`, address).pipe(
-      map((response) => deserializeAddress(response.data))
-    );
-  }
+  return this.http.post<any>(`${this.baseUrl}${ADDRESS_API_URLS.address.create}`, address, { observe: 'response' }).pipe(
+    take(1), // ✅ emits once
+    filter((res: any) => res.statusCode === 200 || res.statusCode === 201),
+    map(res => deserializeAddress(res.body?.data))
+  );
+}
+
 
   // ✅ Update Address (Deserialize single object)
   updateAddress(id: number, address: Address): Observable<Address> {

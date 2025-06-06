@@ -16,6 +16,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { EstimateDeliveryDialogComponent } from '../estimate-delivery-dialog/estimate-delivery-dialog.component';
 import { AddressFacade } from '../../../settings/_state/address.facade';
 import { Address } from '../../../settings/_model/address-model';
+import { BreadcrumbComponent } from '../../../../shared/components/breadcrumb/breadcrumb.component';
+import { BreadcrumbFacade } from '../../../../core/state/breadcrumb.facade';
 
 @Component({
   selector: 'app-cart-details',
@@ -23,7 +25,8 @@ import { Address } from '../../../settings/_model/address-model';
     CommonModule,
     FormsModule,
     RouterModule,
-    PriceSummaryComponent
+    PriceSummaryComponent,
+    BreadcrumbComponent
   ],
   templateUrl: './cart-details.component.html',
   styleUrls: ['./cart-details.component.scss'],
@@ -76,12 +79,18 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
 
   constructor(private readonly router: Router,
     private readonly toastService: ToastService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private breadcrumbFacade: BreadcrumbFacade
   ) { }
 
   ngOnInit() {
     this.fetchCartList();
     this.fetchCategories();
+
+    this.breadcrumbFacade.setBreadcrumb([
+    { label: 'Home', url: '/' },
+    { label: 'Cart', url: '/cart' }
+  ]);
   }
 
   fetchCartList() {

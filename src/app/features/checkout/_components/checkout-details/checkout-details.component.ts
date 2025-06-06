@@ -193,6 +193,7 @@ export class CheckoutDetailsComponent implements OnInit {
 
   /** Step 3: Verify payment with server */
   private verifyPaymentCallback(orderPk: string, response: any): void {
+    this.isProcessingPayment = true; // 🔁 Start loader
     const payload = {
       payment_id: response.razorpay_payment_id,
       payment_signature: response.razorpay_signature
@@ -200,13 +201,14 @@ export class CheckoutDetailsComponent implements OnInit {
 
     this.paymentService.verifyPayment(orderPk, payload).subscribe({
       next: () => {
-
         const orderId = orderPk;
         const orderDate = new Date().toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',
           day: 'numeric'
         });
+
+        this.isProcessingPayment = false; // ✅ Stop loader
 
         const dialogRef = this.dialog.open(OrderSuccessDialogComponent, {
           data: {
@@ -229,6 +231,7 @@ export class CheckoutDetailsComponent implements OnInit {
       },
       error: () => {
         this.toastService.showError('Payment verification failed.');
+        this.isProcessingPayment = false; // ✅ Stop loader
       }
     });
   }

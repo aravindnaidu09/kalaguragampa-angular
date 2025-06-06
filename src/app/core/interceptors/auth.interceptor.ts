@@ -21,6 +21,23 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
   const accessToken = store.selectSnapshot(AuthState.getAccessToken) ?? localStorage.getItem('accessToken')!;
   const refreshToken = store.selectSnapshot(AuthState.getRefreshToken) ?? localStorage.getItem('refreshToken')!;
 
+  // List of APIs to exclude from auth handling
+  const excludedUrls = [
+    '/auth/api/v1/login/',
+    '/auth/api/v1/send-otp/',
+    '/auth/api/v1/resend-otp/',
+    '/auth/api/v1/verify-otp/',
+    '/auth/api/v1/users/register',
+    '/auth/api/v1/users/password-reset',
+    '/auth/api/v1/token/refresh/' // always exclude refresh endpoint from refresh logic
+  ];
+
+  // Utility: Check if request should be excluded
+  const isExcluded = excludedUrls.some(url => req.url.includes(url));
+
+  if (isExcluded) {
+    return next(req); // 🚫 No token or refresh logic for these
+  }
   let clonedRequest = req;
   if (accessToken) {
     clonedRequest = req.clone({

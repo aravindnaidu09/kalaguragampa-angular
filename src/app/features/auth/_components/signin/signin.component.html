@@ -8,7 +8,11 @@
       <label for="mobileNumber">Mobile Number</label>
       <input type="text" id="mobileNumber" class="form-control" placeholder="Enter your mobile number"
         formControlName="mobileNumber" (input)="onMobileNumberInput($event)" maxlength="10"
-        (keypress)="allowOnlyNumbers($event)" />
+        (keypress)="allowOnlyNumbers($event)" [readonly]="!isPhoneEditable"/>
+
+      <a *ngIf="!isPhoneEditable" class="change-number-link" (click)="changePhoneNumber()">
+        <mat-icon fontIcon="edit" class="edit-icon"></mat-icon> Change Number
+      </a>
       <small *ngIf="loginOtpForm.get('mobileNumber')?.invalid && loginOtpForm.get('mobileNumber')?.touched"
         class="validation-message">Enter a valid 10-digit mobile number.</small>
 
@@ -43,10 +47,9 @@
     <!-- OTP Input Field -->
     <div class="form-group" *ngIf="isOtpSent">
       <label for="otp">OTP</label>
-      <input type="text" id="otp" class="form-control" placeholder="Enter OTP" formControlName="otp"
-        maxlength="5" />
-      <small *ngIf="loginOtpForm.get('otp')?.invalid && loginOtpForm.get('otp')?.touched"
-        class="validation-message">OTP must be 5 characters long.</small>
+      <input type="text" id="otp" class="form-control" placeholder="Enter OTP" formControlName="otp" maxlength="5" />
+      <small *ngIf="loginOtpForm.get('otp')?.invalid && loginOtpForm.get('otp')?.touched" class="validation-message">OTP
+        must be 5 characters(Only Numeric) long.</small>
     </div>
 
     <!-- Submit Button -->

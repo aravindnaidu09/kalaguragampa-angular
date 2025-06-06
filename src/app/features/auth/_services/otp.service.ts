@@ -13,8 +13,8 @@ export class OtpService {
 
   constructor(private readonly httpClient: HttpClient) { }
 
-  sendOtp(identifier: string, otpType: 'email' | 'mobile', countryCode?: string): Observable<any> {
-    let payload: any = { otp_type: otpType };
+  sendOtp(identifier: string, otpType: 'email' | 'mobile', countryCode?: string, otpFor?: string): Observable<any> {
+    let payload: any = { otp_type: otpType, otp_for: otpFor };
 
     if (otpType === 'mobile') {
       payload.mobile = identifier;
@@ -26,8 +26,8 @@ export class OtpService {
     return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.auth.sendOtp}`, payload);
   }
 
-  verifyOtp(identifier: string, otp: string, otpType: 'email' | 'mobile', countryCode?: string): Observable<any> {
-    let payload: any = { otp_type: otpType, otp };
+  verifyOtp(identifier: string, otp: string, otpType: 'email' | 'mobile', countryCode?: string, otpFor?: string): Observable<any> {
+    let payload: any = { otp_type: otpType, otp, otp_for: otpFor };
 
     if (otpType === 'mobile') {
       payload.mobile = identifier;

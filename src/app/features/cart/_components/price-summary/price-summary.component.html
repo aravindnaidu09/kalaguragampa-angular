@@ -41,7 +41,7 @@
 
   <div class="summary-total">
     <span>Total Amount</span>
-    <span>₹{{ finalAmountSignal() }}</span>
+    <span>₹{{ finalAmountSignal() | number: '1.2-2' }}</span>
   </div>
 
   <ng-container *ngIf="showPlaceOrderButton">

@@ -6,6 +6,8 @@ import { Address, serializeAddress } from '../../_model/address-model';
 import { AddressFacade } from '../../_state/address.facade';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 import { AddressFormComponent } from "../../../checkout/_components/address-form/address-form.component";
+import { AddressService } from '../../_services/address.service';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-address-management',
@@ -26,7 +28,8 @@ export class AddressManagementComponent {
   private fb = inject(FormBuilder);
   private addressFacade = inject(AddressFacade);
   private confirmDialogService = inject(ConfirmDialogService);
-
+  private addressService = inject(AddressService);
+  private toastService = inject(ToastService);
 
   addressForm!: FormGroup;
   isEditing = false;
@@ -75,14 +78,21 @@ export class AddressManagementComponent {
         }
       });
     } else {
-      this.addressFacade.createAddress(payload).subscribe(success => {
-        if (success) {
-          this.resetForm(true);
+      this.addressFacade.createAddress(payload).subscribe({
+        next: (success) => {
+          if (success) {
+            this.toastService.showSuccess('Address added successfully.');
+            this.resetForm(true);
+          }
+        },
+        error: (error) => {
+          console.error('Add Address Failed:', error);
+          this.toastService.showError(error || 'Failed to add address. Please try again.');
         }
       });
     }
-
   }
+
 
   editAddress(address: Address): void {
     this.isEditing = true;
@@ -100,8 +110,9 @@ export class AddressManagementComponent {
       confirmText: 'Remove'
     }).subscribe(result => {
       if (result) {
-        console.log('Confirmed delete');
-        this.addressFacade.deleteAddress(addressId).subscribe();
+        this.addressFacade.deleteAddress(addressId).subscribe(() => {
+          this.toastService.showSuccess('Address removed successfully.');
+        });
       }
     });
   }

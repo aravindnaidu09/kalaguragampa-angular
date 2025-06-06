@@ -51,14 +51,12 @@ export class AddressFormComponent implements OnInit {
     address.id = this.initialData.id ?? null; // Assign ID if editing
     // const apiPayload = serializeAddress(address);
 
-    setTimeout(() => {
-      this.save.emit(address);
-      this.isSubmitting = false;
+    this.save.emit(address);
+    this.isSubmitting = false;
 
-      if (this.formMode === 'add') {
-        this.resetForm();
-      }
-    }, 800);
+    if (this.formMode === 'add') {
+      this.resetForm();
+    }
   }
 
   resetForm(): void {

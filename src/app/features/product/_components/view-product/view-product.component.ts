@@ -16,6 +16,9 @@ import { ProductComponent } from '../product/product.component';
 import { IProductQueryParams } from '../../_models/product-query-model';
 import { IWishlist } from '../../_models/wishlist-model';
 import { WishlistFacade } from '../../../cart/_state/wishlist.facade';
+import { SeoService } from '../../../../core/services/seo.service';
+import { BreadcrumbComponent } from '../../../../shared/components/breadcrumb/breadcrumb.component';
+import { BreadcrumbFacade } from '../../../../core/state/breadcrumb.facade';
 
 @Component({
   selector: 'app-view-product',
@@ -24,7 +27,8 @@ import { WishlistFacade } from '../../../cart/_state/wishlist.facade';
     CommonModule,
     FormsModule,
     ReviewContainerComponent,
-    ProductComponent
+    ProductComponent,
+    BreadcrumbComponent
   ],
   templateUrl: './view-product.component.html',
   styleUrl: './view-product.component.scss',
@@ -38,6 +42,8 @@ export class ViewProductComponent implements OnInit {
   private auth = inject(AuthService);
   currencyService = inject(CurrencyService);
   private wishlistFacade = inject(WishlistFacade);
+  private seoService = inject(SeoService);
+  private breadCrumbFacade = inject(BreadcrumbFacade);
 
   product = signal<IProduct | null>(null); // ✅ Reactive Signal for Product Data
   quantity = signal<number>(1); // ✅ Default Quantity
@@ -101,6 +107,22 @@ export class ViewProductComponent implements OnInit {
         this.product.set(response); // ✅ Extract product from API response
         this.isLoading.set(false);
         this.fetchRelatedProducts(); // ✅ Fetch related products
+
+        this.breadCrumbFacade.setBreadcrumb([
+          { label: 'Home', url: '/' },
+          { label: 'Products', url: '/detail-view' },
+          { label: response.name!, url: this.router.url }
+        ]);
+
+        // ✅ SEO Setup
+        this.seoService.update(
+          `${response.name} - Buy Online at Kalagura Gampa`,
+          response.shortDescription || 'Shop premium handmade herbal products with natural ingredients.',
+          `${response.name}, ${response.categoryName}, Kalagura Gampa`
+        );
+
+        const canonicalSlug = response.name?.toLowerCase().replace(/\\s+/g, '-');
+        this.seoService.setCanonical(`https://kalaguragampa.com/product/${canonicalSlug}/${response.id}`);
       },
       error: () => {
         this.errorMessage.set('Failed to load product details.');

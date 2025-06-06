@@ -6,6 +6,8 @@ import { DetailedProductListComponent } from '../detailed-product-list/detailed-
 import { IProductQueryParams } from '../../_models/product-query-model';
 import { ProductService } from '../../_services/product.service';
 import { IProduct } from '../../_models/product-model';
+import { SeoService } from '../../../../core/services/seo.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-products-page',
@@ -57,12 +59,55 @@ export class ProductsPageComponent {
     return this.totalProducts() ? Math.ceil(this.totalProducts() / this.itemsPerPage()) : 1;
   });
 
-  constructor(private readonly productService: ProductService) { }
+  constructor(private readonly productService: ProductService,
+    private readonly seoService: SeoService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
+  ) { }
 
   ngOnInit(): void {
     this.isLoading.set(true);
-    this.fetchProducts()
+    // this.fetchProducts();
+
+    this.route.queryParams.subscribe(params => {
+      this.filters.set(params);
+      this.currentPage.set(Number(params['page']) || 1);
+      this.handleSeoBasedOnFilters(params);
+      this.fetchProducts();
+    });
   }
+
+  private handleSeoBasedOnFilters(params: Record<string, any>): void {
+    const hasFilters = Object.keys(params).length > 0;
+
+    if (hasFilters) {
+      this.seoService.update(
+        'Explore Herbal Products | Kalagura Gampa',
+        'Filter and discover natural food and wellness products tailored to your needs.'
+      );
+      document.head.querySelector("meta[name='robots']")?.remove();
+      const meta = document.createElement('meta');
+      meta.name = 'robots';
+      meta.content = 'noindex, follow';
+      document.head.appendChild(meta);
+
+      this.seoService.setCanonical('https://kalaguragampa.com/products');
+    } else {
+      this.seoService.update(
+        'Shop Herbal Products Online | Kalagura Gampa',
+        'Explore our wide range of handmade herbal food and wellness products. Natural, affordable, and trusted by thousands.',
+        'herbal products, natural wellness, ayurvedic oils, food powders, kalagura gampa'
+      );
+      document.head.querySelector("meta[name='robots']")?.remove();
+      const meta = document.createElement('meta');
+      meta.name = 'robots';
+      meta.content = 'index, follow';
+      document.head.appendChild(meta);
+
+      this.seoService.setCanonical('https://kalaguragampa.com/products');
+    }
+  }
+
 
   /**
    * ✅ Apply Sorting from SortFilterBar
@@ -87,6 +132,12 @@ export class ProductsPageComponent {
     this.filtersChanged.set(params);
     this.currentPage.set(1);
 
+    const merged = { ...this.filters(), ...params, page: 1 };
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: merged,
+      queryParamsHandling: 'merge'
+    });
     this.fetchProducts();
   }
 
@@ -96,6 +147,7 @@ export class ProductsPageComponent {
   applyFilters(params: IProductQueryParams) {
     this.filters.set({ ...this.filters(), ...params });
     this.currentPage.set(1);
+    this.updateFilters(params);
     this.fetchProducts(); // Fetch products after filter change
   }
 
@@ -104,9 +156,16 @@ export class ProductsPageComponent {
     */
   changePage(newPage: number) {
     if (newPage > 0 && newPage <= this.totalPages()) {
-      this.currentPage.set(newPage);
-      this.fetchProducts();
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { ...this.filters(), page: newPage },
+        queryParamsHandling: 'merge'
+      });
     }
+    // if (newPage > 0 && newPage <= this.totalPages()) {
+    //   this.currentPage.set(newPage);
+    //   this.fetchProducts();
+    // }
   }
 
   /** ✅ Reset filters */
@@ -114,6 +173,10 @@ export class ProductsPageComponent {
     this.filters.set({});
     this.filtersChanged.set({});
     this.currentPage.set(1);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {}
+    });
     this.fetchProducts();
   }
 

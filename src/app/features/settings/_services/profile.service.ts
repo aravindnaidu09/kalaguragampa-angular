@@ -24,7 +24,7 @@ export class ProfileService {
 
   // ✅ Update User Profile
   updateUserProfile(data: Partial<ProfileModel>): Observable<any> {
-    return this.http.post(this.baseUrl, data);
+    return this.http.put(this.baseUrl, data);
   }
 
 }

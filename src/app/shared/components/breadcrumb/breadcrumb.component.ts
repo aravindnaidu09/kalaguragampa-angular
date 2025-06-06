@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { BreadcrumbFacade } from '../../../core/state/breadcrumb.facade';
 
 export interface BreadcrumbItem {
   label: string;
@@ -20,6 +21,6 @@ export interface BreadcrumbItem {
   styleUrl: './breadcrumb.component.scss'
 })
 export class BreadcrumbComponent {
-   readonly breadcrumbs = this.breadcrumbFacade.breadcrumbs;
-  constructor(private breadcrumbFacade: BreadcrumbFacade) {}
+  private breadCrumbFacade = inject(BreadcrumbFacade);
+  readonly breadcrumbs = this.breadCrumbFacade.breadcrumbs;
 }

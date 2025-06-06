@@ -17,7 +17,7 @@ export class BreadcrumbFacade {
    * Sets the breadcrumbs in the state.
    * @param breadcrumbs - An array of Breadcrumb objects to set.
    */
-  set(breadcrumbs: Breadcrumb[]) {
+  setBreadcrumb(breadcrumbs: Breadcrumb[]) {
     this.store.dispatch(new SetBreadcrumbs(breadcrumbs));
   }
 
@@ -25,7 +25,7 @@ export class BreadcrumbFacade {
    * Clears the breadcrumbs from the state.
    * This will reset the breadcrumbs to an empty array.
    */
-  clear() {
+  clearBreadcrumb() {
     this.store.dispatch(new ClearBreadcrumbs());
   }
 }

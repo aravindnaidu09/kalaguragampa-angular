@@ -11,10 +11,16 @@ import { IWishlist } from '../../../product/_models/wishlist-model';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 import { CartFacade } from '../../_state/cart.facade';
 import { CurrencyService } from '../../../../core/services/currency.service';
+import { BreadcrumbFacade } from '../../../../core/state/breadcrumb.facade';
+import { BreadcrumbComponent } from '../../../../shared/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-wishlist',
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    BreadcrumbComponent
+  ],
   templateUrl: './wishlist.component.html',
   styleUrl: './wishlist.component.scss'
 })
@@ -41,10 +47,16 @@ export class WishlistComponent implements OnInit {
     private readonly confirmService: ConfirmDialogService,
     private readonly cartFacade: CartFacade,
     public currencyService: CurrencyService,
+    private breadcrumbFacade: BreadcrumbFacade
   ) { }
 
   ngOnInit(): void {
     this.wishlistFacade.fetch();
+
+    this.breadcrumbFacade.setBreadcrumb([
+      { label: 'Home', url: '/' },
+      { label: 'Wishlist', url: '/wishlist' }
+    ]);
   }
 
   addAllToCart(): void {

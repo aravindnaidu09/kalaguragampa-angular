@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 })
 export class FooterComponent {
 
+  currentYear = new Date().getFullYear();
+
   constructor(private readonly router: Router) {}
 
   goToPolicyPage(route: string) {

@@ -3,7 +3,7 @@
   <div class="sidebar-card">
     <div class="user-profile">
       <div class="avatar"></div>
-      <div class="user-name" *ngIf="user()">{{ user()?.full_name }}</div>
+      <div class="user-name" *ngIf="user()">{{ user()?.last_name! + " " +  user()?.first_name! }}</div>
     </div>
 
     <div class="section">
