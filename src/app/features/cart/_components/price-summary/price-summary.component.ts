@@ -29,6 +29,19 @@ export class PriceSummaryComponent {
     return base + shipping;
   });
 
+  readonly shouldHideShippingAndDelivery = computed(() => {
+    const cart = this.cartSignal();
+    if (!cart) return true;
+
+    return (
+      (cart.cartTotal ?? 0) === 0 &&
+      (cart.taxAmount ?? 0) === 0 &&
+      (cart.discountAmount ?? 0) === 0 &&
+      (cart.couponAmount ?? 0) === 0
+    );
+  });
+
+
   private router = inject(Router);
 
   @Input() showPlaceOrderButton: boolean = true; // Flag to show/hide the button

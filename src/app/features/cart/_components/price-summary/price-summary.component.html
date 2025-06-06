@@ -21,15 +21,16 @@
     <span class="apply-link" (click)="openCouponDialog()">Apply Coupon</span>
   </div>
 
-  <div class="summary-row">
+  <div class="summary-row" *ngIf="!shouldHideShippingAndDelivery()">
     <span class="label-with-icon">
       Shipping Fee
-      <img src="assets/images/icons8-info-50.png" alt="Info" title="Shipping charges vary based on your location and order value." class="info-icon" />
+      <img src="assets/images/icons8-info-50.png" alt="Info"
+        title="Shipping charges vary based on your location and order value." class="info-icon" />
     </span>
     <span class="green">{{ isShippingFree ? 'FREE' : '₹' + shippingFeeSignal() }}</span>
   </div>
 
-  <div class="summary-row" *ngIf="estimatedDeliveryDaysSignal()">
+  <div class="summary-row" *ngIf="!shouldHideShippingAndDelivery() && estimatedDeliveryDaysSignal()">
     <span>Estimated Delivery</span>
     <span>
       Arrives in {{ estimatedDeliveryDaysSignal() }}–{{ estimatedDeliveryEndRange() }} business days
