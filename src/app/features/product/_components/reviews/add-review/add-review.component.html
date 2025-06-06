@@ -14,7 +14,7 @@
     <div class="product-meta">
       <span class="product-name">{{ product?.name }}</span>
       <img [src]="getImagePath(product?.image)" alt="{{ product.name }}" loading="lazy"
-      (error)="onImageError($event)" />
+        (error)="onImageError($event)" />
     </div>
 
     <app-star-rating [(rating)]="formData.rating" />
@@ -23,6 +23,7 @@
     <input [(ngModel)]="formData.title" placeholder="Title (optional)" />
 
 
-    <button class="submit-btn" (click)="submitReview()">SUBMIT</button>
+    <button class="submit-btn" (click)="submitReview()" [disabled]="isSubmitting">{{ isSubmitting ? 'Submitting...' :
+      'Submit Review' }}</button>
   </section>
 </div>
