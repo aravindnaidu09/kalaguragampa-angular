@@ -158,7 +158,23 @@
     }
   }
 
-  .loader.mini {
+  .change-number-container {
+    margin-top: 2px;
+
+    .change {
+      font-size: 13px;
+      color: #007bff;
+      font-weight: bold;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+
+  .mini {
     display: inline-block;
     width: 14px;
     height: 14px;

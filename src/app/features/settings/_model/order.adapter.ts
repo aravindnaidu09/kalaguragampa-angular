@@ -8,7 +8,7 @@ export function deserializeOrder(raw: any): IOrder {
     total_amount: Number(raw.total_amount),
     coupon_code: raw.coupon_code ?? null,
     coupon_discount: Number(raw.coupon_discount ?? 0),
-    created_at: raw.created_at,
+    created_at: raw.order_created_at,
     delivery_date: raw.delivery_date ?? null,
     delivery_status: raw.delivery_status ?? null,
     delivery_id: raw.delivery_id ?? null,

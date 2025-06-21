@@ -39,6 +39,15 @@ export class SignUpComponent {
   emailOtpCooldown = 30;
   isLoginPage = signal<boolean>(false);
   verifyMobileOtpLoading = signal(false);
+  verifyEmailOtpLoading = signal(false);
+
+  mobileResendAttempts = 0;
+  MAX_RESEND_ATTEMPTS = 3;
+
+  emailResendAttempts = 0;
+  MAX_EMAIL_RESEND_ATTEMPTS = 3;
+
+  isMobileEditing = false;
 
   constructor(
     private fb: FormBuilder,
@@ -110,18 +119,45 @@ export class SignUpComponent {
     }
   }
 
-  /** ✅ Resend OTP for Mobile */
-  resendMobileOtp() {
-    if (!this.registerForm.get('mobileNumber')?.valid) {
-      this.toastService.showError('Please enter a valid mobile number before resending OTP.');
+  /** ✅ Send OTP for Mobile */
+  sendMobileOtp() {
+    if (this.registerForm.get('mobileNumber')?.invalid) {
+      this.showMobileError = true;
       return;
     }
 
     this.isLoadingMobileOtp = true;
 
-    this.otpService.resendOtp(this.registerForm.value.mobileNumber, 'mobile', '91').subscribe({
+    this.otpService.sendOtp(this.getFieldValue('mobileNumber'), 'mobile', '91', 'register').subscribe({
+      next: () => {
+        this.isMobileOtpSent = true;
+        this.isLoadingMobileOtp = false;
+        this.startCooldown('mobile');
+        this.toastService.showSuccess('OTP sent to mobile successfully.');
+
+        this.registerForm.get('mobileNumber')?.disable();
+        this.isMobileEditing = false;
+      },
+      error: (err: any) => {
+        this.isLoadingMobileOtp = false;
+        this.toastService.showError(err.error?.message || 'Failed to send mobile OTP. Try again.');
+      }
+    });
+  }
+
+  /** ✅ Resend OTP for Mobile */
+  resendMobileOtp() {
+    if (this.mobileResendAttempts >= this.MAX_RESEND_ATTEMPTS) {
+      this.toastService.showWarning('Maximum resend attempts reached. Please try again later.');
+      return;
+    }
+
+    this.isLoadingMobileOtp = true;
+
+    this.otpService.resendOtp(this.registerForm.get('mobileNumber')?.getRawValue(), 'mobile', '91').subscribe({
       next: () => {
         this.isLoadingMobileOtp = false;
+        this.mobileResendAttempts++;
         this.startCooldown('mobile');
         this.toastService.showSuccess('OTP has been resent successfully. Check your messages.');
       },
@@ -137,26 +173,36 @@ export class SignUpComponent {
   }
 
 
-  /** ✅ Send OTP for Mobile */
-  sendMobileOtp() {
-    if (this.registerForm.get('mobileNumber')?.invalid) {
-      this.showMobileError = true;
+  /** ✅ Verify OTP for Mobile */
+  verifyMobileOtp() {
+    const otp = this.getFieldValue('mobileOtp');
+    if (!otp || !otp.trim()) {
+      this.toastService.showError('Please enter the OTP to verify.');
       return;
     }
-    this.isLoadingMobileOtp = true;
-    this.otpService.sendOtp(this.getFieldValue('mobileNumber'), 'mobile', '91', 'register').subscribe({
+
+    this.verifyMobileOtpLoading.set(true);  // ✅ START LOADING
+
+    this.otpService.verifyOtp(
+      this.getFieldValue('mobileNumber'),
+      this.getFieldValue('mobileOtp'),
+      'mobile', '', 'register'
+    ).subscribe({
       next: () => {
-        this.isMobileOtpSent = true;
-        this.isLoadingMobileOtp = false;
-        this.startCooldown('mobile');
-        this.toastService.showSuccess('OTP sent to mobile successfully.');
+        this.isMobileVerified = true;
+        this.enableFields();
+        this.toastService.showSuccess('Mobile OTP verified successfully.');
       },
       error: (err: any) => {
-        this.isLoadingMobileOtp = false;
-        this.toastService.showError(err.error?.message || 'Failed to send mobile OTP. Try again.');
+        this.toastService.showError(err.error?.message || 'Invalid mobile OTP. Try again.');
+        this.verifyMobileOtpLoading.set(false);
+      },
+      complete: () => {
+        this.verifyMobileOtpLoading.set(false);  // ✅ STOP LOADING
       }
     });
   }
+
 
   /** ✅ Send OTP for Email */
   sendEmailOtp() {
@@ -171,6 +217,9 @@ export class SignUpComponent {
         this.isLoadingEmailOtp = false;
         this.startCooldown('email');
         this.toastService.showSuccess('OTP sent to email successfully.');
+
+        this.registerForm.get('email')?.disable();
+
       },
       error: (err: any) => {
         this.isLoadingEmailOtp = false;
@@ -191,12 +240,18 @@ export class SignUpComponent {
       return;
     }
 
+    if (this.emailResendAttempts >= this.MAX_EMAIL_RESEND_ATTEMPTS) {
+      this.toastService.showWarning('Maximum resend attempts reached. Please try again later.');
+      return;
+    }
+
     this.isLoadingEmailOtp = true;
 
-    this.otpService.resendOtp(this.registerForm.value.email, 'email').subscribe({
+    this.otpService.resendOtp(this.registerForm.get('email')?.getRawValue(), 'email').subscribe({
       next: () => {
         this.isLoadingEmailOtp = false;
         this.startCooldown('email');
+        this.emailResendAttempts++;
         this.toastService.showSuccess('Email OTP has been resent successfully. Check your inbox.');
       },
       error: (err) => {
@@ -210,40 +265,32 @@ export class SignUpComponent {
     });
   }
 
-
-  /** ✅ Verify OTP for Mobile */
-  verifyMobileOtp() {
-    if (!this.getFieldValue('mobileOtp')) return;
-    this.verifyMobileOtpLoading.set(true);
-    this.otpService.verifyOtp(this.getFieldValue('mobileNumber'), this.getFieldValue('mobileOtp'), 'mobile', '', 'register').subscribe({
-      next: () => {
-        this.isMobileVerified = true;
-        this.enableFields();
-        this.toastService.showSuccess('Mobile OTP verified successfully.');
-      },
-      error: (err: any) => {
-        this.toastService.showError(err.error?.message || 'Invalid mobile OTP. Try again.');
-      },
-      complete: () => {
-        this.verifyMobileOtpLoading.set(false);
-      }
-    });
-  }
-
   /** ✅ Verify OTP for Email */
   verifyEmailOtp() {
-    if (!this.getFieldValue('emailOtp')) return;
-    this.otpService.verifyOtp(this.getFieldValue('email'), this.getFieldValue('emailOtp'), 'email', '', 'register').subscribe({
-      next: () => {
-        this.isEmailVerified = true;
-        this.enableFields();
-        this.toastService.showSuccess('Email OTP verified successfully.');
-      },
-      error: (err: any) => {
-        this.toastService.showError(err.error?.message || 'Invalid email OTP. Try again.');
-      }
-    });
+    const otp = this.getFieldValue('emailOtp');
+    if (!otp || !otp.trim()) {
+      this.toastService.showError('Please enter the OTP to verify.');
+      return;
+    }
+    this.verifyEmailOtpLoading.set(true);
+
+    this.otpService.verifyOtp(this.getFieldValue('email'), this.getFieldValue('emailOtp'), 'email', '', 'register')
+      .subscribe({
+        next: () => {
+          this.isEmailVerified = true;
+          this.enableFields();
+          this.toastService.showSuccess('Email OTP verified successfully.');
+        },
+        error: (err: any) => {
+          this.toastService.showError(err.error?.message || 'Invalid email OTP. Try again.');
+          this.verifyEmailOtpLoading.set(false);
+        },
+        complete: () => {
+          this.verifyEmailOtpLoading.set(false);
+        }
+      });
   }
+
 
   /** ✅ Cooldown Timer for OTP */
   startCooldown(type: 'mobile' | 'email') {
@@ -295,7 +342,18 @@ export class SignUpComponent {
 
     this.isLoadingRegister = true;
 
-    this.authService.register(this.registerForm.value).subscribe({
+    const payload = {
+      username: this.registerForm.get('username')?.value,
+      first_name: this.registerForm.get('firstName')?.value,
+      last_name: this.registerForm.get('lastName')?.value,
+      password: this.registerForm.get('password')?.value,
+      confirm_password: this.registerForm.get('confirmPassword')?.value,
+      mobile: this.registerForm.get('mobileNumber')?.getRawValue(),
+      email: this.registerForm.get('email')?.getRawValue(),
+      country_code: '91', // Assuming country code is fixed for India
+    }
+
+    this.authService.register(payload).subscribe({
       next: () => {
         this.isLoadingRegister = false;
         this.toastService.showSuccess('Registration successful! You can now log in.');
@@ -315,4 +373,20 @@ export class SignUpComponent {
     });
   }
 
+  enableMobileEdit() {
+    this.registerForm.get('mobileNumber')?.enable();
+    this.registerForm.get('mobileNumber')?.reset();
+    this.isMobileEditing = true;
+    this.isMobileOtpSent = false;
+    this.canResendMobileOtp = false;
+    this.mobileResendAttempts = 0;
+  }
+
+  enableEmailEdit() {
+    this.registerForm.get('email')?.enable();
+    this.registerForm.get('email')?.reset();
+    this.isEmailOtpSent = false;
+    this.canResendEmailOtp = false;
+    this.emailResendAttempts = 0;
+  }
 }

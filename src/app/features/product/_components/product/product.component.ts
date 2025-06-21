@@ -50,7 +50,7 @@ export class ProductComponent {
 
 
   @Output() wishlistToggle = new EventEmitter<number>();
-  @Output() addToCart = new EventEmitter<number>();
+  @Output() addToCartEvent = new EventEmitter<number>();
 
   isWishlistUpdating = false;
 
@@ -98,5 +98,9 @@ export class ProductComponent {
 
   navigateViewProduct(name: string, id: number) {
     this.router.navigate([`product/${name}/${id}`])
+  }
+
+  addToCart(product: IProduct) {
+
   }
 }

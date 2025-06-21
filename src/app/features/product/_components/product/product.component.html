@@ -10,8 +10,6 @@
     </ng-template>
   </div>
 
-
-
   <!-- 📦 Product Image -->
   <div class="product-image" (click)="navigateViewProduct(product.name!, product.id!)">
     <img [src]="getImagePath(product.images?.[0]?.image)" alt="{{ product.name }}" loading="lazy"
@@ -24,12 +22,21 @@
       <h4 [title]="product.name">{{ product.name }}</h4>
     </div>
 
-    <div class="product-price">{{ currencyService.getSymbol() }}{{ currencyService.convertPrice(product.price) }}</div>
+    <div class="product-price">
+      {{ currencyService.getSymbol() }}{{ currencyService.convertPrice(product.price) }}
+    </div>
 
     <div class="rating-cart-wrapper">
       <div class="product-rating">
         ({{ product.rating ?? 4.1 }}) ⭐ | 200
       </div>
+
+      <div class="add-to-cart-wrapper" (click)="addToCart(product)">
+        <span class="add-to-cart-icon" role="button" tabindex="0" aria-label="Add to Cart">🛒</span>
+        <!-- <i class="pi pi-shopping-cart add-to-cart-icon"></i> -->
+        <div class="tooltip">Add to Cart</div>
+      </div>
     </div>
   </div>
+
 </div>

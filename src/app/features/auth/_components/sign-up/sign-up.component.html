@@ -30,19 +30,24 @@
           </a>
         </ng-template>
       </div>
+      <div *ngIf="isMobileOtpSent" class="change-number-container">
+        <span class="change" (click)="enableMobileEdit()">Change number</span>
+      </div>
 
       <!-- ✅ Dynamic Validation Message -->
       <small *ngIf="showMobileError" class="error-message">Enter a valid 10-digit mobile number.</small>
 
       <div class="input-container" *ngIf="isMobileOtpSent && !isMobileVerified">
         <input type="text" formControlName="mobileOtp" placeholder="Enter OTP" />
-        <ng-container *ngIf="!verifyMobileOtpLoading; else loadingTpl">
-          <a (click)="verifyMobileOtp()">Verify OTP</a>
+        <ng-container *ngIf="!verifyMobileOtpLoading(); else loadingTpl">
+          <!-- ✅ add () -->
+          <a (click)="verifyMobileOtp()" [class.disabled]="verifyMobileOtpLoading()">Verify OTP</a>
         </ng-container>
         <ng-template #loadingTpl>
-          <span class="loader mini"></span>
+          <span class="mini"></span>
         </ng-template>
       </div>
+
     </div>
 
 
@@ -72,14 +77,24 @@
           </a>
         </ng-template>
       </div>
+      <div *ngIf="isEmailOtpSent" class="change-number-container">
+        <span class="change" (click)="enableEmailEdit()">Edit Email</span>
+      </div>
+
 
       <!-- ✅ Dynamic Validation Message -->
       <small *ngIf="showEmailError" class="error-message">Enter a valid email address.</small>
 
       <div class="input-container" *ngIf="isEmailOtpSent && !isEmailVerified">
         <input type="text" formControlName="emailOtp" placeholder="Enter OTP" />
-        <a (click)="verifyEmailOtp()">Verify OTP</a>
+        <ng-container *ngIf="!verifyEmailOtpLoading(); else emailLoadingTpl">
+          <a (click)="verifyEmailOtp()">Verify OTP</a>
+        </ng-container>
+        <ng-template #emailLoadingTpl>
+          <span class="mini"></span>
+        </ng-template>
       </div>
+
     </div>
 
 

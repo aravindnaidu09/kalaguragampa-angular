@@ -39,7 +39,7 @@
           (click)="increaseQuantity()">+</button>
       </div>
 
-      <div class="stock-info" *ngIf="product()?.stockStatus === 'Out of Stock'; else inStock">
+      <div class="stock-info" *ngIf="product()?.stockStatus === 'Out of Stock'">
         <div class="stock-out">
           <span>Out of Stock</span>
           <label class="notify-checkbox">
@@ -49,9 +49,9 @@
         </div>
       </div>
 
-      <ng-template #inStock>
+      <!-- <ng-template #inStock>
         <p class="stock-in">{{ product()?.stockStatus }}</p>
-      </ng-template>
+      </ng-template> -->
 
 
     </div>

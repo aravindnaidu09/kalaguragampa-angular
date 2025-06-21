@@ -33,13 +33,13 @@
             <!-- Quantity Selectors -->
             <div class="selectors">
               <div class="qty-controls">
-                <button class="qty-btn" (click)="updateQuantity(item, 'decrement')"
+                <button *ngIf="!showNavigationButtons" class="qty-btn" (click)="updateQuantity(item, 'decrement')"
                   [disabled]="item.quantity! <= 1 || isLoading(item?.id!)">–</button>
 
                 <input class="qty-input" type="number" [value]="item.quantity" min="1" [max]="item.product?.maxQuantity"
-                  (input)="onManualQtyInput(item, $event)" [disabled]="isLoading(item?.id!)" />
+                  (input)="onManualQtyInput(item, $event)" [disabled]="isLoading(item?.id!) || showNavigationButtons" />
 
-                <button class="qty-btn" (click)="updateQuantity(item, 'increment')"
+                <button *ngIf="!showNavigationButtons" class="qty-btn" (click)="updateQuantity(item, 'increment')"
                   [disabled]="item.quantity! >= item.product?.maxQuantity! || isLoading(item?.id!)">+</button>
 
                 <div class="spinner" *ngIf="isLoading(item?.id!)"></div>
