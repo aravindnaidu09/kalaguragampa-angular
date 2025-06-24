@@ -50,7 +50,7 @@ export class ProductComponent {
 
 
   @Output() wishlistToggle = new EventEmitter<number>();
-  @Output() addToCartEvent = new EventEmitter<number>();
+  @Output() addToCartEvent = new EventEmitter<IProduct>();
 
   isWishlistUpdating = false;
 
@@ -101,6 +101,6 @@ export class ProductComponent {
   }
 
   addToCart(product: IProduct) {
-
+    this.addToCartEvent.emit(product);
   }
 }

@@ -292,4 +292,29 @@ export class ViewProductComponent implements OnInit {
     this.scrollContainer.nativeElement.scrollBy({ left: 300, behavior: 'smooth' });
   }
 
+  isWishlisted(): boolean {
+    // return this.wishlistItems.some(item => item.id === this.product()?.id);
+    return false;
+  }
+
+  toggleWishlist(): void {
+    // this.addToWishlist(this.product());
+  }
+
+  shareProduct(): void {
+    const shareUrl = `${window.location.origin}/product/${this.product()?.id}`;
+    if (navigator.share) {
+      navigator.share({
+        title: this.product()?.name,
+        text: 'Check out this product!',
+        url: shareUrl
+      }).catch(console.error);
+    } else {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        // Optionally show snackbar/toast
+        console.log('Copied to clipboard:', shareUrl);
+      });
+    }
+  }
+
 }

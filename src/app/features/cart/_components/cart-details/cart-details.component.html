@@ -47,10 +47,12 @@
             </div>
 
             <div class="price-block">
-              <span class="new-price">₹{{ item.basePrice }}</span>
+              <span class="new-price">MRP: ₹{{ item.productMrp }}</span>
               <span class="old-price">GST: {{ item.gstRate }}%</span>
-              <span class="discount">Tax: {{ item.taxAmount }}</span>
-              <span class="discount">Total: ₹{{ item.subtotal }}</span>
+              <span class="old-price">BasePrice: {{ item.basePrice }}</span>
+
+              <span class="old-price">Tax: {{ item.taxAmount }}</span>
+              <span class="old-price">Sub-Total: ₹{{ item.subtotal }}</span>
             </div>
           </div>
 

@@ -71,9 +71,11 @@ export class AddressManagementComponent {
   handleAddressSave(rawPayload: Address): void {
     const payload = serializeAddress(rawPayload);
 
+
     if (this.isEditing && payload.id) {
       this.addressFacade.updateAddress(payload.id, payload).subscribe(success => {
         if (success) {
+          this.toastService.showSuccess('Address updated successfully.');
           this.resetForm(true);
         }
       });
@@ -95,12 +97,30 @@ export class AddressManagementComponent {
 
 
   editAddress(address: Address): void {
-    this.isEditing = true;
-    this.selectedAddressId = address.id!;
-    this.addressForm.patchValue(address);
+    this.editingData = {};
 
-    this.editingData = address;
-    this.accordionOpen = true;
+    setTimeout(() => {
+      console.log('checking-edit-address: ', address);
+      this.isEditing = true;
+      this.selectedAddressId = address.id!;
+      this.addressForm.patchValue(this.mapAddressToForm(address));
+      this.editingData = address;
+      this.accordionOpen = true;
+    }, 300);
+
+  }
+
+  private mapAddressToForm(address: Address): any {
+    return {
+      name: address.fullName,
+      addressLine1: address.street,
+      addressLine2: address.street2,
+      city: address.city,
+      state: address.state,
+      country: address.country,
+      pincode: address.pincode,
+      mobile: address.phone
+    };
   }
 
   deleteAddress(addressId: number): void {

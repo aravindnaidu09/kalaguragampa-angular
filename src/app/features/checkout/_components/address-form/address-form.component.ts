@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, SimpleChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Address, serializeAddress } from '../../../settings/_model/address-model';
 
@@ -13,7 +13,7 @@ import { Address, serializeAddress } from '../../../settings/_model/address-mode
   templateUrl: './address-form.component.html',
   styleUrl: './address-form.component.scss'
 })
-export class AddressFormComponent implements OnInit {
+export class AddressFormComponent implements OnInit, OnChanges {
   @Input() formMode: 'add' | 'edit' = 'add';
   @Input() initialData: Partial<Address> = {};
   @Output() save = new EventEmitter<any>();
@@ -37,6 +37,24 @@ export class AddressFormComponent implements OnInit {
       phone: [data.phone || '', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       isDefault: [data.isDefault || false]
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['initialData'] && changes['initialData'].currentValue) {
+      const data = changes['initialData'].currentValue;
+
+      this.addressForm?.patchValue({
+        fullName: data.fullName || '',
+        street: data.street || '',
+        street2: data.street2 || '',
+        pincode: data.pincode || '',
+        city: data.city || '',
+        state: data.state || '',
+        country: data.country || '',
+        phone: data.phone || '',
+        isDefault: data.isDefault || false
+      });
+    }
   }
 
   onSubmit(): void {

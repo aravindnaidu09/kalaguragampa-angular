@@ -21,26 +21,28 @@ export class AddressService {
         return Array.isArray(data)
           ? data.map(deserializeAddress)
           : data && typeof data === 'object'
-          ? [deserializeAddress(data)]
-          : [];
+            ? [deserializeAddress(data)]
+            : [];
       })
     );
   }
 
   // ✅ Add New Address (Deserialize single object)
   addAddress(address: Address): Observable<Address> {
-  return this.http.post<any>(`${this.baseUrl}${ADDRESS_API_URLS.address.create}`, address, { observe: 'response' }).pipe(
-    take(1), // ✅ emits once
-    filter((res: any) => res.statusCode === 200 || res.statusCode === 201),
-    map(res => deserializeAddress(res.body?.data))
-  );
-}
+    return this.http.post<any>(`${this.baseUrl}${ADDRESS_API_URLS.address.create}`, address, { observe: 'response' }).pipe(
+      take(1), // ✅ emits once
+      filter((res: any) => res.statusCode === 200 || res.statusCode === 201),
+      map(res => deserializeAddress(res.body?.data))
+    );
+  }
 
 
   // ✅ Update Address (Deserialize single object)
   updateAddress(id: number, address: Address): Observable<Address> {
-    return this.http.put<any>(`${this.baseUrl}${ADDRESS_API_URLS.address.update(id)}`, address).pipe(
-      map((response) => deserializeAddress(response.data))
+    return this.http.put<any>(`${this.baseUrl}${ADDRESS_API_URLS.address.update(id)}`, address, { observe: 'response' }).pipe(
+      take(1), // ✅ emits once
+      filter((res: any) => res.statusCode === 200 || res.statusCode === 201),
+      map(res => deserializeAddress(res.body?.data))
     );
   }
 

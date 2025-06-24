@@ -42,14 +42,12 @@ export class AddressFacade {
     );
   }
 
-
-
   updateAddress(id: number, payload: Address): Observable<any> {
     this.store.dispatch(new UpdateAddress(id, payload));
 
     return this.actions$.pipe(
       ofActionCompleted(UpdateAddress),
-      filter((result: any) => result.result?.statusCode === 200),
+      filter((result: any) => result.result.successful),
       tap(() => this.loadAddresses()),
       take(1),
       map(() => true),

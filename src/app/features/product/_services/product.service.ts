@@ -161,7 +161,4 @@ export class ProductService {
       map(res => res.data)
     );
   }
-
-
-
 }

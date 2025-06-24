@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, inject, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { CouponFacade } from '../../_state/coupon.facade';
 
 @Component({
   selector: 'app-apply-coupon-dialog',
@@ -14,6 +15,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrl: './apply-coupon-dialog.component.scss'
 })
 export class ApplyCouponDialogComponent {
+  private couponFacade = inject(CouponFacade);
+
   form: FormGroup;
   availableCoupons: string[] = ['KGNEW100', 'FREESHIP', 'SAVE10', 'LOYALTY20'];
   errorMessage: string | null = null;
@@ -43,6 +46,9 @@ export class ApplyCouponDialogComponent {
 
     // Or use API call here:
     // this.couponService.validateCode(enteredCode).subscribe(...)
+    if (enteredCode) {
+      this.couponFacade.applyCoupon(enteredCode);
+    }
 
     this.dialogRef.close(enteredCode);
   }

@@ -15,6 +15,18 @@
 
   <!-- ✅ Product Details -->
   <div class="product-details">
+    <!-- ✅ Share & Wishlist Icons -->
+    <!-- <div class="product-icons">
+      <button class="icon-btn" (click)="toggleWishlist()">
+        <ng-container *ngIf="isWishlisted(); else notWishlisted">❤️</ng-container>
+        <ng-template #notWishlisted>🤍</ng-template>
+      </button>
+
+      <button class="icon-btn" (click)="shareProduct()">
+        <i class="pi pi-share-alt"></i>
+      </button>
+    </div> -->
+
     <h2>{{ product()?.name }}</h2>
 
     <div class="product-price">

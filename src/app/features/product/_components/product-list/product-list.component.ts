@@ -12,6 +12,8 @@ import { IWishlist } from '../../_models/wishlist-model';
 import { SkeletonLoaderComponent } from "../../../../shared/components/skeleton-loader/skeleton-loader.component";
 import { AuthService } from '../../../auth/_services/auth.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { Store } from '@ngxs/store';
+import { AddToCart } from '../../../cart/_state/cart.actions';
 
 @Component({
   selector: 'app-product-list',
@@ -60,6 +62,7 @@ export class ProductListComponent implements OnInit {
   constructor(
     private readonly productService: ProductService,
     private readonly wishlistFacade: WishlistFacade,
+    private readonly store: Store,
     private readonly router: Router
   ) {
     this.categorySelection$.pipe(debounceTime(300)).subscribe((categoryId) => {
@@ -204,6 +207,9 @@ export class ProductListComponent implements OnInit {
     return this.wishlistUpdatingMap().get(productId) === true;
   }
 
+  addProductToCart(event: IProduct) {
+    this.store.dispatch(new AddToCart(event.id!, 1))
+  }
 
   /** ✅ Navigate to full listing */
   navigateToProductPage(): void {

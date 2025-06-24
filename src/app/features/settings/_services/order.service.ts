@@ -11,7 +11,7 @@ import { deserializeOrders } from '../_model/order.adapter';
 export class OrderService {
   private readonly baseUrl = `${APP_SETTINGS.apiBaseUrl}${ORDER_API_URLS.order.getAll}`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * ✅ Get all user orders with filters: pagination + status/time/year
@@ -37,5 +37,15 @@ export class OrderService {
         count: res.data.count
       }))
     );
+  }
+
+  /**
+ * ✅ Download invoice for a given order ID (returns Blob)
+ */
+  downloadInvoice(orderId: number): Observable<Blob> {
+    const url = `${APP_SETTINGS.apiBaseUrl}${ORDER_API_URLS.order.invoiceDownload(orderId)}`;
+    return this.http.post(url, null, {
+      responseType: 'blob'
+    });
   }
 }

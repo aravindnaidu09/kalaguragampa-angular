@@ -34,6 +34,33 @@
 
 .product-details {
   max-width: 500px;
+  position: relative;
+
+  .product-icons {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    gap: 10px;
+
+    .icon-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 5px;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+
+    .pi-share-alt {
+      font-size: 20px;
+      color: #333;
+    }
+  }
 }
 
 .product-price span {

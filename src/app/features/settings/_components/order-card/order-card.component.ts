@@ -8,6 +8,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { ReviewProductInfo } from '../../../product/_models/add-review.model';
 import { ReviewFacade } from '../../../product/_state/review.facade';
 import { environment } from '../../../../../environments/environment.dev';
+import { OrderService } from '../../_services/order.service';
 
 @Component({
   selector: 'app-order-card',
@@ -34,10 +35,14 @@ export class OrderCardComponent {
   private router = inject(Router);
   private toast = inject(ToastService);
   private reviewFacade = inject(ReviewFacade);
+  private orderService = inject(OrderService);
 
   @Input() item!: IOrder;
 
   collapsedOrders = new Set<number>(); // store collapsed order IDs
+
+  invoiceLoading: { [orderId: number]: boolean } = {};
+
 
 
   // Map backend status to color class
@@ -62,7 +67,8 @@ export class OrderCardComponent {
   }
 
   goToInvoice(orderId: number): void {
-    this.router.navigate(['/order', orderId, 'invoice']);
+    // this.router.navigate(['/order', orderId, 'invoice']);
+
   }
 
   goToTrack(id: number): void {
@@ -127,6 +133,30 @@ export class OrderCardComponent {
 
   onImageError(event: Event): void {
     (event.target as HTMLImageElement).src = `${environment.apiBaseUrl}/media/KG_LOGO.png`;
+  }
+
+
+  downloadInvoice(orderId: number) {
+    this.invoiceLoading[orderId] = true;
+
+    this.orderService.downloadInvoice(orderId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Invoice_Order_${orderId}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+
+        this.toast.showSuccess('Invoice downloaded successfully!')
+      },
+      complete: () => {
+        this.invoiceLoading[orderId] = false;
+      },
+      error: () => {
+        this.invoiceLoading[orderId] = false;
+      }
+    });
   }
 
 

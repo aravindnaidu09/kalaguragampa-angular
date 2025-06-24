@@ -19,6 +19,7 @@ export interface CartResponseItem {
 export interface Item {
   id?: number;
   product?: IProduct;
+  productMrp?: string;
   quantity?: number,
   basePrice?: string,
   gstRate?: string,
@@ -34,6 +35,7 @@ export function deserializeItems(data: any[]): Item[] {
     gstRate: item.gst_rate,
     taxAmount: item.tax_amount,
     subtotal: item.subtotal,
+    productMrp: item.product_mrp,
     product: item.product ? {
       id: item.product.id,
       name: item.product.name,

@@ -7,9 +7,20 @@
           📋
         </button>
       </div>
-      <div class="order-date">Placed on {{ item.created_at | date: 'd MMMM y' }}, Delivery Status: {{ item.delivery_status }}</div>
+      <div class="order-date">Placed on {{ item.created_at | date: 'd MMMM y' }}, Delivery Status:
+        {{ item.delivery_status }}</div>
     </div>
-    <!-- <button class="link-btn" (click)="goToInvoice(item.order_id)">View Invoice</button> -->
+    <!-- <button class="link-btn" (click)="goToInvoice(item.order_id)">Download Invoice</button> -->
+    <button class="btn btn-outline-primary btn-sm" [disabled]="invoiceLoading[item.order_id]"
+      (click)="downloadInvoice(item.order_id)">
+      <ng-container *ngIf="!invoiceLoading[item.order_id]; else loadingTpl">
+        Download Invoice
+      </ng-container>
+      <ng-template #loadingTpl>
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Loading...
+      </ng-template>
+    </button>
   </div>
 
   <!-- Content Row -->

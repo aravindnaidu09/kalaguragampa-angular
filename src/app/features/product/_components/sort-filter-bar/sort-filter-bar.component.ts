@@ -29,12 +29,12 @@ export class SortFilterBarComponent {
 
   // ✅ Sorting Options
   sortOptions: FilterOption[] = [
-    { label: 'Best sellers', value: 'best-sellers' },
-    { label: 'Newest', value: 'newest' },
-    { label: 'Best rated', value: 'best-rated' },
-    { label: 'Trending', value: 'trending' },
-    { label: 'Price ↑', value: 'price-asc' },
-    { label: 'Price ↓', value: 'price-desc' },
+    // { label: 'Best sellers', value: 'best-sellers' },
+    // { label: 'Newest', value: 'newest' },
+    // { label: 'Best rated', value: 'best-rated' },
+    // { label: 'Trending', value: 'trending' },
+    { label: 'Price ↑', value: 'price_asc' },
+    { label: 'Price ↓', value: 'price_desc' },
   ];
 
   ngOnInit(): void {

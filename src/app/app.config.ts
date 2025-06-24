@@ -23,6 +23,7 @@ import { ProfileState } from './features/settings/_state/profile.state';
 import { TrackState } from './features/orders/_state/track.state';
 import { ReviewState } from './features/product/_state/review.state';
 import { BreadcrumbState } from './core/state/breadcrumb.state';
+import { CouponState } from './features/cart/_state/coupon.state';
 
 
 export const appConfig: ApplicationConfig = {
@@ -32,7 +33,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withHashLocation()),
     provideAnimationsAsync(),
     provideHttpClient(),
-    provideStore([AuthState, OtpState, SearchState, WishlistState, CartState, AddressState, OrderState, ProfileState, TrackState, ReviewState, BreadcrumbState],
+    provideStore([AuthState, OtpState, SearchState, WishlistState, CartState, AddressState, OrderState, ProfileState, TrackState, ReviewState, BreadcrumbState, CouponState],
       withNgxsReduxDevtoolsPlugin(),
       // withNgxsFormPlugin(),
       withNgxsLoggerPlugin(),
