@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, Signal, ViewChild, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, Signal, ViewChild, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../_services/product.service';
 import { IProduct } from '../../_models/product-model';
@@ -19,6 +19,8 @@ import { WishlistFacade } from '../../../cart/_state/wishlist.facade';
 import { SeoService } from '../../../../core/services/seo.service';
 import { BreadcrumbComponent } from '../../../../shared/components/breadcrumb/breadcrumb.component';
 import { BreadcrumbFacade } from '../../../../core/state/breadcrumb.facade';
+import { MatIconModule } from '@angular/material/icon';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-view-product',
@@ -28,12 +30,25 @@ import { BreadcrumbFacade } from '../../../../core/state/breadcrumb.facade';
     FormsModule,
     ReviewContainerComponent,
     ProductComponent,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    MatIconModule
   ],
   templateUrl: './view-product.component.html',
   styleUrl: './view-product.component.scss',
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-10px)' }),
+        animate('200ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+      transition(':leave', [
+        animate('150ms ease-in', style({ opacity: 0, transform: 'translateY(-5px)' })),
+      ]),
+    ])
+  ]
+
 })
-export class ViewProductComponent implements OnInit {
+export class ViewProductComponent implements OnInit, AfterViewInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private productService = inject(ProductService);
@@ -61,9 +76,14 @@ export class ViewProductComponent implements OnInit {
 
   addToCartLoading = signal(false);
   buyNowLoading = signal(false);
+  scrollUnlocked = signal(false);
 
 
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+  @ViewChild('reviewEndRef') reviewEndRef!: ElementRef;
+  @ViewChild('shareMenuRef') shareMenuRef!: ElementRef;
+  @ViewChild('shareIconRef') shareIconRef!: ElementRef;
+
 
   reviews = signal([
     {
@@ -82,6 +102,17 @@ export class ViewProductComponent implements OnInit {
     }
   ]);
   newReview = signal({ comment: '', rating: 0 });
+  doesExistsInWishlist = signal(false);
+  showShareMenu = false;
+
+  @HostListener('document:click', ['$event'])
+  onOutsideClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!this.shareMenuRef?.nativeElement.contains(target) && !this.shareIconRef?.nativeElement.contains(target)) {
+      this.showShareMenu = false;
+    }
+  }
+
 
   ngOnInit(): void {
     this.route.params
@@ -92,7 +123,31 @@ export class ViewProductComponent implements OnInit {
 
     this.wishlistItems = this.wishlistFacade.wishlistSignal;
 
+    this.updateWishlistCheck();
   }
+
+  ngAfterViewInit(): void {
+    if (this.reviewEndRef) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            this.scrollUnlocked.set(true);
+          }
+        },
+        { threshold: 0.5 } // or 1.0 for full view
+      );
+
+      observer.observe(this.reviewEndRef.nativeElement);
+    }
+  }
+
+  updateWishlistCheck(): void {
+    const inWishlist = !!this.wishlistFacade.wishlistSignal()?.find(
+      w => w.productDetails.id === this.product()?.id
+    );
+    this.doesExistsInWishlist.set(inWishlist);
+  }
+
 
   // ✅ Fetch Product by ID from API
   private fetchProductDetails(productId: string): void {
@@ -280,7 +335,7 @@ export class ViewProductComponent implements OnInit {
     if (isWishlisted) {
       this.wishlistFacade.remove(productId).subscribe();
     } else {
-      this.wishlistFacade.add(productId).subscribe(); ''
+      this.wishlistFacade.add(productId).subscribe();
     }
   }
 
@@ -315,6 +370,31 @@ export class ViewProductComponent implements OnInit {
         console.log('Copied to clipboard:', shareUrl);
       });
     }
+  }
+
+  toggleShareMenu(): void {
+    this.showShareMenu = !this.showShareMenu;
+  }
+
+  share(platform: 'facebook' | 'twitter' | 'email'): void {
+    const productUrl = window.location.href;
+    const title = encodeURIComponent('Check this out from Kalagura Gampa!');
+
+    let url = '';
+    switch (platform) {
+      case 'facebook':
+        url = `https://www.facebook.com/sharer/sharer.php?u=${productUrl}`;
+        break;
+      case 'twitter':
+        url = `https://twitter.com/intent/tweet?url=${productUrl}&text=${title}`;
+        break;
+      case 'email':
+        url = `mailto:?subject=Kalagura Gampa Product&body=${productUrl}`;
+        break;
+    }
+
+    window.open(url, '_blank');
+    this.showShareMenu = false;
   }
 
 }

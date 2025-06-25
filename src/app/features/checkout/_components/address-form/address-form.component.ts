@@ -2,13 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, OnChanges, SimpleChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Address, serializeAddress } from '../../../settings/_model/address-model';
+import { GooglePlacesDirective } from '../../../../shared/directives/google-places.directive';
 
 @Component({
   selector: 'app-address-form',
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    GooglePlacesDirective
   ],
   templateUrl: './address-form.component.html',
   styleUrl: './address-form.component.scss'
@@ -99,4 +101,13 @@ export class AddressFormComponent implements OnInit, OnChanges {
   get f() {
     return this.addressForm.controls;
   }
+
+  onPlaceSelected(place: google.maps.places.PlaceResult): void {
+    if (!place.geometry || !place.geometry.location) return;
+
+    console.log('Full Address:', place.formatted_address);
+    console.log('Latitude:', place.geometry.location.lat());
+    console.log('Longitude:', place.geometry.location.lng());
+  }
+
 }

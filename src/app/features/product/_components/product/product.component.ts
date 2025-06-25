@@ -64,25 +64,25 @@ export class ProductComponent {
     if (this.isWishlistUpdating) return;
 
     this.isWishlistUpdating = true;
-
     const wishlistId = this.getWishlistId();
-
     const emittedId = wishlistId || this.product.id!;
     this.wishlistToggle.emit(emittedId);
 
-    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.resetWishlistLoader();
+      this.cdr.markForCheck();
+    });
   }
 
   public resetWishlistLoader(): void {
     this.isWishlistUpdating = false;
-    this.cdr.markForCheck();
+    // this.cdr.markForCheck();
   }
 
-
-
   private getWishlistId(): number | undefined {
-    return this.wishlistItems()
-      ?.find(item => item.productDetails?.id === this.product.id)?.id;
+    const existedWishlistProduct = this.wishlistItems()
+      ?.find(item => item.productDetails?.id === this.product.id);
+    return existedWishlistProduct?.id;
   }
 
 

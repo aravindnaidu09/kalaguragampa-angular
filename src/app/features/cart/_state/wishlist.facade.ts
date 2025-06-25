@@ -42,7 +42,7 @@ export class WishlistFacade {
 
       const items: IWishlist[] = this.wishlistSignal();
       return items.some(
-        item => item.isAddedInWishlist && item.productDetails?.id === productId
+        item => item.isAddedInWishlist && item?.id === productId
       );
     });
   }

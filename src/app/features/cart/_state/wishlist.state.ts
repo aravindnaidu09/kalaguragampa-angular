@@ -121,7 +121,7 @@ export class WishlistState {
         localStorage.setItem('wishlistCount', JSON.stringify(updatedWishlist.length));
 
         // ✅ Notify user
-        // this.toast.showSuccess('Added to wishlist');
+        this.toast.showSuccess('Added to wishlist');
       }),
       catchError((err) => {
         ctx.patchState({ loading: false });
@@ -139,14 +139,14 @@ export class WishlistState {
     return this.wishlistService.removeFromWishlist(productId).pipe(
       tap(() => {
         const state = ctx.getState();
-        const filtered = state.wishlistItems.filter(item => item.productDetails.id !== productId);
+        const filtered = state.wishlistItems.filter(item => item.id !== productId);
         ctx.patchState({
           wishlistItems: filtered,
           totalItems: filtered.length,
           loading: false
         });
         localStorage.setItem('wishlist', JSON.stringify(filtered));
-        // this.toast.showSuccess('Removed from wishlist');
+        this.toast.showSuccess('Removed from wishlist');
       }),
       catchError((err) => {
         ctx.patchState({ loading: false });

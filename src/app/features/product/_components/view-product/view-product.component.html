@@ -1,76 +1,21 @@
 <app-breadcrumb></app-breadcrumb>
 
-<div class="product-container" *ngIf="!isLoading(); else loading">
-  <!-- ✅ Product Image -->
-  <div class="product-image">
-    <img [src]="getImagePath(product()?.images![imageIndex].image)" [alt]="product()?.name"
-      (error)="onImageError($event)" />
-
-    <!-- ✅ Product Thumbnail Images -->
-    <div class="thumbnail-container" *ngIf="product()?.images!.length > 1">
-      <img *ngFor="let image of product()?.images; let i = index" [src]="getImagePath(image.image)"
-        [alt]="product()?.name" (error)="onImageError($event)" (click)="showClickedSpecificImage(i)" />
-    </div>
-  </div>
-
-  <!-- ✅ Product Details -->
-  <div class="product-details">
-    <!-- ✅ Share & Wishlist Icons -->
-    <!-- <div class="product-icons">
-      <button class="icon-btn" (click)="toggleWishlist()">
-        <ng-container *ngIf="isWishlisted(); else notWishlisted">❤️</ng-container>
-        <ng-template #notWishlisted>🤍</ng-template>
-      </button>
-
-      <button class="icon-btn" (click)="shareProduct()">
-        <i class="pi pi-share-alt"></i>
-      </button>
-    </div> -->
-
-    <h2>{{ product()?.name }}</h2>
-
-    <div class="product-price">
-      <span>{{ currencyService.getSymbol() }}{{ currencyService.convertPrice( product()?.price) }}</span>
-    </div>
-
-    <div class="product-rating">
-      <span>4.1⭐ | (25)</span>
-      <!-- <span>(10)</span> -->
-    </div>
-
-    <!-- ✅ Quantity Selector & Stock Info -->
-    <div class="product-quantity-stock-info-wrapper">
-      <div class="product-quantity">
-        <button class="quantity-btn" (click)="decreaseQuantity()"
-          [disabled]="quantity() === 1 || product()?.stockStatus === 'Out of Stock'"
-          [class.disabled]="quantity() === 1 || product()?.stockStatus === 'Out of Stock'">-</button>
-        <label>{{ quantity() }}</label>
-        <button class="quantity-btn"
-          [disabled]="quantity() === product()?.maxQuantity || product()?.stockStatus === 'Out of Stock'"
-          [class.disabled]="quantity() === product()?.maxQuantity || product()?.stockStatus === 'Out of Stock'"
-          (click)="increaseQuantity()">+</button>
+<div class="product-detail-wrapper" *ngIf="!isLoading(); else loading">
+  <!-- ✅ Left Section: Product Images & Actions -->
+  <div class="product-left-section">
+    <div class="product-image-section">
+      <div class="thumbnail-container" *ngIf="product()?.images!.length > 1">
+        <img *ngFor="let image of product()?.images; let i = index" [src]="getImagePath(image.image)"
+          [alt]="product()?.name" (error)="onImageError($event)" (mouseenter)="showClickedSpecificImage(i)"
+          (click)="showClickedSpecificImage(i)" />
       </div>
 
-      <div class="stock-info" *ngIf="product()?.stockStatus === 'Out of Stock'">
-        <div class="stock-out">
-          <span>Out of Stock</span>
-          <label class="notify-checkbox">
-            <input type="checkbox" [(ngModel)]="notify" (change)="notifyMe(product()?.id)" />
-            <span>Notify Me</span>
-          </label>
-        </div>
-      </div>
-
-      <!-- <ng-template #inStock>
-        <p class="stock-in">{{ product()?.stockStatus }}</p>
-      </ng-template> -->
-
-
+      <img class="main-product-image" [src]="getImagePath(product()?.images![imageIndex].image)" [alt]="product()?.name"
+        (error)="onImageError($event)" />
     </div>
 
-    <!-- ✅ Add to Cart & Buy Now Buttons -->
+    <!-- ✅ Buy Now & Add to Cart Buttons -->
     <div class="product-actions">
-      <!-- Buy Now Button -->
       <button class="btn buy-now" [disabled]="buyNowLoading()" (click)="goToCheckoutPage()">
         <ng-container *ngIf="!buyNowLoading(); else buyNowLoader">Buy Now</ng-container>
         <ng-template #buyNowLoader>
@@ -78,49 +23,119 @@
         </ng-template>
       </button>
 
-      <!-- Add to Cart Button -->
       <button class="btn add-to-cart" [disabled]="addToCartLoading()" (click)="addToCart()">
         <ng-container *ngIf="!addToCartLoading(); else addToCartLoader">Add to Cart</ng-container>
         <ng-template #addToCartLoader>
           <span class="button-spinner"></span>
         </ng-template>
       </button>
-
     </div>
   </div>
 
-  <!-- ✅ Inject Review Container Component -->
-  <div class="product-reviews-wrapper">
-    <app-review-container [productId]="product()?.id!"></app-review-container>
-  </div>
+  <!-- ✅ Right Section: Product Details, Reviews -->
+  <div class="product-content-section">
+    <div class="product-details">
+      <h2>{{ product()?.name }}</h2>
 
-  <div class="related-products-wrapper">
-    <h3>Related Products</h3>
+      <div class="icon-actions">
+        <button mat-icon-button aria-label="Add to Wishlist" tooltip="Add to Wishlist"
+          (click)="addToWishlist(product()?.id!)">
+          <ng-container *ngIf="doesExistsInWishlist(); else notWishlisted">
+            <span title="Already Added">❤️</span>
+          </ng-container>
+          <ng-template #notWishlisted>
+            <span title="Add to Wishlist">🤍</span>
+          </ng-template>
 
-    <!-- Skeleton Loader -->
-    <div class="related-products-skeleton" *ngIf="relatedLoading()">
-      <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5]"></div>
-    </div>
+        </button>
+        <button  #shareIconRef mat-icon-button aria-label="Share" tooltip="Share" (click)="toggleShareMenu()">
+          <span title="Share" class="icon-button">🔗</span>
+        </button>
 
-    <!-- Error or Empty -->
-    <p *ngIf="relatedError()" class="related-error">{{ relatedError() }}</p>
-
-    <!-- Scrollable Related Products -->
-    <div class="related-products-scroll" *ngIf="!relatedLoading() && relatedProducts().length">
-      <button class="scroll-btn left" (click)="scrollLeft()">&#8249;</button>
-      <div class="scroll-container" #scrollContainer>
-        <app-product *ngFor="let relatedProduct of relatedProducts()" [product]="relatedProduct"
-          [wishlistItems]="wishlistItems" (wishlistToggle)="addToWishlist($event)"></app-product>
+        <!-- 📤 Share Popup Menu -->
+        <div #shareMenuRef class="share-menu" *ngIf="showShareMenu">
+          <div class="share-option facebook" (click)="share('facebook')">
+            <div class="icon-circle"><i class="fab fa-facebook-f"></i></div>
+            <span>Facebook</span>
+          </div>
+          <div class="share-option twitter" (click)="share('twitter')">
+            <div class="icon-circle"><i class="fab fa-twitter"></i></div>
+            <span>Twitter</span>
+          </div>
+          <div class="share-option email" (click)="share('email')">
+            <div class="icon-circle"><i class="fas fa-envelope"></i></div>
+            <span>Email</span>
+          </div>
+        </div>
       </div>
-      <button class="scroll-btn right" (click)="scrollRight()">&#8250;</button>
+
+
+      <div class="product-price">
+        <span>{{ currencyService.getSymbol() }}{{ currencyService.convertPrice(product()?.price) }}</span>
+      </div>
+
+      <div class="product-rating">
+        <span>4.1⭐ | (25)</span>
+      </div>
+
+      <div class="product-quantity-stock-info-wrapper">
+        <div class="product-quantity">
+          <button class="quantity-btn" (click)="decreaseQuantity()"
+            [disabled]="quantity() === 1 || product()?.stockStatus === 'Out of Stock'">-</button>
+          <label>{{ quantity() }}</label>
+          <button class="quantity-btn"
+            [disabled]="quantity() === product()?.maxQuantity || product()?.stockStatus === 'Out of Stock'"
+            (click)="increaseQuantity()">+</button>
+        </div>
+
+        <div class="stock-info" *ngIf="product()?.stockStatus === 'Out of Stock'">
+          <div class="stock-out">
+            <span>Out of Stock</span>
+            <label class="notify-checkbox">
+              <input type="checkbox" [(ngModel)]="notify" (change)="notifyMe(product()?.id)" />
+              <span>Notify Me</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Reviews Section -->
+    <div class="product-reviews-wrapper">
+      <app-review-container [productId]="product()?.id!"></app-review-container>
+      <div #reviewEndRef class="review-end-marker"></div>
     </div>
   </div>
-
 </div>
 
-<!-- ✅ Skeleton Loader for Product -->
+<!-- ✅ Related Products Section -->
+<div class="related-products-wrapper">
+  <h3>Related Products</h3>
+
+  <!-- Skeleton Loader -->
+  <div class="related-products-skeleton" *ngIf="relatedLoading()">
+    <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5]"></div>
+  </div>
+
+  <!-- Error or Empty -->
+  <p *ngIf="relatedError()" class="related-error">{{ relatedError() }}</p>
+
+  <!-- Scrollable Related Products -->
+  <div class="related-products-scroll" *ngIf="!relatedLoading() && relatedProducts().length">
+    <button class="scroll-btn left" (click)="scrollLeft()">&#8249;</button>
+    <div class="scroll-container" #scrollContainer>
+      <app-product *ngFor="let relatedProduct of relatedProducts()" [product]="relatedProduct"
+        [wishlistItems]="wishlistItems" (wishlistToggle)="addToWishlist($event)"></app-product>
+    </div>
+    <button class="scroll-btn right" (click)="scrollRight()">&#8250;</button>
+  </div>
+</div>
+
+
+
+<!-- ✅ Skeleton Loader -->
 <ng-template #loading>
-  <div class="skeleton product-container">
+  <div class="skeleton product-detail-wrapper">
     <div class="skeleton-box skeleton-image"></div>
     <div class="skeleton-box skeleton-text"></div>
     <div class="skeleton-box skeleton-text"></div>

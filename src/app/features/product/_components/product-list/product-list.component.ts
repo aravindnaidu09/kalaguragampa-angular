@@ -180,6 +180,8 @@ export class ProductListComponent implements OnInit {
       return;
     }
 
+    console.log('checking-if-eventIsFiring');
+
     const isWishlisted = this.wishlistFacade.isInWishlistSignal(productId)();
     const map = new Map(this.wishlistUpdatingMap());
 
