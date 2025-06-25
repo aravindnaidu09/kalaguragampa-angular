@@ -103,11 +103,32 @@ export class AddressFormComponent implements OnInit, OnChanges {
   }
 
   onPlaceSelected(place: google.maps.places.PlaceResult): void {
-    if (!place.geometry || !place.geometry.location) return;
+    if (!place.geometry || !place.address_components) return;
 
-    console.log('Full Address:', place.formatted_address);
-    console.log('Latitude:', place.geometry.location.lat());
-    console.log('Longitude:', place.geometry.location.lng());
+    const streetNumber = this.getComponent(place, 'street_number');
+    const route = this.getComponent(place, 'route');
+    const locality = this.getComponent(place, 'locality') || this.getComponent(place, 'sublocality_level_1');
+    const administrativeArea = this.getComponent(place, 'administrative_area_level_1');
+    const postalCode = this.getComponent(place, 'postal_code');
+    const country = this.getComponent(place, 'country');
+
+    const street = [streetNumber, route].filter(Boolean).join(' ').trim();
+
+    this.addressForm.patchValue({
+      street: street,               // Address Line 1: no pincode here
+      street2: '',                  // optional second line
+      pincode: postalCode,          // Properly extracted pincode
+      city: locality,
+      state: administrativeArea,
+      country: country
+    });
+
+  }
+
+
+  private getComponent(place: google.maps.places.PlaceResult, type: string): string {
+    const comp = place.address_components?.find(c => c.types.includes(type));
+    return comp?.long_name || '';
   }
 
 }
