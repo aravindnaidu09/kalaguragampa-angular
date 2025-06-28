@@ -376,25 +376,44 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
     this.showShareMenu = !this.showShareMenu;
   }
 
-  share(platform: 'facebook' | 'twitter' | 'email'): void {
-    const productUrl = window.location.href;
-    const title = encodeURIComponent('Check this out from Kalagura Gampa!');
+  share(platform: string) {
+  const url = window.location.href;
 
-    let url = '';
-    switch (platform) {
-      case 'facebook':
-        url = `https://www.facebook.com/sharer/sharer.php?u=${productUrl}`;
-        break;
-      case 'twitter':
-        url = `https://twitter.com/intent/tweet?url=${productUrl}&text=${title}`;
-        break;
-      case 'email':
-        url = `mailto:?subject=Kalagura Gampa Product&body=${productUrl}`;
-        break;
-    }
+  switch (platform) {
+    case 'facebook':
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+      break;
 
-    window.open(url, '_blank');
-    this.showShareMenu = false;
+    case 'twitter':
+      window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`, '_blank');
+      break;
+
+    case 'email':
+      window.location.href = `mailto:?subject=Check this out&body=${encodeURIComponent(url)}`;
+      break;
+
+    case 'whatsapp':
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(url)}`, '_blank');
+      break;
+
+    case 'copy':
+      this.copyUrlToClipboard(url);
+      break;
+
+    default:
+      console.warn('Unknown share platform:', platform);
+      break;
   }
+}
+
+copyUrlToClipboard(text: string) {
+  navigator.clipboard.writeText(text).then(() => {
+    this.toastService.showSuccess('URL copied to clipboard!');
+  }).catch(err => {
+    console.error('Clipboard error:', err);
+    this.toastService.showError('Failed to copy URL.');
+  });
+}
+
 
 }

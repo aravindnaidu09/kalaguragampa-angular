@@ -10,7 +10,7 @@
       <label *ngFor="let category of categories" class="category-item">
         <input type="checkbox" [checked]="selectedCategory() === category.id" (change)="toggleCategory(category.id)" />
         <span class="category-name">{{ category.name }}</span>
-        <span class="product-count">({{ category.productCount }})</span>
+        <span class="product-count">({{ category.product_count }})</span>
       </label>
     </div>
   </div>

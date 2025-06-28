@@ -48,7 +48,7 @@
           </ng-template>
 
         </button>
-        <button  #shareIconRef mat-icon-button aria-label="Share" tooltip="Share" (click)="toggleShareMenu()">
+        <button #shareIconRef mat-icon-button aria-label="Share" tooltip="Share" (click)="toggleShareMenu()">
           <span title="Share" class="icon-button">🔗</span>
         </button>
 
@@ -66,7 +66,16 @@
             <div class="icon-circle"><i class="fas fa-envelope"></i></div>
             <span>Email</span>
           </div>
+          <div class="share-option whatsapp" (click)="share('whatsapp')">
+            <div class="icon-circle"><i class="fab fa-whatsapp"></i></div>
+            <span>WhatsApp</span>
+          </div>
+          <div class="share-option copy-url" (click)="share('copy')">
+            <div class="icon-circle"><i class="fas fa-link"></i></div>
+            <span>Copy URL</span>
+          </div>
         </div>
+
       </div>
 
 
@@ -91,10 +100,10 @@
         <div class="stock-info" *ngIf="product()?.stockStatus === 'Out of Stock'">
           <div class="stock-out">
             <span>Out of Stock</span>
-            <label class="notify-checkbox">
+            <!-- <label class="notify-checkbox">
               <input type="checkbox" [(ngModel)]="notify" (change)="notifyMe(product()?.id)" />
               <span>Notify Me</span>
-            </label>
+            </label> -->
           </div>
         </div>
       </div>

@@ -69,13 +69,13 @@ export class HeaderComponent implements OnInit {
   hashRoute: string = '';
 
   countryOptions = [
-    { label: 'Australia', value: 'AUD' },
-    { label: 'Canada', value: 'CAD' },
-    { label: 'Europe', value: 'EUR' },
+    // { label: 'Australia', value: 'AUD' },
+    // { label: 'Canada', value: 'CAD' },
+    // { label: 'Europe', value: 'EUR' },
     { label: 'India', value: 'INR' },
-    { label: 'UK', value: 'GBP' },
-    { label: 'USA', value: 'USD' },
-    { label: 'Singapore', value: 'SGD' }
+    // { label: 'UK', value: 'GBP' },
+    // { label: 'USA', value: 'USD' },
+    // { label: 'Singapore', value: 'SGD' }
   ];
 
   // Close dropdown if clicked outside

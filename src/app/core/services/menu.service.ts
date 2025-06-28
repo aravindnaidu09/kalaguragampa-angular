@@ -6,6 +6,7 @@ import { ClearToken } from '../../features/auth/_state/auth.state';
 import { WishlistFacade } from '../../features/cart/_state/wishlist.facade';
 import { ToastService } from './toast.service';
 import { ClearCart } from '../../features/cart/_state/cart.actions';
+import { CartFacade } from '../../features/cart/_state/cart.facade';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class MenuService {
   constructor(private router: Router,
     private readonly store: Store,
     private readonly wishlistFacade: WishlistFacade,
+    private readonly cartFacade: CartFacade,
     private readonly toastService: ToastService
   ) {
     this.updateMenu(); // Initialize menu based on stored login state
@@ -89,7 +91,8 @@ export class MenuService {
 
   clearCartAndWishlist(): void {
     // ✅ Clear Cart & Wishlist (reset badges)
-    this.store.dispatch(new ClearCart());
+    // this.store.dispatch(new ClearCart());
+    this.cartFacade.clearCart();
     this.wishlistFacade.clear();
 
     this.toastService.showSuccess('Logged Out successful!');

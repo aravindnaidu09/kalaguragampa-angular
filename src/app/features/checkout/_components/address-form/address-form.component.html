@@ -31,8 +31,8 @@
 
     <div class="form-group">
       <label>Pincode</label>
-      <input formControlName="pincode" placeholder="6-digit pincode" appGooglePlaces
-        (placeChanged)="onPlaceSelected($event)" />
+      <input #addressInput appGooglePlaces formControlName="pincode" placeholder="6-digit pincode" appGooglePlaces
+        (placeChanged)="onPlaceSelected($event)"  />
       <div *ngIf="f['pincode'].touched && f['pincode'].invalid" class="error">Valid 6-digit pincode required.</div>
     </div>
 

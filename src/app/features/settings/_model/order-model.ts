@@ -25,4 +25,5 @@ export interface IOrderProduct {
   quantity?: number;
   color?: string;
   is_rated?: boolean;
+  qty?: number;
 }

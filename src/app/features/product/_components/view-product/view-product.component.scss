@@ -399,5 +399,22 @@
     &.email:hover .icon-circle i {
       color: #fff;
     }
+
+    &.whatsapp:hover .icon-circle {
+      background-color: #25d366;
+    }
+
+    &.whatsapp:hover .icon-circle i {
+      color: #fff;
+    }
+
+    &.copy-url:hover .icon-circle {
+      background-color: #0d6efd;
+    }
+
+    &.copy-url:hover .icon-circle i {
+      color: #fff;
+    }
+
   }
 }

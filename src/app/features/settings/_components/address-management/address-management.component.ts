@@ -140,7 +140,11 @@ export class AddressManagementComponent {
   setDefaultAddress(addressId: number, address: Address): void {
     const rawPayload = { ...address, isDefault: true };
     const payload = serializeAddress(rawPayload);
-    this.addressFacade.updateAddress(addressId, payload);
+    this.addressFacade.updateAddress(addressId, payload).subscribe(success => {
+      if (success) {
+        this.toastService.showSuccess('Address updated successfully.');
+      }
+    });
   }
 
   resetForm(isCancel: boolean): void {

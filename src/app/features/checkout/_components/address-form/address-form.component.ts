@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, OnChanges, SimpleChanges, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, SimpleChanges, OnInit, Output, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Address, serializeAddress } from '../../../settings/_model/address-model';
 import { GooglePlacesDirective } from '../../../../shared/directives/google-places.directive';
@@ -24,22 +24,10 @@ export class AddressFormComponent implements OnInit, OnChanges {
   addressForm!: FormGroup;
   isSubmitting = false;
 
+  @ViewChild('addressInput') addressInput!: ElementRef;
+
   constructor(private fb: FormBuilder) { }
 
-  ngOnInit(): void {
-    const data = this.initialData ?? {};
-    this.addressForm = this.fb.group({
-      fullName: [data.fullName || '', Validators.required],
-      street: [data.street || '', Validators.required],
-      street2: [data.street2 || ''],
-      pincode: [data.pincode || '', [Validators.required, Validators.pattern(/^\d{6}$/)]],
-      city: [data.city || '', Validators.required],
-      state: [data.state || '', Validators.required],
-      country: [data.country || '', Validators.required],
-      phone: [data.phone || '', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      isDefault: [data.isDefault || false]
-    });
-  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['initialData'] && changes['initialData'].currentValue) {
@@ -57,6 +45,22 @@ export class AddressFormComponent implements OnInit, OnChanges {
         isDefault: data.isDefault || false
       });
     }
+  }
+
+
+  ngOnInit(): void {
+    const data = this.initialData ?? {};
+    this.addressForm = this.fb.group({
+      fullName: [data.fullName || '', Validators.required],
+      street: [data.street || '', Validators.required],
+      street2: [data.street2 || ''],
+      pincode: [data.pincode || '', [Validators.required, Validators.pattern(/^\d{6}$/)]],
+      city: [data.city || '', Validators.required],
+      state: [data.state || '', Validators.required],
+      country: [data.country || '', Validators.required],
+      phone: [data.phone || '', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      isDefault: [data.isDefault || false]
+    });
   }
 
   onSubmit(): void {
@@ -102,6 +106,7 @@ export class AddressFormComponent implements OnInit, OnChanges {
     return this.addressForm.controls;
   }
 
+
   onPlaceSelected(place: google.maps.places.PlaceResult): void {
     if (!place.geometry || !place.address_components) return;
 
@@ -122,7 +127,6 @@ export class AddressFormComponent implements OnInit, OnChanges {
       state: administrativeArea,
       country: country
     });
-
   }
 
 

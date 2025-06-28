@@ -66,19 +66,31 @@ export class CartState {
     );
   }
 
+  // @Action(ClearCart)
+  // clearCart(ctx: StateContext<CartStateModel>) {
+  //   return this.cartService.clearCart().pipe(
+  //     tap(() => {
+  //       ctx.patchState({ cart: null });
+  //       // this.toast.showSuccess('Cart cleared successfully.');
+  //     }),
+  //     catchError((err) => {
+  //       // this.toast.showError('Failed to clear cart.');
+  //       return of(err);
+  //     })
+  //   );
+  // }
+
   @Action(ClearCart)
-  clearCart(ctx: StateContext<CartStateModel>) {
-    return this.cartService.clearCart().pipe(
-      tap(() => {
-        ctx.patchState({ cart: null });
-        // this.toast.showSuccess('Cart cleared successfully.');
-      }),
-      catchError((err) => {
-        // this.toast.showError('Failed to clear cart.');
-        return of(err);
-      })
-    );
+  clearCart({ setState }: StateContext<CartStateModel>) {
+    setState({
+      cart: null,
+      loading: false,
+      shippingFee: undefined,
+      courierName: undefined,
+      estimatedDeliveryDays: undefined
+    });
   }
+
 
   @Action(AddToCart)
   addToCart(ctx: StateContext<CartStateModel>, action: AddToCart): Observable<boolean> {
