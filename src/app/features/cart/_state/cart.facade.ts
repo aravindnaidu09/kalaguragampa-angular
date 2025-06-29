@@ -44,8 +44,8 @@ export class CartFacade {
       switchMap(() => this.store.selectOnce(CartState.cart)),
       map(cart => !!cart),
       tap(success => {
-        if (success) this.toast.showSuccess('Item added to cart');
-        else this.toast.showError('Failed to add item');
+        // if (success) this.toast.showSuccess('Item added to cart');
+        // else this.toast.showError('Failed to add item');
       }),
       catchError(() => {
         this.toast.showError('Unexpected error');

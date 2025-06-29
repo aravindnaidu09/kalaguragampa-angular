@@ -15,7 +15,7 @@
     </div>
 
     <!-- ✅ Buy Now & Add to Cart Buttons -->
-    <div class="product-actions">
+    <div class="product-actions" *ngIf="product()?.stockStatus !== 'out_of_stock'">
       <button class="btn buy-now" [disabled]="buyNowLoading()" (click)="goToCheckoutPage()">
         <ng-container *ngIf="!buyNowLoading(); else buyNowLoader">Buy Now</ng-container>
         <ng-template #buyNowLoader>
@@ -90,14 +90,14 @@
       <div class="product-quantity-stock-info-wrapper">
         <div class="product-quantity">
           <button class="quantity-btn" (click)="decreaseQuantity()"
-            [disabled]="quantity() === 1 || product()?.stockStatus === 'Out of Stock'">-</button>
+            [disabled]="quantity() === 1 || product()?.stockStatus === 'out_of_stock'">-</button>
           <label>{{ quantity() }}</label>
           <button class="quantity-btn"
-            [disabled]="quantity() === product()?.maxQuantity || product()?.stockStatus === 'Out of Stock'"
+            [disabled]="quantity() === product()?.maxQuantity || product()?.stockStatus === 'out_of_stock'"
             (click)="increaseQuantity()">+</button>
         </div>
 
-        <div class="stock-info" *ngIf="product()?.stockStatus === 'Out of Stock'">
+        <div class="stock-info" *ngIf="product()?.stockStatus === 'out_of_stock'">
           <div class="stock-out">
             <span>Out of Stock</span>
             <!-- <label class="notify-checkbox">
