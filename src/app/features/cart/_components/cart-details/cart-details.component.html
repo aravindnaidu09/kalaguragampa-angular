@@ -9,7 +9,7 @@
         <span class="section-title">My Cart</span>
       </div>
 
-      <div class="cart-actions">
+      <div class="cart-actions" *ngIf="!showNavigationButtons">
         <button class="delete-all-btn" (click)="deleteAllItems()">
           🗑️ Delete All
         </button>
@@ -56,12 +56,15 @@
             </div>
           </div>
 
-          <button class="remove-button" title="Remove this item" (click)="removeItem(item.id!)">
-            <ng-container *ngIf="deletingItemIds.has(item.id!); else closeIcon">
-              <div class="spinner mini"></div>
-            </ng-container>
-            <ng-template #closeIcon>✕</ng-template>
-          </button>
+          <ng-container *ngIf="!showNavigationButtons">
+            <button class="remove-button" title="Remove this item" (click)="removeItem(item.id!)">
+              <ng-container *ngIf="deletingItemIds.has(item.id!); else closeIcon">
+                <div class="spinner mini"></div>
+              </ng-container>
+              <ng-template #closeIcon>✕</ng-template>
+            </button>
+
+          </ng-container>
 
         </div>
       </ng-container>

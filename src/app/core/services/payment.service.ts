@@ -23,7 +23,7 @@ export class PaymentService {
     address_id: number;
     courier_company_id: string;
   }): Observable<ApiResponse<{ id: string; amount: number; currency: string }>> {
-    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/${PAYMENT_API_URLS.payment.createOrder}`, payload);
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}${PAYMENT_API_URLS.payment.createOrder}`, payload);
   }
 
   /**
