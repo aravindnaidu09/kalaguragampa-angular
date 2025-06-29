@@ -153,7 +153,7 @@ export class CheckoutDetailsComponent implements OnInit {
     const shippingFee = this.cartFacade.shippingFeeSignal() || 0;
 
     const payload = {
-      total_amount: totalAmount + shippingFee,
+      total_amount: totalAmount,
       address_id: addressId,
       courier_company_id: '0',
       country_code: countryCode
