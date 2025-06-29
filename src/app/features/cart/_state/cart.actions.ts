@@ -1,6 +1,8 @@
 export class LoadCart {
   static readonly type = '[Cart] Load Cart';
+  constructor(public addressId?: number, public countryCode: string = 'IND') {}
 }
+
 
 export class ClearCart {
   static readonly type = '[Cart] Clear Cart';

@@ -8,11 +8,14 @@ import { CartState } from './cart.state';
 import { AddToCart, ClearCart, LoadCart, LoadShippingEstimate, RemoveCartItems, UpdateCartItems } from './cart.actions';
 import { CartResponseItem } from '../_models/cart-item-model';
 import { ToastService } from '../../../core/services/toast.service';
+import { AddressFacade } from '../../settings/_state/address.facade';
 
 @Injectable({ providedIn: 'root' })
 export class CartFacade {
   private store = inject(Store);
   private toast = inject(ToastService);
+  private addressFacade = inject(AddressFacade);
+
 
   readonly cartSignal = this.store.selectSignal(CartState.cart);
   readonly loadingSignal = this.store.selectSignal(CartState.loading);
@@ -24,7 +27,12 @@ export class CartFacade {
   readonly estimatedDeliveryDaysSignal = this.store.selectSignal((state) => state.cart.estimatedDeliveryDays ?? '');
 
   loadCart(): Observable<any> {
-    return this.store.dispatch(new LoadCart());
+    return this.addressFacade.loadAddresses().pipe(
+      switchMap(() => {
+        const addressId = this.addressFacade.selectedAddressId() ?? undefined;
+        return this.store.dispatch(new LoadCart(addressId, 'IND'));
+      })
+    );
   }
 
   clearCart(): void {

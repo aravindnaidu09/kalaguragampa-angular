@@ -19,15 +19,15 @@ export class PriceSummaryComponent {
   private dialog = inject(MatDialog);
   // Signals for cart details
   readonly cartSignal: Signal<any> = this.cartFacade.cartSignal;
-  readonly shippingFeeSignal = inject(CartFacade).shippingFeeSignal;
+  // readonly shippingFeeSignal = inject(CartFacade).shippingFeeSignal;
   readonly courierNameSignal = inject(CartFacade).courierNameSignal;
   readonly estimatedDeliveryDaysSignal = inject(CartFacade).estimatedDeliveryDaysSignal;
 
-  readonly finalAmountSignal = computed(() => {
-    const base = this.cartSignal()?.totalAmount ?? 0;
-    const shipping = this.shippingFeeSignal() ?? 0;
-    return base + shipping;
-  });
+  // readonly finalAmountSignal = computed(() => {
+  //   const base = this.cartSignal()?.totalAmount ?? 0;
+  //   const shipping = this.shippingFeeSignal() ?? 0;
+  //   return base + shipping;
+  // });
 
   readonly shouldHideShippingAndDelivery = computed(() => {
     const cart = this.cartSignal();

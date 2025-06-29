@@ -27,7 +27,7 @@
       <img src="assets/images/icons8-info-50.png" alt="Info"
         title="Shipping charges vary based on your location and order value." class="info-icon" />
     </span>
-    <span class="green">{{ isShippingFree ? 'FREE' : '₹' + shippingFeeSignal() }}</span>
+    <span class="green">{{ isShippingFree ? 'FREE' : '₹' + cart?.shippingAmount }}</span>
   </div>
 
   <div class="summary-row" *ngIf="!shouldHideShippingAndDelivery() && estimatedDeliveryDaysSignal()">
@@ -42,7 +42,7 @@
 
   <div class="summary-total">
     <span>Total Amount</span>
-    <span>₹{{ finalAmountSignal() | number: '1.2-2' }}</span>
+    <span>₹{{ cart?.totalAmount | number: '1.2-2' }}</span>
   </div>
 
   <ng-container *ngIf="showPlaceOrderButton">

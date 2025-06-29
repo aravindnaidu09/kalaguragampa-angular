@@ -46,10 +46,10 @@ export class CartState {
   }
 
   @Action(LoadCart)
-  loadCart(ctx: StateContext<CartStateModel>) {
+  loadCart(ctx: StateContext<CartStateModel>, action: LoadCart) {
     ctx.patchState({ loading: true });
 
-    return this.cartService.getCart().pipe(
+    return this.cartService.getCart(action.addressId, action.countryCode).pipe(
       tap((res) => {
         if (res?.data) {
           ctx.patchState({ cart: res.data });
@@ -65,6 +65,7 @@ export class CartState {
       })
     );
   }
+
 
   // @Action(ClearCart)
   // clearCart(ctx: StateContext<CartStateModel>) {

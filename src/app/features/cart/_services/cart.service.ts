@@ -19,13 +19,25 @@ export class CartService {
    * ✅ Get current user's cart
    * Deserializes response to CartResponseItem (camelCase typed)
    */
-  getCart(): Observable<ApiResponse<CartResponseItem>> {
-    return this.httpClient.get<ApiResponse<any>>(`${this.baseUrl}${CART_API_URLS.cart.getCart}`).pipe(
-      map((response) => ({
-        ...response,
-        data: deserializeCartResponse(response.data)
-      }))
-    );
+  getCart(addressId?: number, countryCode: string = 'IND'): Observable<ApiResponse<CartResponseItem>> {
+    const params: any = {};
+
+    if (addressId !== undefined) {
+      params.address_id = addressId;
+    }
+
+    if (countryCode) {
+      params.country_code = countryCode;
+    }
+
+    return this.httpClient
+      .get<ApiResponse<any>>(`${this.baseUrl}${CART_API_URLS.cart.getCart}`, { params })
+      .pipe(
+        map((response) => ({
+          ...response,
+          data: deserializeCartResponse(response.data)
+        }))
+      );
   }
 
   /**
@@ -66,7 +78,7 @@ export class CartService {
    */
   removeCartItems(itemIds: number[], countryCode: string = 'IND'): Observable<ApiResponse<CartResponseItem>> {
     let params = new HttpParams();
-      // .set('country_code', countryCode);
+    // .set('country_code', countryCode);
 
     // Append multiple item_ids
     itemIds.forEach(id => {
