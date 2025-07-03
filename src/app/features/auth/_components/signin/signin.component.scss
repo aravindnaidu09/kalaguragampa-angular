@@ -264,7 +264,9 @@
   height: 12px;
   animation: spin 0.8s linear infinite;
 }
-
+.FormClass{
+  width: 100%;
+}
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -274,3 +276,13 @@
     transform: rotate(360deg);
   }
 }
+
+@media (max-width: 768px) {
+.FormClass{
+  width: 85%;
+}
+   
+  
+}
+
+

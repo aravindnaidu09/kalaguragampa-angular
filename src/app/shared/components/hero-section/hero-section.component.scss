@@ -34,3 +34,14 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .hero-section {
+    height: 120px !important; /* Adjust height for smaller screens */
+  }
+
+  .slider img {
+    object-fit: cover; /* Change to cover for better fit on smaller screens */
+  }
+  
+}

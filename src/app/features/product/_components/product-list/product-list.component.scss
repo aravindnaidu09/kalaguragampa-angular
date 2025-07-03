@@ -180,3 +180,35 @@
   padding: 10px 0;
   overflow-x: auto;
 }
+
+@media (max-width: 768px) {
+  .shop-by-category, .new-arrivals, .week-top-sellers, .top-sellers {
+    padding: 10px;
+    
+    .header h3 {
+      font-size: 20px;
+    }
+
+    .category-scroll-wrapper {
+      .categories {
+        gap: 8px;
+
+        .category-item {
+          padding: 5px 10px;
+          font-size: 11px;
+        }
+      }
+    }
+
+    .product-scroll-wrapper {
+      .product-scroll-container {
+        gap: 12px;
+
+        app-product {
+          width: auto !important; // Adjusted for mobile view
+        }
+      }
+    }
+  }
+  
+}
