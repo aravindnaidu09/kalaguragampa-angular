@@ -18,7 +18,6 @@ import { ChangePasswordComponent } from "../../../auth/_components/change-passwo
     CommonModule,
     RouterModule,
     ProfileComponent,
-    AddressFormComponent,
     AddressManagementComponent,
     OrderHistoryComponent,
     ChangePasswordComponent,
