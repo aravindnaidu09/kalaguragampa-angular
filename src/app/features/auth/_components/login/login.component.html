@@ -1,11 +1,15 @@
 <div class="login-with-otp">
   <!-- Left Image Section -->
+  
   <div class="left-section">
     <img src="../../../../../assets/images/sign-in-page.png" alt="Kalagura Gampa" />
+
   </div>
+
 
   <!-- Right Section Wrapper -->
   <div class="right-section">
+
     <ng-container *ngIf="!isRegistering() && !isForgotPassword(); else showOtherContent">
       <app-signin
         [activeLoginMethod]="activeLoginMethod"

@@ -1,8 +1,9 @@
 <ng-container>
-  <h2 class="title">Let's Sign You In</h2>
+  <h2 class="title">
+     <img src="../../../../../assets/images/logo.png" alt="Kalagura Gampa" class="show-on-mobile-tab" width="35" height="35" /> <span class="px-1">Let's Sign You In</span></h2>
   <p class="subtitle">Welcome</p>
 
-  <form *ngIf="activeLoginMethod === 'otp'" [formGroup]="loginOtpForm" (ngSubmit)="onSubmitOtp()">
+  <form class="FormClass" *ngIf="activeLoginMethod === 'otp'" [formGroup]="loginOtpForm" (ngSubmit)="onSubmitOtp()">
     <!-- Mobile Number Field -->
     <div class="form-group">
       <label for="mobileNumber">Mobile Number</label>
@@ -65,7 +66,7 @@
   </form>
 
   <!-- Login with Password Form -->
-  <form *ngIf="activeLoginMethod === 'password'" [formGroup]="loginPasswordForm" (ngSubmit)="onSubmitPassword()">
+  <form  class="FormClass" *ngIf="activeLoginMethod === 'password'" [formGroup]="loginPasswordForm" (ngSubmit)="onSubmitPassword()">
     <div class="form-group">
       <label for="emailOrMobile">Email or Mobile Number</label>
       <input type="text" id="emailOrMobile" class="form-control" placeholder="Enter your email or mobile number"

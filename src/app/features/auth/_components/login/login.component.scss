@@ -35,17 +35,88 @@
     min-width: 400px;
   }
 
-  @media (max-width: 768px) {
-    flex-direction: column;
+
+}
+.show-on-mobile-tab{
+  display: none;
+  height: 50px;
+  width: 50px;
+  padding: auto;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 9;
+}
+@media (max-width: 768px) {
+  .login-with-otp {
+   
+    display: flex;
+    height: auto !important; // Allow height to adjust based on content
 
     .left-section {
       display: none; // Hide image on mobile
     }
-
-    .right-section {
-      border-radius: 0;
-      width: 100%;
-      padding: 30px 20px;
+ width: 100% !important;
+    
+.right-section {
+      border-radius: 2px;
+      width: auto; // Reduced padding for mobile
+      padding: 0px;
+      top: 0px;
+      right: 0px;
+      left: 0px;
     }
+    .otp-icon {
+      position: absolute;
+      top: 16px; // Adjust as needed
+      right: 20px; // Adjust as needed
+      font-size: 24px; // Adjust size as needed
+      color: #682f12; // Match your theme color
+      cursor: pointer;
+      z-index: 10; // Ensure it appears above other content
+    }
+   
   }
+.FormClass{
+  width: 85%;
+}
+    .show-on-mobile-tab{
+    display: inline-block
+  }
+}
+@media (max-width: 480px) {
+  .login-with-otp {
+   border: 2px solid #682f12;
+    height: auto !important;
+    position: relative;
+    width: 100%;
+    padding: 10px;
+
+
+   .right-section {
+      border-radius: 2px;
+      width: auto; // Reduced padding for mobile
+      padding: 0px;
+      top: 0px;
+      right: 0px;
+      left: 0px;
+    }
+
+    // Move the icon styling outside of .right-section so it's not hidden
+    .otp-icon {
+      position: absolute;
+      top: 16px; // Adjust as needed
+      right: 20px; // Adjust as needed
+      font-size: 24px; // Adjust size as needed
+      color: #682f12; // Match your theme color
+      cursor: pointer;
+      z-index: 10; // Ensure it appears above other content
+    }
+  
+   
+  }
+  .show-on-mobile-tab{
+    display: inline-block
+  }
+  
 }

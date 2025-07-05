@@ -22,6 +22,7 @@
         height: 20px;
         transition: filter 0.3s ease;
         filter: grayscale(100%);
+         filter: grayscale(0%) brightness(100%) invert(100%);
         /* Start with grayscale for a muted effect */
       }
 
@@ -85,6 +86,7 @@
       img {
         width: 20px;
         height: 20px;
+        filter: grayscale(0%) brightness(100%) invert(100%);
       }
 
       span {
@@ -251,8 +253,6 @@
   /* ✅ FIX: Properly position the search suggestions */
   .search-suggestions {
     position: absolute;
-    top: 100%;
-    /* ✅ Ensures it starts just below the search bar */
     left: 0;
     width: 100%;
     max-width: 350px;
@@ -283,7 +283,13 @@
       }
     }
   }
-
+  .search-suggestions-lg{
+    top:100%;
+  }
+   .search-suggestions-md{
+    bottom: 100%;
+    border: 1px solid #682f12;
+  }
   .no-results {
     padding: 12px;
     text-align: center;
@@ -392,4 +398,166 @@
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   /* Optional shadow for 3D effect */
+}
+
+
+@media (max-width: 768px) {
+ .search-bar{
+    max-width: 100%;
+    /* Full width on smaller screens */
+    padding: 4px 8px;
+    /* Reduced padding for compactness */
+
+    input {
+      font-size: 16px;
+      /* Smaller font size */
+      padding: 6px;
+      /* Adjusted padding */
+    }
+
+    .search-button img {
+      width: 35px;
+      height: 35px;
+      /* Smaller search icon */
+    }
+    .product-img {
+      width: 35px;
+      height: 35px;
+      /* Smaller product image */
+    }
+  }
+
+  .app-header {
+    padding: 10px 15px;
+    /* Reduced padding for a more compact header */
+
+    .logo img {
+      height: 35px;
+      /* Smaller logo size */
+    }
+
+    .header-actions {
+      gap: 10px;
+      /* Reduced spacing between action items */
+
+      .action-item img {
+        width: 16px;
+        height: 16px;
+        /* Smaller icon size */
+      }
+
+      span {
+        font-size: 12px;
+        /* Smaller font size */
+      }
+    }
+  }
+  .top-bar {
+    padding: 8px 20px;
+    /* Reduced padding for a more compact top bar */
+
+    .social-icons a img {
+      width: 18px;
+      height: 18px;
+      /* Smaller social icon size */
+    }
+
+    .top-bar-right {
+      gap: 15px;
+
+      .location-dropdown select {
+        font-size: 14px;
+        /* Smaller font size */
+      }
+
+      .customer-care span {
+        font-size: 12px;
+        /* Smaller font size */
+      }
+    }
+  }
+  .search-suggestions {
+  max-width: 100% !important;
+}
+ }
+
+
+@media (max-width: 480px) {
+  .search-bar{
+    max-width: 100%;
+    /* Full width on smaller screens */
+    padding: 4px 8px;
+    /* Reduced padding for compactness */
+
+    input {
+      font-size: 16px;
+      /* Smaller font size */
+      padding: 6px;
+      /* Adjusted padding */
+    }
+
+    .search-button img {
+      width: 30px;
+      height: 30px;
+      /* Smaller search icon */
+    }
+    .product-img {
+      width: 25px;
+      height: 25px;
+      /* Smaller product image */
+    }
+  }
+.search-suggestions {
+  max-width: 100% !important;
+}
+  .app-header {
+    padding: 10px 15px;
+    /* Reduced padding for a more compact header */
+
+    .logo img {
+      height: 35px;
+      /* Smaller logo size */
+    }
+
+    .header-actions {
+      gap: 30px;
+      width: 15%;
+      /* Reduced spacing between action items */
+
+      .action-item img {
+        width: 16px;
+        height: 16px;
+        /* Smaller icon size */
+      }
+
+      span {
+        font-size: 12px;
+        /* Smaller font size */
+      }
+    }
+  }
+  .top-bar {
+    padding: 8px 20px;
+    /* Reduced padding for a more compact top bar */
+
+    .social-icons a img {
+      width: 18px;
+      height: 18px;
+      /* Smaller social icon size */
+    }
+
+    .top-bar-right {
+      gap: 15px;
+
+      .location-dropdown select {
+        font-size: 14px;
+        /* Smaller font size */
+      }
+
+      .customer-care span {
+        font-size: 12px;
+        /* Smaller font size */
+      }
+    }
+  }
 }

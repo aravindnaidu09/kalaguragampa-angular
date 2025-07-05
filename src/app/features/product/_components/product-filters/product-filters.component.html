@@ -4,13 +4,23 @@
   </h3>
 
   <!-- 📌 CATEGORY FILTER -->
-  <div class="filter-section category-section">
-    <h4>Category</h4>
+  <div class="filter-section category-section modern-ui">
+    <h4 class="section-title">
+      <span class="icon-category"></span> Category
+    </h4>
     <div class="category-list">
-      <label *ngFor="let category of categories" class="category-item">
-        <input type="checkbox" [checked]="selectedCategory() === category.id" (change)="toggleCategory(category.id)" />
-        <span class="category-name">{{ category.name }}</span>
-        <span class="product-count">({{ category.product_count }})</span>
+      <label *ngFor="let category of categories" class="category-item modern-checkbox">
+        <input
+          type="radio"
+          name="category"
+          [checked]="selectedCategory() === category.id"
+          (change)="toggleCategory(category.id)"
+        />
+        <span class="custom-radio"></span>
+        <span class="category-info">
+          <span class="category-name">{{ category.name }}</span>
+          <span class="product-count">({{ category.product_count }})</span>
+        </span>
       </label>
     </div>
   </div>

@@ -196,3 +196,25 @@
   }
 
 }
+
+@media(max-width: 768px) {
+  .register-form {
+    max-width: 90%;
+    padding: 5px;
+
+    .back-to-login{
+  text-align: left;
+  
+}
+  .form-group {
+    width: 90% !important; // Ensure full width on mobile
+  }
+
+  .submit-btn {
+    font-size: 14px; // Slightly smaller button text on mobile
+  }
+  }
+  
+
+  
+}

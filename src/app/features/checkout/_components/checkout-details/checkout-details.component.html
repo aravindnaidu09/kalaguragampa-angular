@@ -1,12 +1,7 @@
   <h5 class="section-title">Checkout Page</h5>
-
-
-  <div class="checkout-container">
-
-
+  <div class="checkout-container d-none d-md-flex">
     <!-- LEFT: Stepper Accordion -->
     <div class="checkout-left">
-
       <!-- Step 0: Delivery Address -->
       <div class="accordion-step" [class.active]="currentStep === 0">
         <div class="accordion-header disabled">
@@ -64,10 +59,10 @@
           </div>
 
           <div class="payment-wrapper">
-            <h3 class="payment-title">Choose your payment method</h3>
+              <h3 class="payment-title">Choose your payment method</h3>
             <div class="payment-actions">
-              <button class="btn outline back-btn" (click)="goToPreviousStep()">← Previous</button>
-              <button class="btn primary make-payment-btn" [disabled]="isProcessingPayment" (click)="makePayment()">
+              <button type="button" class="btn outline back-btn" (click)="goToPreviousStep()">&#8592; Previous</button>
+              <button type="button" class="btn primary make-payment-btn" [disabled]="isProcessingPayment" (click)="makePayment()">
                 <ng-container *ngIf="!isProcessingPayment; else loading">
                   Make Payment
                 </ng-container>
@@ -84,5 +79,78 @@
     <!-- RIGHT: Price Summary -->
     <div class="checkout-right">
       <app-price-summary [showPlaceOrderButton]="false"></app-price-summary>
+    </div>
+  </div>
+   <!-- Mobile Tab View: Modern 4-Step Checkout -->
+  <div class="mobile-checkout-steps d-lg-none d-sm-flex">
+    <!-- <div class="mobile-stepper">
+      <div 
+        *ngFor="let step of ['Delivery Address', 'Add New Address', 'Order Summary', 'Payment']; let i = index"
+        class="mobile-step"
+        [class.active]="currentStep === i"
+        [class.completed]="currentStep > i"
+        (click)="currentStep > i ? goToStep(i) : null"
+      >
+        <span class="step-circle">
+          <ng-container [ngSwitch]="i">
+            <i *ngSwitchCase="0" class="fa fa-map-marker-alt" aria-label="Delivery Address"></i>
+            <i *ngSwitchCase="1" class="fa fa-address-card" aria-label="Add New Address"></i>
+            <i *ngSwitchCase="2" class="fa fa-list-alt" aria-label="Order Summary"></i>
+            <i *ngSwitchCase="3" class="fa fa-credit-card" aria-label="Payment"></i>
+          </ng-container>
+        </span>
+      </div>
+    </div> -->
+
+    <div class="mobile-step-content">
+      <!-- Step 0: Delivery Address -->
+      <ng-container *ngIf="currentStep === 0">
+        <app-shipping-billing [hideRemoveOption]="true" [showContinueButton]="true"
+          (continue)="goToNextStep()" (addNewAddressClicked)="goToAddAddressStep($event)">
+        </app-shipping-billing>
+      </ng-container>
+
+      <!-- Step 1: Add New Address -->
+      <ng-container *ngIf="currentStep === 1">
+        <app-address-form [formMode]="formMode" [initialData]="selectedAddressForEdit"
+          (save)="handleAddressSave($event)" (cancel)="goToPreviousStep()">
+        </app-address-form>
+      </ng-container>
+
+      <!-- Step 2: Order Summary -->
+      <ng-container *ngIf="currentStep === 2">
+        <app-cart-details [showCartTitle]="false" [showPriceSummaryBlock]="false" [showNavigationButtons]="true"
+          (continue)="goToNextStep()" (back)="goToPreviousStep()">
+        </app-cart-details>
+      </ng-container>
+
+      <!-- Step 3: Payment -->
+      <ng-container *ngIf="currentStep === 3">
+        <div class="delivery-selection" *ngIf="deliveryOptions.length > 0">
+          <h3>Select Delivery Partner</h3>
+          <div *ngFor="let option of deliveryOptions" class="delivery-option" (click)="selectDeliveryOption(option)"
+            [class.selected]="selectedDeliveryOption?.courier_company_id === option.courier_company_id">
+            <strong>{{ option.courier_name }}</strong>
+            <span>₹{{ option.shipping_amount }}</span>
+            <span class="etd">Delivery in: {{ option.etd }}</span>
+          </div>
+        </div>
+        <div class="payment-wrapper">
+          <h3 class="payment-title">Choose your payment method</h3>
+           <app-price-summary [showPlaceOrderButton]="false"></app-price-summary>
+          <div class="payment-actions">
+
+            <button class="btn outline back-btn" (click)="goToPreviousStep()">← Previous</button>
+            <button class="btn primary make-payment-btn" [disabled]="isProcessingPayment" (click)="makePayment()">
+              <ng-container *ngIf="!isProcessingPayment; else loading">
+                Make Payment
+              </ng-container>
+              <ng-template #loading>
+                <span class="spinner"></span> Processing...
+              </ng-template>
+            </button>
+          </div>
+        </div>
+      </ng-container>
     </div>
   </div>

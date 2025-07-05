@@ -162,3 +162,90 @@
     }
   }
 }
+@media (max-width: 768px) {
+  .wishlist-icon{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 15px;
+  }
+  .product-card {
+    width: 125px;
+    margin: 10px 0;
+    padding: 8px;
+
+    .product-image {
+      height: 90px;
+
+      img {
+        width: 80%;
+        height: 80%;
+      }
+    }
+
+    .product-details {
+      margin-top: 10px;
+
+      .product-header h4 {
+        font-size: 0.95rem;
+        max-width: 100%;
+      }
+
+      .product-price {
+        font-size: 0.75rem;
+      }
+
+      .rating-cart-wrapper {
+        .product-rating {
+          font-size: 13px;
+        }
+        .add-to-cart-wrapper .add-to-cart-icon {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+    .wishlist-icon{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 15px;
+  }
+  .product-card {
+    width: 120px;
+    padding: 6px;
+
+    .product-image {
+      height: 80px;
+
+      img {
+        width: 75%;
+        height: 75%;
+      }
+    }
+
+    .product-details {
+      margin-top: 8px;
+
+      .product-header h4 {
+        font-size: 0.9rem;
+      }
+
+      .product-price {
+        font-size: 0.7rem;
+      }
+
+      .rating-cart-wrapper {
+        .product-rating {
+          font-size: 12px;
+        }
+        .add-to-cart-wrapper .add-to-cart-icon {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+}

@@ -180,3 +180,48 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .footer-container {
+    padding: 20px 30px; /* Adjust padding for smaller screens */
+  }
+
+  .footer-top {
+    flex-direction: column;
+    gap: 20px;
+
+    .footer-section {
+      width: 100%;
+      text-align: left; /* Ensure left alignment in responsive view */
+    }
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+}
+@media (max-width: 480px) {
+  .footer-container {
+    padding: 15px 20px; /* Further adjust padding for very small screens */
+  }
+
+  .footer-top {
+    flex-direction: column;
+    gap: 15px;
+
+    .footer-section {
+      width: 100%;
+      text-align: left; /* Ensure left alignment in responsive view */
+    }
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+  }
+  
+}

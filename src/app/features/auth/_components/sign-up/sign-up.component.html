@@ -1,5 +1,5 @@
 <ng-container *ngIf="!isLoginPage();">
-  <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="register-form">
+  <form  class="FormClass" [formGroup]="registerForm" (ngSubmit)="onRegister()" class="register-form">
 
     <!-- Back to Login -->
     <span class="back-to-login" (click)="goBackToLogin()">← Back to Login</span>

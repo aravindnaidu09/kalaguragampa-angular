@@ -1,6 +1,6 @@
-<div class="account-wrapper">
+<div class="account-wrapper d-none d-md-flex">
   <!-- Left: Sidebar -->
-  <div class="sidebar-card">
+  <div class="sidebar-card w-25">
     <div class="user-profile">
       <div class="avatar"></div>
       <div class="user-name" *ngIf="user()">{{ user()?.last_name! + " " +  user()?.first_name! }}</div>
@@ -36,10 +36,93 @@
         <li routerLink="notifications" routerLinkActive="active">Notifications</li>
       </ul>
     </div>
-  </div>
-
+ </div>
+ 
   <!-- Right: Content -->
-  <div class="content-area">
+  <div class="content-area w-100">
     <router-outlet #outlet="outlet"></router-outlet>
   </div>
 </div>
+
+
+<!-- Mobile View: Section List and Content -->
+<div class="mobile-account-sections d-lg-none" *ngIf="!selectedSection">
+  <div class="mobile-section" style="background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 18px; padding: 18px;">
+    <div class="section-title" style="color: #682f12; font-weight: 600; font-size: 1.1rem; margin-bottom: 10px;">
+      ACCOUNT SETTINGS
+          <ul style="list-style: none; padding: 0; margin: 0;">
+      <li (click)="selectSection('profile'); navigateToMobileOutlet('profile')" style="padding: 12px 0; border-bottom: 1px solid #f0f0f0; color: #222; cursor: pointer; transition: background 0.2s;" 
+          (mouseenter)="hover=true" (mouseleave)="hover=false" [ngStyle]="{'background': hover ? '#e3f0fd' : 'transparent'}">
+        <i class="bi bi-person" style="color: #682f12; margin-right: 8px;"></i> Profile Information
+      </li>
+      <li (click)="selectSection('address')" style="padding: 12px 0; color: #222; cursor: pointer; transition: background 0.2s;">
+        <i class="bi bi-geo-alt" style="color: #682f12; margin-right: 8px;"></i> Manage Addresses
+      </li>
+    </ul>
+  </div>
+  <div class="mobile-section" style="background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 18px; padding: 18px;">
+    <div class="section-title" style="color: #682f12; font-weight: 600; font-size: 1.1rem; margin-bottom: 10px;">MY ORDERS</div>
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      <li (click)="selectSection('orders')" style="padding: 12px 0; color: #222; cursor: pointer; transition: background 0.2s;">
+        <i class="bi bi-bag" style="color: #682f12; margin-right: 8px;"></i> Order History
+      </li>
+    </ul>
+  </div>
+  <div class="mobile-section" style="background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 18px; padding: 18px;">
+    <div class="section-title" style="color: #682f12; font-weight: 600; font-size: 1.1rem; margin-bottom: 10px;">Security</div>
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      <li (click)="selectSection('change-password')" style="padding: 12px 0; color: #222; cursor: pointer; transition: background 0.2s;">
+        <i class="bi bi-shield-lock" style="color: #682f12; margin-right: 8px;"></i> Change Password
+      </li>
+    </ul>
+  </div>
+  <div class="mobile-section" style="background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 18px; padding: 18px;">
+    <div class="section-title" style="color: #682f12; font-weight: 600; font-size: 1.1rem; margin-bottom: 10px;">PREFERENCES</div>
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      <li (click)="selectSection('notifications')" style="padding: 12px 0; color: #222; cursor: pointer; transition: background 0.2s;">
+        <i class="bi bi-bell" style="color: #682f12; margin-right: 8px;"></i> Notifications
+      </li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<div class="mobile-section-content d-lg-none" *ngIf="selectedSection" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: auto;">
+  <div class="header" style="width: 100%; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 12px 12px 0 0; box-shadow: 0 2px 8px rgba(104,47,18,0.07); padding: 10px 0 6px 0;">
+    <button class="back-btn" (click)="goBackFromMobileSection()" style="background: none; border: none; color: #682f12; font-size: 1.3rem; margin-right: 10px; cursor: pointer; display: flex; align-items: center;">
+      <i class="fa fa-arrow-left" style="font-size: 1.8rem; color: #682f12; display: inline-block;"></i>
+    <span class="visually-hidden">Back</span>
+      <span style="position: absolute; left: -9999px;">Back</span>
+    </button>
+    <span class="header-title" style="color: #682f12; font-weight: 600; font-size: 1.1rem; flex: 1; text-align: center;">
+      <ng-container [ngSwitch]="selectedSection">
+        <ng-container *ngSwitchCase="'profile'">Profile Information</ng-container>
+        <ng-container *ngSwitchCase="'address'">Manage Address</ng-container>
+        <ng-container *ngSwitchCase="'orders'">Order History</ng-container>
+        <ng-container *ngSwitchCase="'change-password'">Change Password</ng-container>
+        <ng-container *ngSwitchCase="'notifications'">Notifications</ng-container>
+      </ng-container>
+    </span>
+    <span style="width: 36px;"></span> <!-- Spacer for symmetry -->
+  </div>
+  <div class="section-content" style="width: 100%; background: #fff; border-radius: 0 0 12px 12px; box-shadow: 0 2px 12px rgba(104,47,18,0.06); padding: 12px 8px; margin-bottom: 0; display: flex; flex-direction: column; align-items: center;">
+    <ng-container [ngSwitch]="selectedSection">
+      <ng-container *ngSwitchCase="'profile'">
+        <app-profile class="w-100 px-2"></app-profile>
+      </ng-container>
+      <ng-container *ngSwitchCase="'address'" class="px-5">
+        <app-address-management class="w-100 px-2"></app-address-management>
+      </ng-container>
+      <ng-container *ngSwitchCase="'orders'" class="px-5">
+        <app-order-history class="w-100 px-2"></app-order-history>
+      </ng-container>
+      <ng-container *ngSwitchCase="'change-password'">
+        <app-change-password class="w-100 px-2"></app-change-password>
+      </ng-container>
+      <ng-container *ngSwitchCase="'notifications'">
+        <app-notification-preferences class="w-100 px-2"></app-notification-preferences>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
+

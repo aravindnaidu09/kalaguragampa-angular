@@ -25,7 +25,7 @@
     </div>
     <div class="customer-care">
       <img src="../../../../assets/images/customer-support.gif" alt="Customer Care" />
-      <span title="Dedicated Help Center (IST 9:30 AM to 6 :00 PM)">040-71903466</span>
+      <a class="text-white text-decoration-none" href="tel:04071903466" title="Dedicated Help Center (IST 9:30 AM to 6 :00 PM)">040-71903466</a>
     </div>
   </div>
 </div>
@@ -37,7 +37,7 @@
     <span class="brand-text">Kalagura Gampa</span>
   </div>
 
-  <div class="search-bar" *ngIf="!compact">
+  <div class="search-bar d-none d-md-flex" *ngIf="!compact">
     <input type="text" class="search-input" placeholder="Search for products..." [value]="searchQuery()"
       (input)="onSearchChange($event)" (keydown)="onSearchKeyDown($event)" (click)="checkMenuDropdownIsOpen()"
       aria-label="Search for products" />
@@ -49,19 +49,31 @@
     <div class="loader-spinner" *ngIf="isLoading()" aria-label="Loading..."></div>
 
     <!-- ✅ Live Search Suggestions -->
-    <div class="search-suggestions" *ngIf="showSuggestions()">
+    <div class="search-suggestions search-suggestions-lg" *ngIf="showSuggestions()">
       <ng-container *ngIf="(products$ | async)?.length! > 0; else noResults">
-        <ul>
-          <li *ngFor="let product of products$ | async; let i = index" (click)="goToProductDetails(product)"
-            [ngClass]="{ 'highlighted': i === selectedIndex() }">
-            <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" class="product-img"
-              (error)="onImageError($event)" />
-            <div class="product-info">
-              <span class="product-name">{{ product.name }}</span>
-              <span class="product-price">₹{{ product.price }}</span>
-            </div>
-          </li>
-        </ul>
+        <ul style="padding-left: 0; margin-bottom: 0;">
+      <li *ngFor="let product of products$ | async; let i = index" (click)="goToProductDetails(product)"
+     [ngClass]="{ 'highlighted': i === selectedIndex() }"
+     style="display: flex; align-items: center; border-bottom: 1px solid #e0e0e0; padding: 8px 0; cursor: pointer;">
+     <img src="../../../../assets/images/search.png" width="18" height="18" alt="Search Icon"
+       style="margin-right: 10px; opacity: 0.7;" />
+     <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" class="product-img"
+       (error)="onImageError($event)" style="margin-right: 10px;" />
+     <div class="product-info">
+       <span class="product-name">{{ product.name }}</span>
+       <span class="product-price">₹{{ product.price }}</span>
+     </div>
+      </li>
+    <!-- <li *ngFor="let product of products$ | async; let i = index" (click)="goToProductDetails(product)"
+      [ngClass]="{ 'highlighted': i === selectedIndex() }">
+      <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" class="product-img"
+        (error)="onImageError($event)" />
+      <div class="product-info">
+        <span class="product-name">{{ product.name }}</span>
+        <span class="product-price">₹{{ product.price }}</span>
+      </div>
+    </li> -->
+     </ul>
       </ng-container>
       <ng-template #noResults>
         <div class="no-results">No products found</div>
@@ -69,11 +81,11 @@
     </div>
   </div>
 
-  <div class="header-actions" *ngIf="!compact">
+  <div class="header-actions " *ngIf="!compact">
     <div class="account-wrapper" (click)="toggleMenu()" aria-haspopup="true">
       <div class="action-item account-item">
         <img src="../../../../assets/images/Account.png" width="20" height="20" alt="Account Icon" />
-        <span>Account</span>
+        <span class="d-none d-lg-flex">Account</span>
       </div>
       <app-menu-dropdown *ngIf="isMenuOpen" [menuItems]="menuItems()" (menuAction)="onMenuAction($event)"
         aria-label="Account Dropdown Menu"></app-menu-dropdown>
@@ -81,13 +93,13 @@
 
     <div class="action-item" (click)="goToWishlistPage()">
       <img class="wishlist-image" src="../../../../assets/images/Wishlist.png" width="20" height="20" />
-      <span>Wishlist</span>
+      <span class="d-none d-lg-flex">Wishlist</span>
       <div class="wishlist-badge" *ngIf="wCount() > 0">{{ wCount() }}</div>
     </div>
 
     <div class="action-item" (click)="goToCartPage()">
       <img class="cart-image" src="../../../../assets/images/cart-48.png" width="20" height="20" />
-      <span>Cart</span>
+      <span class="d-none d-lg-flex">Cart</span>
       <div class="cart-badge" *ngIf="cartFacade.countSignal() > 0">{{ cartFacade.countSignal() }}</div>
     </div>
   </div>
@@ -99,4 +111,54 @@
     <app-login [activeLoginMethod]="selectedLoginMethod" (closeLoginDialog)="closeLoginDialog($event)"
       (isLoginSuccess)="refreshHeaderState($event)"></app-login>
   </ng-template>
+
+  
 </header>
+
+<div class="mobile-bottom-search-bar d-lg-none fixed-bottom p-2 shadow"
+  style="border-top: 3px solid #682f12; background: #fcf9f5;" *ngIf="!compact">
+  <div class="search-bar" style="background: transparent;">
+    <input type="text" class="search-input mb-2" placeholder="Search for products..." [value]="searchQuery()"
+   (input)="onSearchChange($event)" (keydown)="onSearchKeyDown($event)" (click)="checkMenuDropdownIsOpen()"
+   aria-label="Search for products" />
+    <div class="d-flex align-items-center mb-2">
+   <button class="search-button me-2">
+     <img src="../../../../assets/images/search.png" width="20" height="20" alt="Search Icon" />
+   </button>
+   <!-- ⏳ Loader spinner next to input -->
+   <div class="loader-spinner" *ngIf="isLoading()" aria-label="Loading..."></div>
+    </div>
+    <!-- ✅ Live Search Suggestions -->
+    <div class="search-suggestions search-suggestions-md" *ngIf="showSuggestions()">
+   <ng-container *ngIf="(products$ | async)?.length! > 0; else noResults">
+    <ul style="padding-left: 0; margin-bottom: 0;">
+      <li *ngFor="let product of products$ | async; let i = index" (click)="goToProductDetails(product)"
+     [ngClass]="{ 'highlighted': i === selectedIndex() }"
+     style="display: flex; align-items: center; border-bottom: 1px solid #e0e0e0; padding: 8px 0; cursor: pointer;">
+     <img src="../../../../assets/images/search.png" width="25" height="25" alt="Search Icon"
+       style="margin-right: 10px; opacity: 0.7;" />
+     <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" class="product-img"
+       (error)="onImageError($event)" style="margin-right: 10px;" />
+     <div class="product-info">
+       <span class="product-name">{{ product.name }}</span>
+       <span class="product-price">₹{{ product.price }}</span>
+     </div>
+      </li>
+    <!-- <li *ngFor="let product of products$ | async; let i = index" (click)="goToProductDetails(product)"
+      [ngClass]="{ 'highlighted': i === selectedIndex() }">
+      <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" class="product-img"
+        (error)="onImageError($event)" />
+      <div class="product-info">
+        <span class="product-name">{{ product.name }}</span>
+        <span class="product-price">₹{{ product.price }}</span>
+      </div>
+    </li> -->
+     </ul>
+   </ng-container>
+   <ng-template #noResults>
+     <div class="no-results">No products found</div>
+   </ng-template>
+    </div>
+  </div>
+</div>
+ 
