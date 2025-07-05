@@ -353,6 +353,9 @@ export class SignUpComponent {
       country_code: '91', // Assuming country code is fixed for India
     }
 
+    // console.log('checking-payload: ', payload);
+    // return;
+
     this.authService.register(payload).subscribe({
       next: () => {
         this.isLoadingRegister = false;

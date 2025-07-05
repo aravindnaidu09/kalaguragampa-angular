@@ -62,18 +62,18 @@ export class AuthService {
 
 
   register(userData: any): Observable<any> {
-    const payload = {
-      username: userData.username,
-      email: userData.email,
-      first_name: userData.firstName,  // Converting camelCase to snake_case
-      last_name: userData.lastName,
-      mobile: userData.mobileNumber,
-      country_code: '91', // Assuming a default country code for India
-      password: userData.password,
-      confirm_password: userData.confirmPassword,
-    };
+    // const payload = {
+    //   username: userData.username,
+    //   email: userData.email,
+    //   first_name: userData.firstName,  // Converting camelCase to snake_case
+    //   last_name: userData.lastName,
+    //   mobile: userData.mobileNumber,
+    //   country_code: '91', // Assuming a default country code for India
+    //   password: userData.password,
+    //   confirm_password: userData.confirmPassword,
+    // };
 
-    return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.user.register}`, payload);
+    return this.httpClient.post(`${this.baseUrl}${AUTH_API_URLS.user.register}`, userData);
   }
 
   changePassword(data: { current_password: string; new_password: string; confirm_password: string }): Observable<any> {
