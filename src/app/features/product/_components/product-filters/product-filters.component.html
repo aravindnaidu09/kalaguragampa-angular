@@ -1,4 +1,4 @@
-<div class="filters-container">
+<div class="filters-container" *ngIf="!isScreenBetween996And400">
   <h3 class="filter-title">
     Filter & Refine
   </h3>
@@ -58,4 +58,100 @@
 
   <!-- 📌 RESET BUTTON -->
   <button class="reset-btn" (click)="resetFilters()">Reset Filters</button>
+</div>
+
+<div class="mobile-filter-bar" *ngIf="isScreenBetween996And400">
+  <div class="filter-heading">
+    Filter & Refine
+  </div>
+  <div class="filter-buttons">
+    <button (click)="openFilter('category')">Category</button>
+    <button (click)="openFilter('price')">Price</button>
+    <button (click)="openFilter('rating')">Rating</button>
+    <button (click)="applyFilters()">Filter</button>
+  </div>
+</div>
+<!-- ✅ CATEGORY OVERLAY -->
+<div
+  class="filter-overlay"
+  *ngIf="openPanel === 'category'"
+>
+  <div class="overlay-header">
+    <span>Category</span>
+    <button (click)="closeOverlay()">✖</button>
+  </div>
+  <div class="overlay-content">
+    <!-- Re-use your existing category UI -->
+    <div class="category-list">
+      <label
+        *ngFor="let category of categories"
+        class="category-item modern-checkbox justify-content-start"
+      >
+        <input
+          type="radio"
+          name="category"
+          [checked]="selectedCategory() === category.id"
+          (change)="toggleCategory(category.id)"
+        />
+        <span class="custom-radio"></span>
+        <span class="category-info">
+          <span class="category-name">{{ category.name }}</span>
+          <span class="product-count">({{ category.product_count }})</span>
+        </span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ PRICE OVERLAY -->
+<div
+  class="filter-overlay"
+  *ngIf="openPanel === 'price'"
+>
+  <div class="overlay-header">
+    <span>Price (₹)</span>
+    <button (click)="closeOverlay()">✖</button>
+  </div>
+  <div class="overlay-content">
+    <div class="price-inputs">
+      <input
+        type="number"
+        min="0"
+        max="100000"
+        [ngModel]="minPrice()"
+        (ngModelChange)="onPriceChange('min', $event)"
+        placeholder="Min ₹"
+      />
+      <span class="price-divider">-</span>
+      <input
+        type="number"
+        min="0"
+        max="100000"
+        [ngModel]="maxPrice()"
+        (ngModelChange)="onPriceChange('max', $event)"
+        placeholder="Max ₹"
+      />
+    </div>
+  </div>
+</div>
+
+<!-- ✅ RATING OVERLAY -->
+<div
+  class="filter-overlay"
+  *ngIf="openPanel === 'rating'"
+>
+  <div class="overlay-header">
+    <span>Rating</span>
+    <button (click)="closeOverlay()">✖</button>
+  </div>
+  <div class="overlay-content">
+    <div class="stars">
+      <span
+        *ngFor="let star of [1, 2, 3, 4, 5]"
+        (click)="setRating(star)"
+        [class.selected]="selectedRating() === star"
+        >⭐</span
+      >
+    </div>
+  </div>
 </div>

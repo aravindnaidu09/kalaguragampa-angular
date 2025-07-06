@@ -27,7 +27,7 @@ isScreenBetween996And400: boolean = false;
 
   private checkScreenWidth() {
     const width = window.innerWidth;
-    this.isScreenBetween996And400 = width <= 724 && width >= 400;
+    this.isScreenBetween996And400 = width <= 724 && width >= 320 ;
   }
   goToPolicyPage(route: string) {
     this.router.navigate([route])

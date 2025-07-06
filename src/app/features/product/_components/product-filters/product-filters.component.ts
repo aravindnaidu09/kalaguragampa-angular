@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output, signal } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnInit, Output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ICategory } from '../../_models/category-model';
 import { ProductService } from '../../_services/product.service';
@@ -19,7 +19,7 @@ import { debounceTime, Subject } from 'rxjs';
 export class ProductFiltersComponent implements OnInit {
   /** ✅ Output EventEmitter to send filters to parent */
   @Output() filtersChanged = new EventEmitter<IProductQueryParams>();
-
+isScreenBetween996And400: boolean = false;
   // ✅ Categories List
   categories: ICategory[] = [];
 
@@ -50,8 +50,20 @@ export class ProductFiltersComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchCategories();
+      this.checkScreenWidth();
+    window.addEventListener('resize', () => {
+      this.checkScreenWidth();
+    });
+  }
+ @HostListener('window:resize', [])
+  onResize() {
+    this.checkScreenWidth();
   }
 
+  private checkScreenWidth() {
+    const width = window.innerWidth;
+    this.isScreenBetween996And400 = width <= 1024 && width >= 350;
+  }
   /** ✅ Fetch available categories from API */
   fetchCategories() {
     this.productService.getCategories().subscribe({
@@ -69,10 +81,12 @@ export class ProductFiltersComponent implements OnInit {
     if (this.selectedCategory() === categoryId) {
       this.selectedCategory.set(null); // Deselect if already selected
       this.categoryChange$.next(null);
+   
     } else {
       this.selectedCategory.set(categoryId);
       this.categoryChange$.next(categoryId);
     }
+       this.closeOverlay();
   }
 
   /** ✅ Handle Price Input Changes */
@@ -95,6 +109,7 @@ export class ProductFiltersComponent implements OnInit {
         this.maxPrice.set(null);
         delete this.productParams.price_max;
       }
+      
     }
 
     this.priceChange$.next();
@@ -124,6 +139,7 @@ export class ProductFiltersComponent implements OnInit {
 
     console.log('Filters Emitted:', filters);
     this.filtersChanged.emit(filters);
+       
   }
 
   /** ✅ Reset All Filters */
@@ -137,4 +153,19 @@ export class ProductFiltersComponent implements OnInit {
     this.productParams = {};
     this.emitFilterChanges();
   }
+
+  openPanel: string | null = null;
+
+openFilter(panel: string) {
+  this.openPanel = panel;
+}
+
+closeOverlay() {
+  this.openPanel = null;
+}
+
+applyFilters() {
+  this.closeOverlay();
+  // trigger filter logic if needed
+}
 }

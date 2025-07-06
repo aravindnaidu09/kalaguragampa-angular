@@ -259,20 +259,21 @@
 @media (max-width: 991.98px) {
   
   .app-header {
-    flex-direction: column;
-    align-items: flex-start;
-
+    padding: 8px 12px;
     .logo {
       margin-bottom: 10px;
-      display: inline;
-    width: 100%;
-    text-align: center;
+      width: 50%;
       img {
         height: 35px;
         padding: 0 10px;
         margin-right: 0;
 
       }
+      .brand-text {
+      font-weight: bold;
+      font-size: 1rem;
+      color: #682f12;
+    }
     }
 
     .search-bar {
@@ -280,7 +281,7 @@
     }
 
     .header-actions {
-      width: 100%;
+      width: 50%;
       justify-content: space-between;
 
       .action-item {
@@ -396,6 +397,15 @@
 
 /* Badge smaller on xs screens */
 @media (max-width: 575.98px) {
+  .app-header{
+    padding: 5px 8px;
+    .logo{
+      .brand-text {
+      font-weight: bold;
+      font-size: 0.875rem;
+      color: #682f12;
+    }
+    }
   .header-actions .action-item {
     .wishlist-badge,
     .cart-badge {
@@ -406,7 +416,7 @@
     }
   }
 }
-
+}
 /* Spinner animation */
 @keyframes spin {
   0% { transform: rotate(0deg); }
