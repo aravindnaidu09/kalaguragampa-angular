@@ -10,7 +10,7 @@
     border-bottom: 1px solid #ddd;
 
     .footer-section {
-      width: 22%;
+      width: 50%;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -183,7 +183,7 @@
 
 @media (max-width: 768px) {
   .footer-container {
-    padding: 20px 30px; /* Adjust padding for smaller screens */
+    padding: 15px 20px; /* Adjust padding for smaller screens */
   }
 
   .footer-top {
@@ -203,9 +203,9 @@
   }
   
 }
-@media (max-width: 480px) {
+@media (max-width: 576px) {
   .footer-container {
-    padding: 15px 20px; /* Further adjust padding for very small screens */
+    padding: 7px 15px; /* Further adjust padding for very small screens */
   }
 
   .footer-top {
