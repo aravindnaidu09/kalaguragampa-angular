@@ -1,5 +1,5 @@
 <app-breadcrumb></app-breadcrumb>
-
+<div *ngIf="!isScreenBetween996And400">
 <div class="product-detail-wrapper" *ngIf="!isLoading(); else loading">
   <!-- ✅ Left Section: Product Images & Actions -->
   <div class="product-left-section">
@@ -107,6 +107,9 @@
           </div>
         </div>
       </div>
+      <div class="mobile-product-description"[innerHTML]=" product()?.description | htmlDecode">
+    <!-- Using HtmlDecodePipe to decode HTML entities -->
+  </div>
     </div>
 
     <!-- ✅ Reviews Section -->
@@ -116,6 +119,137 @@
     </div>
   </div>
 </div>
+</div>
+<div class="mobile-product-detail" *ngIf="isScreenBetween996And400">
+  <!-- ✅ Main Image -->
+  <div class="mobile-image-section">
+    <img
+      class="main-mobile-product-image"
+      [src]="getImagePath(product()?.images![imageIndex].image)"
+      [alt]="product()?.name"
+      (error)="onImageError($event)"
+    />
+
+    <!-- ✅ Thumbnails -->
+    <div
+      class="mobile-thumbnail-container"
+      *ngIf="product()?.images!.length > 1"
+    >
+      <img
+        *ngFor="let image of product()?.images; let i = index"
+        [src]="getImagePath(image.image)"
+        [alt]="product()?.name"
+        (error)="onImageError($event)"
+        [class.active]="i === imageIndex"
+        (click)="showClickedSpecificImage(i)"
+      />
+    </div>
+  </div>
+
+  <!-- ✅ Rating & Actions -->
+  <div class="mobile-header-row">
+    <div class="mobile-rating">
+      <span>4.1⭐ | (25)</span>
+    </div>
+    <div class="mobile-actions">
+      <button
+        mat-icon-button
+        aria-label="Wishlist"
+        (click)="addToWishlist(product()?.id!)"
+      >
+        <ng-container *ngIf="doesExistsInWishlist(); else notWishlisted">
+          <span title="Already Added">❤️</span>
+        </ng-container>
+        <ng-template #notWishlisted>
+          <span title="Add to Wishlist">🤍</span>
+        </ng-template>
+      </button>
+
+      <button
+        mat-icon-button
+        aria-label="Share"
+        (click)="toggleShareMenu()"
+      >
+        <span class="icon-button">🔗</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ✅ Product Name -->
+  <h2 class="mobile-product-name">{{ product()?.name }}</h2>
+
+  <!-- ✅ Price -->
+  <div class="mobile-product-price">
+    <span>
+      {{ currencyService.getSymbol() }}{{ currencyService.convertPrice(product()?.price) }}
+    </span>
+  </div>
+
+  <!-- ✅ Description -->
+  <div class="mobile-product-description"[innerHTML]=" product()?.description | htmlDecode">
+    <!-- Using HtmlDecodePipe to decode HTML entities -->
+  </div>
+
+  <!-- ✅ Quantity Selector -->
+  <div class="mobile-quantity-wrapper">
+    <button
+      class="quantity-btn"
+      (click)="decreaseQuantity()"
+      [disabled]="quantity() === 1 || product()?.stockStatus === 'out_of_stock'"
+    >
+      -
+    </button>
+    <label>{{ quantity() }}</label>
+    <button
+      class="quantity-btn"
+      (click)="increaseQuantity()"
+      [disabled]="quantity() === product()?.maxQuantity || product()?.stockStatus === 'out_of_stock'"
+    >
+      +
+    </button>
+  </div>
+
+  <!-- ✅ Buttons -->
+  <div
+    class="mobile-product-actions"
+    *ngIf="product()?.stockStatus !== 'out_of_stock'"
+  >
+    <button
+      class="btn buy-now"
+      [disabled]="buyNowLoading()"
+      (click)="goToCheckoutPage()"
+    >
+      <ng-container *ngIf="!buyNowLoading(); else buyNowLoader">
+        Buy Now
+      </ng-container>
+      <ng-template #buyNowLoader>
+        <span class="button-spinner"></span>
+      </ng-template>
+    </button>
+
+    <button
+      class="btn add-to-cart"
+      [disabled]="addToCartLoading()"
+      (click)="addToCart()"
+    >
+      <ng-container *ngIf="!addToCartLoading(); else addToCartLoader">
+        Add to Cart
+      </ng-container>
+      <ng-template #addToCartLoader>
+        <span class="button-spinner"></span>
+      </ng-template>
+    </button>
+  </div>
+
+  <!-- ✅ Stock Info -->
+  <div
+    class="mobile-stock-info"
+    *ngIf="product()?.stockStatus === 'out_of_stock'"
+  >
+    <span>Out of Stock</span>
+  </div>
+</div>
+
 
 <!-- ✅ Related Products Section -->
 <div class="related-products-wrapper">

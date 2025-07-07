@@ -165,6 +165,7 @@ closeOverlay() {
 }
 
 applyFilters() {
+  this.resetFilters();
   this.closeOverlay();
   // trigger filter logic if needed
 }

@@ -21,6 +21,7 @@ import { BreadcrumbComponent } from '../../../../shared/components/breadcrumb/br
 import { BreadcrumbFacade } from '../../../../core/state/breadcrumb.facade';
 import { MatIconModule } from '@angular/material/icon';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { HtmlDecodePipe } from '../../../../core/pipes/html-decode.pipe';
 
 @Component({
   selector: 'app-view-product',
@@ -31,7 +32,8 @@ import { trigger, transition, style, animate } from '@angular/animations';
     ReviewContainerComponent,
     ProductComponent,
     BreadcrumbComponent,
-    MatIconModule
+    MatIconModule,
+    HtmlDecodePipe
   ],
   templateUrl: './view-product.component.html',
   styleUrl: './view-product.component.scss',
@@ -59,7 +61,7 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
   private wishlistFacade = inject(WishlistFacade);
   private seoService = inject(SeoService);
   private breadCrumbFacade = inject(BreadcrumbFacade);
-
+  isScreenBetween996And400: boolean = false;
   product = signal<IProduct | null>(null); // ✅ Reactive Signal for Product Data
   quantity = signal<number>(1); // ✅ Default Quantity
   isLoading = signal<boolean>(true); // ✅ Loading State for Skeleton
@@ -112,7 +114,15 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
       this.showShareMenu = false;
     }
   }
+ @HostListener('window:resize', [])
+  onResize() {
+    this.checkScreenWidth();
+  }
 
+  private checkScreenWidth() {
+    const width = window.innerWidth;
+    this.isScreenBetween996And400 = width <= 958 && width >= 320 ;
+  }
 
   ngOnInit(): void {
     this.route.params
@@ -120,7 +130,10 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
         const productId = params['id'];
         this.fetchProductDetails(productId);
       });
-
+    this.checkScreenWidth();
+        window.addEventListener('resize', () => {
+          this.checkScreenWidth();
+        });
     this.wishlistItems = this.wishlistFacade.wishlistSignal;
 
     this.updateWishlistCheck();

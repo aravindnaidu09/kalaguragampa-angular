@@ -132,7 +132,9 @@ export class ProductsPageComponent {
     this.filtersChanged.set(params);
     this.currentPage.set(1);
 
-    const merged = { ...this.filters(), ...params, page: 1 };
+    // Remove category_id if it's an empty string or null, otherwise keep it
+    const merged = { ...this.filters(), ...(params ?? {}), page: 1 };
+ 
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: merged,
@@ -177,6 +179,8 @@ export class ProductsPageComponent {
       relativeTo: this.route,
       queryParams: {}
     });
+    this.products.set([]); // Clear products before fetching new data
+
     this.fetchProducts();
   }
 
