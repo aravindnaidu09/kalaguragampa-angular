@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, Signal, ViewChild, computed, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, Signal, ViewChild, ChangeDetectorRef, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../_services/product.service';
 import { IProduct } from '../../_models/product-model';
@@ -61,6 +61,7 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
   private wishlistFacade = inject(WishlistFacade);
   private seoService = inject(SeoService);
   private breadCrumbFacade = inject(BreadcrumbFacade);
+  private cdr = inject(ChangeDetectorRef);
   isScreenBetween996And400: boolean = false;
   product = signal<IProduct | null>(null); // ✅ Reactive Signal for Product Data
   quantity = signal<number>(1); // ✅ Default Quantity
@@ -112,6 +113,7 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
     const target = event.target as HTMLElement;
     if (!this.shareMenuRef?.nativeElement.contains(target) && !this.shareIconRef?.nativeElement.contains(target)) {
       this.showShareMenu = false;
+     
     }
   }
  @HostListener('window:resize', [])
@@ -128,6 +130,8 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
     this.route.params
       .subscribe((params: any) => {
         const productId = params['id'];
+        console.log("Product ID from route params:", productId);
+        this.product.set({ id: productId, name: params['name'] } as IProduct); // Set product id and empty name before fetching
         this.fetchProductDetails(productId);
       });
     this.checkScreenWidth();
@@ -155,8 +159,9 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
   }
 
   updateWishlistCheck(): void {
+    const productId = String(this.product()?.id);
     const inWishlist = !!this.wishlistFacade.wishlistSignal()?.find(
-      w => w.productDetails.id === this.product()?.id
+      w => String(w.productDetails.id) === productId
     );
     this.doesExistsInWishlist.set(inWishlist);
   }
@@ -384,10 +389,11 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
       });
     }
   }
-
   toggleShareMenu(): void {
     this.showShareMenu = !this.showShareMenu;
+    this.cdr.detectChanges();
   }
+  
 
   share(platform: string) {
   const url = window.location.href;

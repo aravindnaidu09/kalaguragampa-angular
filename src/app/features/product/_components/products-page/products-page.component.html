@@ -2,7 +2,7 @@
 
   <!-- ✅ Left Sidebar (Product Filters) -->
   <aside class="filter-section">
-    <app-product-filters (filtersChanged)="updateFilters($event)"></app-product-filters>
+    <app-product-filters (filtersChanged)="updateFilters($event)" [selectedCat]="selectedCategoryId" ></app-product-filters>
   </aside>
 
   <!-- ✅ Right Section (Sort Filter + Product List) -->

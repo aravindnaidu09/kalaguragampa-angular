@@ -11,6 +11,8 @@ import { WishlistFacade } from '../../../cart/_state/wishlist.facade';
 import { ToastService } from '../../../../core/services/toast.service';
 import { IWishlist } from '../../_models/wishlist-model';
 import { CurrencyService } from '../../../../core/services/currency.service';
+import { Store } from '@ngxs/store';
+import { AddToCart } from '../../../cart/_state/cart.actions';
 
 @Component({
   selector: 'app-detailed-product-list',
@@ -35,6 +37,7 @@ export class DetailedProductListComponent implements OnInit, OnChanges {
   @Input() wishlistItems!: Signal<IWishlist[]>;
 
   constructor(private readonly productService: ProductService,
+     private readonly store: Store,
     private readonly router: Router,
     private readonly authService: AuthService,
     private readonly wishlistFacade: WishlistFacade,
@@ -57,7 +60,14 @@ export class DetailedProductListComponent implements OnInit, OnChanges {
     return items?.some(item => item.productDetails?.id === productId) ?? false;
   }
 
-
+addProductToCart(product: IProduct): void {
+    if (!this.authService.isAuthenticated()) {
+      this.toastService.showWarning('Please log in to add items to your cart!');
+      return;
+    }
+    this.store.dispatch(new AddToCart(product.id!, 1));
+    this.toastService.showSuccess('Product added to cart successfully!');
+    }
 
   navigateToProductPage(item: IProduct) {
     this.router.navigate([`/product/${item.name}/${item.id}`]);

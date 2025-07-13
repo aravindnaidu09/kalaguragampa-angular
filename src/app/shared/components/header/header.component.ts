@@ -1,12 +1,12 @@
 import { CommonModule, Location } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DoCheck, ElementRef, HostListener, Input, OnChanges, OnInit, Signal, SimpleChanges, ViewChild, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DoCheck, ElementRef, HostListener, Input, OnChanges, OnInit, Signal, SimpleChanges, ViewChild, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from "../../../features/auth/_components/login/login.component";
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MenuDropdownComponent, MenuItem } from '../menu-dropdown/menu-dropdown.component';
 import { DialogComponent } from '../dialog/dialog.component';
 import { MenuService } from '../../../core/services/menu.service';
-import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subject, take } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { SearchProducts, SearchState } from '../../../features/product/_state/search.state';
 import { IProduct } from '../../../features/product/_models/product-model';
@@ -18,6 +18,8 @@ import { WishlistFacade } from '../../../features/cart/_state/wishlist.facade';
 import { AuthService } from '../../../features/auth/_services/auth.service';
 import { CartFacade } from '../../../features/cart/_state/cart.facade';
 import { CurrencyService } from '../../../core/services/currency.service';
+import { ICategory } from '../../../features/product/_models/category-model';
+import { ProductListComponent } from '../../../features/product/_components/product-list/product-list.component';
 
 @Component({
   selector: 'app-header',
@@ -67,7 +69,7 @@ export class HeaderComponent implements OnInit {
   isLoading = signal(false);
   fullPath: string = '';
   hashRoute: string = '';
-
+  
   countryOptions = [
     // { label: 'Australia', value: 'AUD' },
     // { label: 'Canada', value: 'CAD' },
@@ -77,6 +79,7 @@ export class HeaderComponent implements OnInit {
     // { label: 'USA', value: 'USD' },
     // { label: 'Singapore', value: 'SGD' }
   ];
+  Cat_Products: any;
 
   // Close dropdown if clicked outside
   @HostListener('document:click', ['$event'])
@@ -117,6 +120,7 @@ export class HeaderComponent implements OnInit {
     readonly cartFacade: CartFacade,
     private location: Location,
     private readonly currencyService: CurrencyService,
+    private readonly productService: ProductService
   ) {
     this.searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(query => {
       if (query.length >= 2) {
@@ -127,6 +131,7 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.preloadCategories();
     this.setMenuItems();
     this.fetchWishlistCount();
     this.fetchCartCount();
@@ -309,6 +314,58 @@ export class HeaderComponent implements OnInit {
     }
     this.router.navigate(['/cart']);
   }
+
+  onSearchIconClick(){
+
+  }
+
+  showDesktopCategories = false;
+  showMobileCategories = false;
+categorySearchText = '';
+
+toggleDesktopCategories() {
+  this.showDesktopCategories = !this.showDesktopCategories;
+}
+  categories = signal<ICategory[]>([]);
+  CategorySelection$ = new Subject<number>();
+  categoryList:ICategory[] = [];
+filteredCategories() {  
+  return this.categoryList.filter(cat =>
+    cat.name.toLowerCase().includes(this.categorySearchText.toLowerCase())
+  );
+}
+ preloadCategories(): void {
+    this.productService.getCategories().pipe(take(1)).subscribe({
+      next: (categories) => {
+        this.categories = this.categoryList = categories;
+        this.isLoading.set(false);
+        console.log('Preloaded Categories:', this.categories);
+        this.filteredCategories();
+      },
+      error: () => this.isLoading.set(false),
+    });
+  }
+onCategoryClick(cat: any) {
+  console.log('Selected category:', cat);
+  this.showDesktopCategories = false;
+  if(this.showMobileCategories){
+    this.showMobileCategories = false;
+  }
+  this.router.navigate([`/detail-view`], { queryParams: { category_id: cat.id, page: 0} });
+  // Navigate or filter products
+}
+
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: Event) {
+  const clickedElement = event.target as HTMLElement;
+
+  // Check if the click was inside the dropdown OR button
+  if (
+    !clickedElement.closest('.desktop-category-dropdown')
+  ) {
+    this.showDesktopCategories = false;
+  }
+}
 
   goToWishlistPage() {
     this.checkMenuDropdownIsOpen();

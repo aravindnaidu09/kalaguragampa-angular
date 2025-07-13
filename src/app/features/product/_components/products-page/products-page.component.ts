@@ -53,7 +53,7 @@ export class ProductsPageComponent {
   // ✅ Pagination State
   currentPage = signal<number>(1);
   itemsPerPage = signal<number>(50); // ✅ Adjust as needed
-
+selectedCategoryId: number | null = null;
   // ✅ Compute Total Pages (Avoid using `Math` directly)
   totalPages = computed(() => {
     return this.totalProducts() ? Math.ceil(this.totalProducts() / this.itemsPerPage()) : 1;
@@ -71,6 +71,8 @@ export class ProductsPageComponent {
 
     this.route.queryParams.subscribe(params => {
       this.filters.set(params);
+      this.selectedCategoryId = params['category_id'] ? Number(params['category_id']) : null;
+      this.sortBy.set(params['sort_by'] || 'latest');
       this.currentPage.set(Number(params['page']) || 1);
       this.handleSeoBasedOnFilters(params);
       this.fetchProducts();

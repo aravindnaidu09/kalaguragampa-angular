@@ -49,11 +49,11 @@
 
         </button>
         <button #shareIconRef mat-icon-button aria-label="Share" tooltip="Share" (click)="toggleShareMenu()">
-          <span title="Share" class="icon-button">🔗</span>
+            <mat-icon aria-label="Share" title="Share">share</mat-icon>
         </button>
 
         <!-- 📤 Share Popup Menu -->
-        <div #shareMenuRef class="share-menu" *ngIf="showShareMenu">
+        <div #shareMenuRef class="share-menu" *ngIf="showShareMenu && !isScreenBetween996And400">
           <div class="share-option facebook" (click)="share('facebook')">
             <div class="icon-circle"><i class="fab fa-facebook-f"></i></div>
             <span>Facebook</span>
@@ -165,13 +165,31 @@
         </ng-template>
       </button>
 
-      <button
-        mat-icon-button
-        aria-label="Share"
-        (click)="toggleShareMenu()"
-      >
-        <span class="icon-button">🔗</span>
+      <button #mobileShareMenuRef mat-icon-button aria-label="Share" tooltip="Share" (click)="toggleShareMenu()">
+         <mat-icon aria-label="Share" title="Share">share</mat-icon>
       </button>
+      <div #mobileShareMenuRef class="share-menu" *ngIf="showShareMenu && isScreenBetween996And400">
+          <div class="share-option facebook" (click)="share('facebook')">
+            <div class="icon-circle"><i class="fab fa-facebook-f"></i></div>
+            <span>Facebook</span>
+          </div>
+          <div class="share-option twitter" (click)="share('twitter')">
+            <div class="icon-circle"><i class="fab fa-twitter"></i></div>
+            <span>Twitter</span>
+          </div>
+          <div class="share-option email" (click)="share('email')">
+            <div class="icon-circle"><i class="fas fa-envelope"></i></div>
+            <span>Email</span>
+          </div>
+          <div class="share-option whatsapp" (click)="share('whatsapp')">
+            <div class="icon-circle"><i class="fab fa-whatsapp"></i></div>
+            <span>WhatsApp</span>
+          </div>
+          <div class="share-option copy-url" (click)="share('copy')">
+            <div class="icon-circle"><i class="fas fa-link"></i></div>
+            <span>Copy URL</span>
+          </div>
+        </div>
     </div>
   </div>
 
@@ -184,13 +202,7 @@
       {{ currencyService.getSymbol() }}{{ currencyService.convertPrice(product()?.price) }}
     </span>
   </div>
-
-  <!-- ✅ Description -->
-  <div class="mobile-product-description"[innerHTML]=" product()?.description | htmlDecode">
-    <!-- Using HtmlDecodePipe to decode HTML entities -->
-  </div>
-
-  <!-- ✅ Quantity Selector -->
+<!-- ✅ Quantity Selector -->
   <div class="mobile-quantity-wrapper">
     <button
       class="quantity-btn"
@@ -248,6 +260,12 @@
   >
     <span>Out of Stock</span>
   </div>
+  <!-- ✅ Description -->
+  <div class="mobile-product-description"[innerHTML]=" product()?.description | htmlDecode">
+    <!-- Using HtmlDecodePipe to decode HTML entities -->
+  </div>
+
+  
 </div>
 
 

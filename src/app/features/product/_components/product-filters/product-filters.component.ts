@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, HostListener, OnInit, Output, signal } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ICategory } from '../../_models/category-model';
 import { ProductService } from '../../_services/product.service';
@@ -16,10 +16,12 @@ import { debounceTime, Subject } from 'rxjs';
   styleUrl: './product-filters.component.scss',
   providers: [ProductService]
 })
-export class ProductFiltersComponent implements OnInit {
+export class ProductFiltersComponent implements OnInit,OnChanges {
   /** ✅ Output EventEmitter to send filters to parent */
   @Output() filtersChanged = new EventEmitter<IProductQueryParams>();
+  @Input() selectedCat: number | null = null;
 isScreenBetween996And400: boolean = false;
+
   // ✅ Categories List
   categories: ICategory[] = [];
 
@@ -54,6 +56,14 @@ isScreenBetween996And400: boolean = false;
     window.addEventListener('resize', () => {
       this.checkScreenWidth();
     });
+  }
+  ngOnChanges() {
+    this.selectedCategory.set(this.selectedCat);
+    if (this.selectedCat) {
+      this.productParams.category_id = this.selectedCat;
+    } else {
+      delete this.productParams.category_id;
+    }
   }
  @HostListener('window:resize', [])
   onResize() {
