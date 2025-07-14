@@ -13,7 +13,7 @@
 
       <div class="product-meta">
         <span class="price">{{ currencyService.getSymbol() }}{{ currencyService.convertPrice(product.price) }}</span>
-        <span class="rating">(4.1) ⭐ | 200</span>
+        
       </div>
 
       <!-- ✅ Wishlist & Add to Cart -->
@@ -24,8 +24,20 @@
         </div>
       </div>
 
-      <div class="add-to-cart">
-        <button class="btn " (click)="addProductToCart(product)">Add to Cart</button>
+      <div class="add-to-cart-wrapper d-flex">
+         <!-- <div class="rating-cart-wrapper"> -->
+      <div class="product-rating">
+        ({{ product.rating ?? 4.1 }}) ⭐ | 200
+      </div>
+
+      <div class="add-to-cart-wrapper" (click)="addProductToCart(product)">
+        <span class="add-to-cart-icon" role="button" tabindex="0" aria-label="Add to Cart">🛒</span>
+        <!-- <i class="pi pi-shopping-cart add-to-cart-icon"></i> -->
+        <div class="tooltip">Add to Cart</div>
+      </div>
+    <!-- </div> -->
+        <!-- <span class="rating">(4.1) ⭐ | 200</span>
+        <button class="btn " (click)="addProductToCart(product)">Add to Cart</button> -->
         </div>
     </div>
   </div>

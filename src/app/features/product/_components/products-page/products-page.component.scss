@@ -74,3 +74,17 @@
   0% { background-position: -200px; }
   100% { background-position: 200px; }
 }
+
+@media (max-width: 768px) {
+  .product-page-container {
+    grid-template-columns: 1fr; // Stack filters & list on mobile
+  }
+
+  .filter-section {
+    max-height: 60vh; // Reduce height on mobile
+  }
+  .product-page-container{
+    padding: 10px; // Reduce padding on mobile
+    gap:10px;
+  }
+}

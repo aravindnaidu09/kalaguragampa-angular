@@ -336,16 +336,15 @@
 
   .search-suggestions-md {
     background: #fff;
-    border: 1px solid #ddd;
-    max-height: 300px;
+    max-height: 350px;
     overflow-y: auto;
     position: absolute;
     top: auto;
     bottom: 100%;
-    width: 100%;
+    width: 95%;
     z-index: 10;
     background: #fff;
-    border: 1px solid #ddd;
+    border: 1px solid #682f12;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     ul {
       list-style: none;
@@ -359,6 +358,7 @@
       border-bottom: 1px solid #e0e0e0;
       padding: 8px 0;
       cursor: pointer;
+      font-size: small;
 
       &:hover,
       &.highlighted {
@@ -474,7 +474,6 @@
   bottom: 58px;
   left: 50%;
   transform: translateX(-7%);
-  
   width: 90vw;
   max-width: 400px;
   max-height: 50vh;

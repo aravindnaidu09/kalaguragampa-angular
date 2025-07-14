@@ -646,7 +646,32 @@
       }
     }
   }
-  
+  .mobile-product-detail {
+    padding: 16px;
+
+    .mobile-image-section {
+      text-align: center;
+
+      .main-mobile-product-image {
+        max-width: 250px;
+        height: auto;
+        margin-bottom: 16px;
+      }
+
+      .mobile-thumbnail-container {
+        justify-content: center !important;
+        display: flex;
+      }
+    }
+
+    .mobile-header-row {
+      align-items: flex-start;
+    }
+
+    .mobile-actions {
+      justify-content: center;
+    }
+  }
 }
 @media (min-width: 768px) and (max-width: 1024px) {
   .mobile-product-detail {

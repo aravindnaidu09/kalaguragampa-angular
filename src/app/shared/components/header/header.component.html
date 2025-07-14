@@ -99,7 +99,6 @@
         class="search-icon-btn"
         type="button"
         style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 0; cursor: pointer;"
-        (click)="onSearchIconClick()"
         tabindex="-1"
         aria-label="Search"
       >
@@ -192,8 +191,7 @@
   <div class="mobile-category-wrapper">
     <button
       class="category-toggle-btn d-inline d-lg-none"
-      (click)="showMobileCategories = !showMobileCategories"
-    >
+      (click)="toggleMobileCategories()">
       <i class="fa-solid fa-list"></i>
     </button>
 
@@ -209,9 +207,10 @@
       [(ngModel)]="categorySearchText"
     /> -->
       <ul>
-        <li
+        <li class="category-item d-flex justify-content-between align-items-center"
           *ngFor="let cat of filteredCategories()"
           (click)="onCategoryClick(cat)"
+          style="font-size: small;"
         >
           <span>{{ cat.name }} ({{ cat.product_count }})</span>
         </li>
@@ -236,13 +235,37 @@
       class="search-icon-btn"
       type="button"
       style="position: absolute; right: 20px; top: 40%; transform: translateY(-50%); background: none; border: none; padding: 0; cursor: pointer;"
-      (click)="onSearchIconClick()"
       tabindex="-1"
       aria-label="Search"
     >
       <img src="../../../../assets/images/search.png" width="20" height="20" alt="Search Icon" />
     </button>
   </div>
+  <div class="search-suggestions search-suggestions-md" *ngIf="showSuggestions()">
+      <ng-container *ngIf="(products$ | async)?.length! > 0; else noResults">
+        <ul>
+          <li class="d-flex align-items-start justify-content-start px-3"
+            *ngFor="let product of products$ | async; let i = index"
+            (click)="goToProductDetails(product)"
+            [ngClass]="{ 'highlighted': i === selectedIndex() }"
+          >
+            <img
+              [src]="getImagePath(product.images![0].image)"
+              alt="{{ product.name }}"
+              class="product-img"
+              (error)="onImageError($event)"
+            />
+            <div class="product-info">
+              <span class="product-name">{{ product.name }}</span>
+              <span class="product-price">₹{{ product.price }}</span>
+            </div>
+          </li>
+        </ul>
+      </ng-container>
+      <ng-template #noResults>
+        <div class="no-results">No products found</div>
+      </ng-template>
+    </div>
 </div>
 
 

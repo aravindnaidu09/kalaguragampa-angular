@@ -179,6 +179,10 @@ export class HeaderComponent implements OnInit {
     this.searchQuery.set(inputValue);
     this.searchSubject.next(inputValue);
     this.isLoading.set(false);
+    if(this.showMobileCategories || this.showDesktopCategories) {
+      this.showMobileCategories = false;
+      this.showDesktopCategories = false;
+    }
   }
 
   // ✅ Keyboard Navigation with Scrolling
@@ -315,16 +319,25 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/cart']);
   }
 
-  onSearchIconClick(){
-
-  }
 
   showDesktopCategories = false;
   showMobileCategories = false;
 categorySearchText = '';
 
 toggleDesktopCategories() {
+  
+  if (this.searchQuery()) {
+    this.searchQuery.set('');
+    this.showSuggestions.set(false);
+  }
   this.showDesktopCategories = !this.showDesktopCategories;
+}
+toggleMobileCategories() {
+  if (this.searchQuery()) {  
+    this.searchQuery.set('');
+    this.showSuggestions.set(false);  
+   }
+  this.showMobileCategories = !this.showMobileCategories;
 }
   categories = signal<ICategory[]>([]);
   CategorySelection$ = new Subject<number>();
@@ -351,6 +364,7 @@ onCategoryClick(cat: any) {
   if(this.showMobileCategories){
     this.showMobileCategories = false;
   }
+
   this.router.navigate([`/detail-view`], { queryParams: { category_id: cat.id, page: 0} });
   // Navigate or filter products
 }
