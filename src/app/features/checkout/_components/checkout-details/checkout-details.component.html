@@ -1,5 +1,6 @@
   <h5 class="section-title">Checkout Page</h5>
-  <div class="checkout-container d-none d-md-flex">
+  {{isScreenBetween996And400 ? 'Mobile View' : 'Desktop View'}}
+  <div class="checkout-container" *ngIf="!isScreenBetween996And400">
     <!-- LEFT: Stepper Accordion -->
     <div class="checkout-left">
       <!-- Step 0: Delivery Address -->
@@ -82,7 +83,7 @@
     </div>
   </div>
    <!-- Mobile Tab View: Modern 4-Step Checkout -->
-  <div class="mobile-checkout-steps d-lg-none d-sm-flex">
+  <div class="mobile-checkout-steps " *ngIf="isScreenBetween996And400">
     <!-- <div class="mobile-stepper">
       <div 
         *ngFor="let step of ['Delivery Address', 'Add New Address', 'Order Summary', 'Payment']; let i = index"

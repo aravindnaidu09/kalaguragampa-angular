@@ -93,3 +93,13 @@ $primary-brown: #682f12;
     }
   }
 }
+
+@media (max-width: 768px) {
+  .address-form {
+    .form-grid {
+      grid-template-columns: 1fr; // Stack fields on smaller screens
+      
+    }
+  }
+  
+}

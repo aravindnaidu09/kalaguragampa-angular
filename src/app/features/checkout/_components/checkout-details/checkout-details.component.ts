@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { ShippingBillingComponent } from "../shipping-billing/shipping-billing.component";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -57,10 +57,22 @@ export class CheckoutDetailsComponent implements OnInit {
   isProcessingPayment = false;
 
   constructor(private dialog: MatDialog) {}
-
+isScreenBetween996And400: boolean = false;
 
   ngOnInit(): void {
+    this.checkScreenWidth();
     // this.fetchDeliveryOptions();
+  }
+@HostListener('window:resize', [])
+  onResize() {
+    this.checkScreenWidth();
+  }
+
+  private checkScreenWidth() {
+    const width = window.innerWidth;
+    console.log('Window width:', width);
+    
+    this.isScreenBetween996And400 = width <= 1024 && width >= 350;
   }
 
   // fetchDeliveryOptions(): void {
