@@ -24,12 +24,14 @@ import { TrackState } from './features/orders/_state/track.state';
 import { ReviewState } from './features/product/_state/review.state';
 import { BreadcrumbState } from './core/state/breadcrumb.state';
 import { CouponState } from './features/cart/_state/coupon.state';
+import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { messageInterceptor } from './core/interceptors/message.interceptor';
 
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, messageInterceptor])),
     provideRouter(routes, withHashLocation()),
     provideAnimationsAsync(),
     provideHttpClient(),

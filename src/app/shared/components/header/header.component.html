@@ -7,7 +7,8 @@
     <a href="https://www.youtube.com/c/KalaguraGampa" target="_blank" rel="noopener noreferrer">
       <img src="../../../../assets/images/youtube-48.png" alt="YouTube" />
     </a>
-    <a href="https://x.com/i/flow/login?redirect_after_login=%2FKalagura_gampa" target="_blank" rel="noopener noreferrer">
+    <a href="https://x.com/i/flow/login?redirect_after_login=%2FKalagura_gampa" target="_blank"
+      rel="noopener noreferrer">
       <img src="../../../../assets/images/x-48.png" alt="Twitter" />
     </a>
     <a href="https://www.instagram.com/kalagura_gampa/" target="_blank" rel="noopener noreferrer">
@@ -18,13 +19,15 @@
     <div class="location-dropdown">
       <select [(ngModel)]="selectedCountry" (change)="onCurrencyChange(selectedCountry)">
         @for (item of countryOptions; track item.value) {
-          <option [ngValue]="item.value">{{ item.label }}</option>
+        <option [ngValue]="item.value">{{ item.label }}</option>
         }
       </select>
     </div>
     <div class="customer-care">
-      <img width="20" height="20" src="../../../../assets/images/customer-support.gif" alt="Customer Care"   class="custCareIcon"/>
-      <a class="text-white text-decoration-none" href="tel:04071903466" title="Dedicated Help Center (IST 9:30 AM to 6 :00 PM)">
+      <img width="20" height="20" src="../../../../assets/images/customer-support.gif" alt="Customer Care"
+        class="custCareIcon" />
+      <a class="text-white text-decoration-none" href="tel:04071903466"
+        title="Dedicated Help Center (IST 9:30 AM to 6 :00 PM)">
         040-71903466
       </a>
     </div>
@@ -34,95 +37,65 @@
 <!-- Header -->
 <header class="app-header">
   <div class="logo" (click)="goToHomePage()">
-    <img src="../../../../assets/images/logo.png" alt="Kalaguragampa Logo" class="KgLogo"/>
+    <img src="../../../../assets/images/logo.png" alt="Kalaguragampa Logo" class="KgLogo" />
     <span class="brand-text">Kalagura Gampa</span>
   </div>
 
-    <div class="header-actions d-none d-lg-flex" *ngIf="!compact">
-      
-<div class="desktop-category-dropdown d-none d-lg-block">
-  <button
-    class="category-dropdown-btn"
-    (click)="toggleDesktopCategories()"
-  >
-    <i class="fa-solid fa-list"></i>
-    Shop by Category
-    <span class="category-count" *ngIf="filteredCategories().length > 0">
-      ({{ filteredCategories().length }})
-    </span>
-    <i
-      class="fa-solid"
-      [ngClass]="{
+  <div class="header-actions d-none d-lg-flex" *ngIf="!compact">
+
+    <div class="desktop-category-dropdown d-none d-lg-block">
+      <button class="category-dropdown-btn" (click)="toggleDesktopCategories()">
+        <i class="fa-solid fa-list"></i>
+        Shop by Category
+        <span class="category-count" *ngIf="filteredCategories().length > 0">
+          ({{ filteredCategories().length }})
+        </span>
+        <i class="fa-solid" [ngClass]="{
         'fa-angle-down': !showDesktopCategories,
         'fa-angle-up': showDesktopCategories
-      }"
-    ></i>
-  </button>
-  <div
-    class="desktop-category-list d-block"
-    *ngIf="showDesktopCategories"
-    (click)="$event.stopPropagation()"
-  >
-    <!-- <input
+      }"></i>
+      </button>
+      <div class="desktop-category-list d-block" *ngIf="showDesktopCategories" (click)="$event.stopPropagation()">
+        <!-- <input
       type="text"
       class="category-search"
       placeholder="Search categories..."
       [(ngModel)]="categorySearchText"
     /> -->
 
-    <ul>
-      <li *ngFor="let cat of filteredCategories()" (click)="onCategoryClick(cat)">
-        <span>{{ cat.name }}({{cat.product_count}})</span>
-      </li>
-    </ul>
+        <ul>
+          <li *ngFor="let cat of filteredCategories()" (click)="onCategoryClick(cat)">
+            <span>{{ cat.name }}({{cat.product_count}})</span>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
-</div>
 
-
-  </div>
-  
   <!-- DESKTOP SEARCH BAR -->
   <div class="search-bar d-none d-lg-flex" *ngIf="!compact">
     <div class="search-input-wrapper" style="position: relative; width: 100%;">
-      <input
-        type="text"
-        class="search-input w-100 rounded-5"
-        placeholder="Search for products..."
-        [value]="searchQuery()"
-        (input)="onSearchChange($event)"
-        (keydown)="onSearchKeyDown($event)"
-        (click)="checkMenuDropdownIsOpen()"
-        aria-label="Search for products"
-        style="padding-right: 40px;"
-      />
-      <button
-        class="search-icon-btn"
-        type="button"
+      <input type="text" class="search-input w-100 rounded-5" placeholder="Search for products..."
+        [value]="searchQuery()" (input)="onSearchChange($event)" (keydown)="onSearchKeyDown($event)"
+        (click)="checkMenuDropdownIsOpen()" aria-label="Search for products" style="padding-right: 40px;" />
+      <button class="search-icon-btn" type="button"
         style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 0; cursor: pointer;"
-        tabindex="-1"
-        aria-label="Search"
-      >
+        tabindex="-1" aria-label="Search">
         <img src="../../../../assets/images/search.png" width="20" height="20" alt="Search Icon" />
       </button>
     </div>
-    
+
     <div class="loader-spinner" *ngIf="isLoading()" aria-label="Loading..."></div>
 
     <div class="search-suggestions search-suggestions-lg" *ngIf="showSuggestions()">
       <ng-container *ngIf="(products$ | async)?.length! > 0; else noResults">
         <ul>
-          <li
-            *ngFor="let product of products$ | async; let i = index"
-            (click)="goToProductDetails(product)"
-            [ngClass]="{ 'highlighted': i === selectedIndex() }"
-          >
-            <img src="../../../../assets/images/search.png" width="18" height="18" alt="Search Icon" class="search-icon" />
-            <img
-              [src]="getImagePath(product.images![0].image)"
-              alt="{{ product.name }}"
-              class="product-img"
-              (error)="onImageError($event)"
-            />
+          <li *ngFor="let product of products$ | async; let i = index" (click)="goToProductDetails(product)"
+            [ngClass]="{ 'highlighted': i === selectedIndex() }">
+            <img src="../../../../assets/images/search.png" width="18" height="18" alt="Search Icon"
+              class="search-icon" />
+            <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" class="product-img"
+              (error)="onImageError($event)" />
             <div class="product-info">
               <span class="product-name">{{ product.name }}</span>
               <span class="product-price">₹{{ product.price }}</span>
@@ -137,27 +110,22 @@
   </div>
 
   <div class="header-actions" *ngIf="!compact">
-     <div class="action-item" (click)="goToHomePage()">
-         <img src="../../../../assets/images/Home_Icon.png" width="20" height="20" alt="Home Icon" />
-          <span class="d-none d-sm-flex">Home</span>
-        </div>
+    <!-- <div class="action-item" (click)="goToHomePage()">
+      <img src="../../../../assets/images/Home_Icon.png" width="20" height="20" alt="Home Icon" />
+      <span class="d-none d-sm-flex">Home</span>
+    </div> -->
     <div class="account-wrapper" (click)="toggleMenu()" aria-haspopup="true">
-    
-
       <div class="action-item account-item">
         <img src="../../../../assets/images/Account.png" width="20" height="20" alt="Account Icon" />
         <span class="d-none d-sm-flex">Account</span>
       </div>
-      <app-menu-dropdown
-        *ngIf="isMenuOpen"
-        [menuItems]="menuItems()"
-        (menuAction)="onMenuAction($event)"
-        aria-label="Account Dropdown Menu"
-      ></app-menu-dropdown>
+      <app-menu-dropdown *ngIf="isMenuOpen" [menuItems]="menuItems()" (menuAction)="onMenuAction($event)"
+        aria-label="Account Dropdown Menu"></app-menu-dropdown>
     </div>
 
     <div class="action-item" (click)="goToWishlistPage()">
-      <img class="wishlist-image" src="../../../../assets/images/Wishlist.png" width="20" height="20" alt="Wishlist Icon" />
+      <img class="wishlist-image" src="../../../../assets/images/Wishlist.png" width="20" height="20"
+        alt="Wishlist Icon" />
       <span class="d-none d-sm-flex">Wishlist</span>
       <div class="wishlist-badge" *ngIf="wCount() > 0">{{ wCount() }}</div>
     </div>
@@ -169,18 +137,12 @@
     </div>
   </div>
 
-  <app-dialog
-    [isVisible]="isLoginDialogVisible"
-    [contentTemplate]="loginTemplate"
-    (closeDialog)="closeLoginDialog(true)"
-  ></app-dialog>
+  <app-dialog [isVisible]="isLoginDialogVisible" [contentTemplate]="loginTemplate"
+    (closeDialog)="closeLoginDialog(true)"></app-dialog>
 
   <ng-template #loginTemplate>
-    <app-login
-      [activeLoginMethod]="selectedLoginMethod"
-      (closeLoginDialog)="closeLoginDialog($event)"
-      (isLoginSuccess)="refreshHeaderState($event)"
-    ></app-login>
+    <app-login [activeLoginMethod]="selectedLoginMethod" (closeLoginDialog)="closeLoginDialog($event)"
+      (isLoginSuccess)="refreshHeaderState($event)"></app-login>
   </ng-template>
 </header>
 
@@ -189,18 +151,12 @@
 
   <!-- Floating Categories Button -->
   <div class="mobile-category-wrapper">
-    <button
-      class="category-toggle-btn d-inline d-lg-none"
-      (click)="toggleMobileCategories()">
+    <button class="category-toggle-btn d-inline d-lg-none" (click)="toggleMobileCategories()">
       <i class="fa-solid fa-list"></i>
     </button>
 
-    <div
-      class="mobile-category-dropdown"
-      *ngIf="showMobileCategories"
-      (click)="$event.stopPropagation()"
-    >
-     <!-- <input
+    <div class="mobile-category-dropdown" *ngIf="showMobileCategories" (click)="$event.stopPropagation()">
+      <!-- <input
       type="text"
       class="category-search"
       placeholder="Search categories..."
@@ -208,10 +164,7 @@
     /> -->
       <ul>
         <li class="category-item d-flex justify-content-between align-items-center"
-          *ngFor="let cat of filteredCategories()"
-          (click)="onCategoryClick(cat)"
-          style="font-size: small;"
-        >
+          *ngFor="let cat of filteredCategories()" (click)="onCategoryClick(cat)" style="font-size: small;">
           <span>{{ cat.name }} ({{ cat.product_count }})</span>
         </li>
       </ul>
@@ -220,52 +173,32 @@
 
   <!-- Search Bar (your existing code remains untouched) -->
   <div class="search-bar w-100 d-inline-flex">
-    <input
-      type="text"
-      class="search-input w-100 rounded-5"
-      placeholder="Search for products..."
-      [value]="searchQuery()"
-      (input)="onSearchChange($event)"
-      (keydown)="onSearchKeyDown($event)"
-      (click)="checkMenuDropdownIsOpen()"
-      aria-label="Search for products"
-      style="padding-right: 40px;"
-    />
-    <button
-      class="search-icon-btn"
-      type="button"
+    <input type="text" class="search-input w-100 rounded-5" placeholder="Search for products..." [value]="searchQuery()"
+      (input)="onSearchChange($event)" (keydown)="onSearchKeyDown($event)" (click)="checkMenuDropdownIsOpen()"
+      aria-label="Search for products" style="padding-right: 40px;" />
+    <button class="search-icon-btn" type="button"
       style="position: absolute; right: 20px; top: 40%; transform: translateY(-50%); background: none; border: none; padding: 0; cursor: pointer;"
-      tabindex="-1"
-      aria-label="Search"
-    >
+      tabindex="-1" aria-label="Search">
       <img src="../../../../assets/images/search.png" width="20" height="20" alt="Search Icon" />
     </button>
   </div>
   <div class="search-suggestions search-suggestions-md" *ngIf="showSuggestions()">
-      <ng-container *ngIf="(products$ | async)?.length! > 0; else noResults">
-        <ul>
-          <li class="d-flex align-items-start justify-content-start px-3"
-            *ngFor="let product of products$ | async; let i = index"
-            (click)="goToProductDetails(product)"
-            [ngClass]="{ 'highlighted': i === selectedIndex() }"
-          >
-            <img
-              [src]="getImagePath(product.images![0].image)"
-              alt="{{ product.name }}"
-              class="product-img"
-              (error)="onImageError($event)"
-            />
-            <div class="product-info">
-              <span class="product-name">{{ product.name }}</span>
-              <span class="product-price">₹{{ product.price }}</span>
-            </div>
-          </li>
-        </ul>
-      </ng-container>
-      <ng-template #noResults>
-        <div class="no-results">No products found</div>
-      </ng-template>
-    </div>
+    <ng-container *ngIf="(products$ | async)?.length! > 0; else noResults">
+      <ul>
+        <li class="d-flex align-items-start justify-content-start px-3"
+          *ngFor="let product of products$ | async; let i = index" (click)="goToProductDetails(product)"
+          [ngClass]="{ 'highlighted': i === selectedIndex() }">
+          <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" class="product-img"
+            (error)="onImageError($event)" />
+          <div class="product-info">
+            <span class="product-name">{{ product.name }}</span>
+            <span class="product-price">₹{{ product.price }}</span>
+          </div>
+        </li>
+      </ul>
+    </ng-container>
+    <ng-template #noResults>
+      <div class="no-results">No products found</div>
+    </ng-template>
+  </div>
 </div>
-
-

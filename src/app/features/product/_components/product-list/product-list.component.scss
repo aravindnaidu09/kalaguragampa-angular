@@ -1,4 +1,7 @@
-.shop-by-category, .new-arrivals, .week-top-sellers, .top-sellers {
+.shop-by-category,
+.new-arrivals,
+.week-top-sellers,
+.top-sellers {
   padding: 30px;
   background-color: #f9f9f9;
 
@@ -128,6 +131,17 @@
         flex: 0 0 auto;
         scroll-snap-align: start;
       }
+
+      &::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+        width: 60px;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #fff 100%);
+        pointer-events: none;
+      }
     }
 
     .scroll-button {
@@ -182,9 +196,13 @@
 }
 
 @media (max-width: 768px) {
-  .shop-by-category, .new-arrivals, .week-top-sellers, .top-sellers {
+
+  .shop-by-category,
+  .new-arrivals,
+  .week-top-sellers,
+  .top-sellers {
     padding: 10px;
-    
+
     .header h3 {
       font-size: 20px;
     }
@@ -210,5 +228,5 @@
       }
     }
   }
-  
+
 }

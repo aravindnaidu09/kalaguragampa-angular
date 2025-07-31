@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnInit, Signal, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnInit, Signal, signal, ViewChild } from '@angular/core';
 import { ICategory } from '../../_models/category-model';
 import { IProduct } from '../../_models/product-model';
 import { ProductService } from '../../_services/product.service';
@@ -14,6 +14,8 @@ import { AuthService } from '../../../auth/_services/auth.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { Store } from '@ngxs/store';
 import { AddToCart } from '../../../cart/_state/cart.actions';
+
+type ScrollRef = 'scrollContainer' | 'topSellersScroll' | 'weekTopSellersScroll' | 'newArrivalsScroll';
 
 @Component({
   selector: 'app-product-list',
@@ -57,6 +59,16 @@ export class ProductListComponent implements OnInit {
   @ViewChild('newArrivalsScroll') newArrivalsScroll!: ElementRef;
 
   @ViewChild('productCard') productCardComponent!: ProductComponent;
+
+  @HostListener('document:keydown.arrowRight')
+  onArrowRight() {
+    this.scrollCategoriesRight();
+  }
+
+  @HostListener('document:keydown.arrowLeft')
+  onArrowLeft() {
+    this.scrollCategoriesLeft();
+  }
 
 
   constructor(
@@ -180,8 +192,6 @@ export class ProductListComponent implements OnInit {
       return;
     }
 
-    console.log('checking-if-eventIsFiring');
-
     const isWishlisted = this.wishlistFacade.isInWishlistSignal(productId)();
     const map = new Map(this.wishlistUpdatingMap());
 
@@ -227,19 +237,22 @@ export class ProductListComponent implements OnInit {
     return product.id!;
   }
 
-  scrollLeft(refName: 'topSellersScroll' | 'weekTopSellersScroll' | 'newArrivalsScroll' | 'scrollContainer') {
-    const el = this[refName]?.nativeElement;
+  scrollLeft(refName: ScrollRef) {
+    const el = this[refName]?.nativeElement as HTMLElement;
     if (el) {
-      el.scrollBy({ left: -300, behavior: 'smooth' });
+      const scrollAmount = el.offsetWidth * 0.8;
+      el.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
     }
   }
 
-  scrollRight(refName: 'topSellersScroll' | 'weekTopSellersScroll' | 'newArrivalsScroll' | 'scrollContainer') {
-    const el = this[refName]?.nativeElement;
+  scrollRight(refName: ScrollRef) {
+    const el = this[refName]?.nativeElement as HTMLElement;
     if (el) {
-      el.scrollBy({ left: 300, behavior: 'smooth' });
+      const scrollAmount = el.offsetWidth * 0.8;
+      el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   }
+
 
   scrollCategoriesLeft(): void {
     this.categoryScrollRef?.nativeElement.scrollBy({ left: -150, behavior: 'smooth' });

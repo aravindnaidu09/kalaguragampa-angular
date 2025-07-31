@@ -30,13 +30,29 @@
       <div class="status">
         <!-- <span class="badge">{{ item.delivery_status }}</span> -->
         <span class="delivery">
-          {{ item.delivery_date ? ('Delivered on ' + (item.delivery_date | date: 'd MMM y')) : 'Awaiting Delivery' }}
+          {{ item.delivery_date
+          ? (item.delivery_status === 'Delivered'
+          ? ('Delivered on ' + (item.delivery_date | date: 'd MMM y'))
+          : ('Delivering by ' + (item.delivery_date | date: 'd MMM y')))
+          : 'Awaiting Delivery'
+          }}
+
         </span>
       </div>
     </div>
 
     <div class="right-actions">
       <button class="primary-btn" (click)="goToTrack(item.delivery_id!)">Track Order</button>
+      <button *ngIf="item.delivery_status === 'Pending'" class="btn-cancel-order"
+        (click)="onCancelOrder(item.delivery_id!)" [disabled]="cancelLoading">
+        <ng-container *ngIf="!cancelLoading; else loadingTpl">Cancel Order</ng-container>
+      </button>
+
+      <ng-template #loadingTpl>
+        <span class="spinner"></span> Cancelling...
+      </ng-template>
+
+
       <!-- <button *ngIf="!item.is_rated" class="review-btn" (click)="reviewProduct(item)">
         ★ Rate & Review Product
       </button> -->

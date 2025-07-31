@@ -20,7 +20,7 @@ export interface TrackStateModel {
 })
 @Injectable()
 export class TrackState {
-  constructor(private trackService: DeliveryService) {}
+  constructor(private trackService: DeliveryService) { }
 
   @Selector()
   static status(state: TrackStateModel): any | null {
@@ -53,4 +53,7 @@ export class TrackState {
       })
     );
   }
+
+
+
 }

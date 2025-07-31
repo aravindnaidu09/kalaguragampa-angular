@@ -6,6 +6,7 @@ import { IOrder } from '../_model/order-model';
 import { APP_SETTINGS } from '../../../core/constants/app-settings';
 import { ORDER_API_URLS } from '../../../core/constants/order-urls';
 import { deserializeOrders } from '../_model/order.adapter';
+import { DELIVERY_API_URLS } from '../../../core/constants/delivery-urls';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -37,6 +38,10 @@ export class OrderService {
         count: res.data.count
       }))
     );
+  }
+
+  cancelOrder(deliveryId: number): Observable<any> {
+    return this.http.post(`${APP_SETTINGS.apiBaseUrl}${DELIVERY_API_URLS.delivery.cancelOrder}`, { delivery_order_id: deliveryId });
   }
 
   /**

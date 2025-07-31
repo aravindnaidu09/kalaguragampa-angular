@@ -113,7 +113,7 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
     const target = event.target as HTMLElement;
     if (!this.shareMenuRef?.nativeElement.contains(target) && !this.shareIconRef?.nativeElement.contains(target)) {
       this.showShareMenu = false;
-     
+
     }
   }
  @HostListener('window:resize', [])
@@ -365,11 +365,6 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
     this.scrollContainer.nativeElement.scrollBy({ left: 300, behavior: 'smooth' });
   }
 
-  isWishlisted(): boolean {
-    // return this.wishlistItems.some(item => item.id === this.product()?.id);
-    return false;
-  }
-
   toggleWishlist(): void {
     // this.addToWishlist(this.product());
   }
@@ -393,7 +388,7 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
     this.showShareMenu = !this.showShareMenu;
     this.cdr.detectChanges();
   }
-  
+
 
   share(platform: string) {
   const url = window.location.href;

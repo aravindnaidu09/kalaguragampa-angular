@@ -9,6 +9,8 @@ import { ReviewProductInfo } from '../../../product/_models/add-review.model';
 import { ReviewFacade } from '../../../product/_state/review.facade';
 import { environment } from '../../../../../environments/environment.dev';
 import { OrderService } from '../../_services/order.service';
+import { OrderFacade } from '../../_state/order.facade';
+import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-order-card',
@@ -36,14 +38,15 @@ export class OrderCardComponent {
   private toast = inject(ToastService);
   private reviewFacade = inject(ReviewFacade);
   private orderService = inject(OrderService);
+  private orderFacade = inject(OrderFacade);
+  private confirmService = inject(ConfirmDialogService);
 
   @Input() item!: IOrder;
 
   collapsedOrders = new Set<number>(); // store collapsed order IDs
 
   invoiceLoading: { [orderId: number]: boolean } = {};
-
-
+  cancelLoading = false;
 
   // Map backend status to color class
   getStatusClass(status: string): string {
@@ -135,6 +138,34 @@ export class OrderCardComponent {
     (event.target as HTMLImageElement).src = `${environment.apiBaseUrl}/media/KG_LOGO.png`;
   }
 
+
+  onCancelOrder(deliveryId: number) {
+    this.confirmService.confirm({
+      title: 'Cancel Order',
+      message: 'Are you sure you want to cancel this order?',
+      confirmText: 'Yes, Cancel',
+      cancelText: 'No'
+    }).subscribe((confirmed) => {
+      if (confirmed) {
+        this.cancelLoading = true;
+        this.orderFacade.cancelOrder(deliveryId).subscribe({
+          next: () => {
+            this.cancelLoading = false;
+
+            // ✅ Optimistically update local signal
+            const current = this.item;
+            if (current) {
+              const updated = { ...current, status: 'Cancelled' };
+              this.orderFacade.updateTrackingSignal(updated); // 👈 implement this below
+            }
+          },
+          error: () => {
+            this.cancelLoading = false;
+          }
+        });
+      }
+    });
+  }
 
   downloadInvoice(orderId: number) {
     this.invoiceLoading[orderId] = true;

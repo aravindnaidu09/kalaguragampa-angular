@@ -26,7 +26,8 @@
 <ng-template #loadingOrError>
   <p *ngIf="loadingSignal()">Loading tracking info...</p>
   <div class="empty-state" *ngIf="!loadingSignal()">
-    <img src="../../../../../assets/images/empty-truck.webp" alt="No Tracking" class="empty-state-img" />
+    <img src="../../../../../assets/images/empty-truck.webp" alt="No tracking available for Order"
+      class="empty-state-img" />
     <p class="empty-state-text">No tracking info available.</p>
   </div>
 </ng-template>

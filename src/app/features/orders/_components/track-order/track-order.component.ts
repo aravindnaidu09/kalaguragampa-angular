@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TrackFacade } from '../../_state/track.facade';
 
@@ -11,7 +11,7 @@ import { TrackFacade } from '../../_state/track.facade';
   templateUrl: './track-order.component.html',
   styleUrl: './track-order.component.scss'
 })
-export class TrackOrderComponent {
+export class TrackOrderComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private facade = inject(TrackFacade);
 
@@ -26,5 +26,4 @@ export class TrackOrderComponent {
     }
     this.facade.loadTracking(deliveryId);
   }
-
 }

@@ -84,7 +84,7 @@
       </div>
 
       <div class="product-rating">
-        <span>4.1⭐ | (25)</span>
+        <span>{{ product()?.rating }}⭐ | ({{ product()?.reviewsCount }})</span>
       </div>
 
       <div class="product-quantity-stock-info-wrapper">
@@ -265,7 +265,7 @@
     <!-- Using HtmlDecodePipe to decode HTML entities -->
   </div>
 
-  
+
 </div>
 
 

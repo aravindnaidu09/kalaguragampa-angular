@@ -20,6 +20,7 @@ import { CartFacade } from '../../../features/cart/_state/cart.facade';
 import { CurrencyService } from '../../../core/services/currency.service';
 import { ICategory } from '../../../features/product/_models/category-model';
 import { ProductListComponent } from '../../../features/product/_components/product-list/product-list.component';
+import { COUNTRY_OPTIONS } from '../../../core/constants/country-codes';
 
 @Component({
   selector: 'app-header',
@@ -69,17 +70,15 @@ export class HeaderComponent implements OnInit {
   isLoading = signal(false);
   fullPath: string = '';
   hashRoute: string = '';
-  
-  countryOptions = [
-    // { label: 'Australia', value: 'AUD' },
-    // { label: 'Canada', value: 'CAD' },
-    // { label: 'Europe', value: 'EUR' },
-    { label: 'India', value: 'INR' },
-    // { label: 'UK', value: 'GBP' },
-    // { label: 'USA', value: 'USD' },
-    // { label: 'Singapore', value: 'SGD' }
-  ];
-  Cat_Products: any;
+
+  countryOptions = COUNTRY_OPTIONS;
+  categoryProducts: any;
+  categories = signal<ICategory[]>([]);
+  CategorySelection$ = new Subject<number>();
+  categoryList: ICategory[] = [];
+  showDesktopCategories = false;
+  showMobileCategories = false;
+  categorySearchText = '';
 
   // Close dropdown if clicked outside
   @HostListener('document:click', ['$event'])
@@ -131,66 +130,76 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.preloadCategories();
-    this.setMenuItems();
-    this.fetchWishlistCount();
-    this.fetchCartCount();
-
-    this.getCurrentUrlPath();
-
-    console.log('Current Route:', this.hashRoute); // 'checkout'
+    this.preloadCategories();        // Fetch all categories at component init
+    this.setMenuItems();             // Initialize user menu based on login state
+    this.fetchWishlistCount();       // Load wishlist count if authenticated
+    this.fetchCartCount();           // Load cart count if authenticated
+    this.getCurrentUrlPath();        // Extract current route path (e.g., 'checkout')
 
     const savedCurrency = localStorage.getItem('currency');
     if (savedCurrency) {
       this.selectedCountry = savedCurrency;
-      this.currencyService.setCurrency(savedCurrency);
+      this.currencyService.setCurrency(savedCurrency);  // Restore saved currency
     }
   }
 
+  /**
+   * Extracts current route path from browser and sets `hashRoute`.
+   */
   getCurrentUrlPath() {
-    this.fullPath = this.location.path(); // returns '/checkout'
+    this.fullPath = this.location.path();
     this.hashRoute = this.fullPath.startsWith('/') ? this.fullPath.substring(1) : this.fullPath;
-
   }
 
+  /**
+   * Fetch wishlist count if user is authenticated.
+   */
   fetchWishlistCount() {
     if (this.authService.isAuthenticated()) {
       this.wishlistFacade.fetch();
     }
   }
 
+  /**
+   * Fetch cart count if user is authenticated.
+   */
   fetchCartCount() {
     if (this.authService.isAuthenticated()) {
       this.cartFacade.loadCart();
     }
   }
 
-  // ✅ Handle user input changes
+  /**
+   * Called on search input change. Updates suggestions & triggers debounced search.
+   */
   onSearchChange(event: Event): void {
     const inputValue = (event.target as HTMLInputElement).value;
 
     if (inputValue.length > 0) {
-      this.isLoading.set(true); // show loader
-      this.showSuggestions.set(true); // ✅ Show suggestions when input has value
+      this.isLoading.set(true);
+      this.showSuggestions.set(true);
     } else {
-      this.showSuggestions.set(false); // ✅ Hide suggestions when input is empty
+      this.showSuggestions.set(false);
     }
 
     this.searchQuery.set(inputValue);
     this.searchSubject.next(inputValue);
     this.isLoading.set(false);
-    if(this.showMobileCategories || this.showDesktopCategories) {
+
+    if (this.showMobileCategories || this.showDesktopCategories) {
       this.showMobileCategories = false;
       this.showDesktopCategories = false;
     }
   }
 
-  // ✅ Keyboard Navigation with Scrolling
+  /**
+   * Handles keyboard navigation (ArrowUp, ArrowDown, Enter) on search suggestions.
+   */
   onSearchKeyDown(event: KeyboardEvent): void {
     let productList: any[] = [];
 
     this.products$.subscribe((products) => {
-      productList = products; // ✅ Assign products to a local variable
+      productList = products;
     });
 
     if (!productList || productList.length === 0) return;
@@ -212,7 +221,9 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  // ✅ Scroll the selected item into view
+  /**
+   * Scrolls the currently highlighted search suggestion into view.
+   */
   scrollToSelectedItem(): void {
     setTimeout(() => {
       const productElements = document.querySelectorAll('.product-info');
@@ -224,17 +235,24 @@ export class HeaderComponent implements OnInit {
     }, 100);
   }
 
-  // ✅ Navigate to product details
+  /**
+   * Navigate to selected product detail page.
+   */
   goToProductDetails(product: IProduct): void {
     this.showSuggestions.set(false);
     this.router.navigate([`/product/${product.name}/${product.id}`]);
   }
 
-  // ✅ Navigate to search results page
+  /**
+   * Navigates to global search results page with search query as parameter.
+   */
   goToSearchResults(): void {
     this.router.navigate(['/search-results'], { queryParams: { query: this.searchQuery() } });
   }
 
+  /**
+   * Returns safe image path for product thumbnail (fallback to default).
+   */
   getImagePath(imagePath?: string): string {
     if (!imagePath || imagePath.trim() === '' || imagePath === 'null' || imagePath === 'undefined') {
       return `${environment.apiBaseUrl}/media/KG_LOGO.png`;
@@ -242,31 +260,37 @@ export class HeaderComponent implements OnInit {
     return `${environment.apiBaseUrl}${imagePath}`;
   }
 
+  /**
+   * Handles image loading error by replacing with fallback image.
+   */
   onImageError(event: Event): void {
     (event.target as HTMLImageElement).src = `${environment.apiBaseUrl}/media/KG_LOGO.png`;
   }
 
+  /**
+   * Initializes menu items based on user login state and registers login trigger.
+   */
   setMenuItems(): void {
     this.menuItems = computed(() => this.menuService.menuItems());
 
-    // ✅ Fetch stored username (if user refreshes)
     const storedUserName = localStorage.getItem('userName');
     if (storedUserName) {
       this.refreshMenu(storedUserName);
     }
 
     this.menuService.registerLoginDialogTrigger(this.openDialog.bind(this));
-
-    // this.menuService.
   }
 
   /**
-  * ✅ Refresh Menu After Login (Called after successful login)
-  */
+   * Refreshes the menu with latest items after login.
+   */
   refreshMenu(username: string): void {
     this.menuService.updateMenu(username);
   }
 
+  /**
+   * Toggle the account dropdown menu visibility.
+   */
   toggleMenu(): void {
     const userName = localStorage.getItem('userName');
     if (userName) {
@@ -275,25 +299,40 @@ export class HeaderComponent implements OnInit {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
+  /**
+   * Logs selected menu item action.
+   */
   onMenuAction(item: MenuItem): void {
     console.log('Menu item selected:', item.label, item.action);
   }
 
+  /**
+   * Opens login dialog with selected method (OTP or password).
+   */
   openDialog(method: 'otp' | 'password'): void {
     this.selectedLoginMethod = method;
     this.isLoginDialogVisible = true;
   }
 
+  /**
+   * Refresh state after login success.
+   */
   refreshHeaderState(event: any) {
     if (event) {
-      // this.get
+      // Placeholder: add logic if needed
     }
   }
 
+  /**
+   * Toggles visibility of login dialog.
+   */
   toggleLoginDialog() {
     this.isLoginDialogVisible = !this.isLoginDialogVisible;
   }
 
+  /**
+   * Handles closing of login dialog and resets user menu.
+   */
   closeLoginDialog(event: any) {
     this.isLoginDialogVisible = !event;
     const storedUserName = localStorage.getItem('userName');
@@ -302,14 +341,23 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  /**
+   * Updates selected country value from dropdown.
+   */
   onSelectionChange(value: any): void {
     this.selectedCountry = value;
   }
 
+  /**
+   * Navigates to home page.
+   */
   goToHomePage() {
-    this.router.navigate(['/'])
+    this.router.navigate(['/']);
   }
 
+  /**
+   * Navigates to cart page or shows warning if cart is empty.
+   */
   goToCartPage() {
     this.checkMenuDropdownIsOpen();
     if (!(this.cartFacade.countSignal() > 0)) {
@@ -319,68 +367,77 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/cart']);
   }
 
-
-  showDesktopCategories = false;
-  showMobileCategories = false;
-categorySearchText = '';
-
-toggleDesktopCategories() {
-  
-  if (this.searchQuery()) {
-    this.searchQuery.set('');
-    this.showSuggestions.set(false);
+  /**
+   * Toggles the desktop category dropdown visibility.
+   */
+  toggleDesktopCategories() {
+    if (this.searchQuery()) {
+      this.searchQuery.set('');
+      this.showSuggestions.set(false);
+    }
+    this.showDesktopCategories = !this.showDesktopCategories;
   }
-  this.showDesktopCategories = !this.showDesktopCategories;
-}
-toggleMobileCategories() {
-  if (this.searchQuery()) {  
-    this.searchQuery.set('');
-    this.showSuggestions.set(false);  
-   }
-  this.showMobileCategories = !this.showMobileCategories;
-}
-  categories = signal<ICategory[]>([]);
-  CategorySelection$ = new Subject<number>();
-  categoryList:ICategory[] = [];
-filteredCategories() {  
-  return this.categoryList.filter(cat =>
-    cat.name.toLowerCase().includes(this.categorySearchText.toLowerCase())
-  );
-}
- preloadCategories(): void {
+
+  /**
+   * Toggles the mobile category dropdown visibility.
+   */
+  toggleMobileCategories() {
+    if (this.searchQuery()) {
+      this.searchQuery.set('');
+      this.showSuggestions.set(false);
+    }
+    this.showMobileCategories = !this.showMobileCategories;
+  }
+
+  /**
+   * Returns list of categories filtered by user search input.
+   */
+  filteredCategories() {
+    return this.categoryList.filter(cat =>
+      cat.name.toLowerCase().includes(this.categorySearchText.toLowerCase())
+    );
+  }
+
+  /**
+   * Loads category list from backend and sets it in signal and local list.
+   */
+  preloadCategories(): void {
     this.productService.getCategories().pipe(take(1)).subscribe({
       next: (categories) => {
         this.categories = this.categoryList = categories;
         this.isLoading.set(false);
-        console.log('Preloaded Categories:', this.categories);
         this.filteredCategories();
       },
       error: () => this.isLoading.set(false),
     });
   }
-onCategoryClick(cat: any) {
-  console.log('Selected category:', cat);
-  this.showDesktopCategories = false;
-  if(this.showMobileCategories){
-    this.showMobileCategories = false;
-  }
 
-  this.router.navigate([`/detail-view`], { queryParams: { category_id: cat.id, page: 0} });
-  // Navigate or filter products
-}
-
-@HostListener('document:click', ['$event'])
-onDocumentClick(event: Event) {
-  const clickedElement = event.target as HTMLElement;
-
-  // Check if the click was inside the dropdown OR button
-  if (
-    !clickedElement.closest('.desktop-category-dropdown')
-  ) {
+  /**
+   * Navigates to product listing by selected category.
+   */
+  onCategoryClick(cat: any) {
     this.showDesktopCategories = false;
-  }
-}
+    if (this.showMobileCategories) {
+      this.showMobileCategories = false;
+    }
 
+    this.router.navigate([`/detail-view`], { queryParams: { category_id: cat.id, page: 0 } });
+  }
+
+  /**
+   * Document click handler: closes dropdowns if clicked outside.
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const clickedElement = event.target as HTMLElement;
+    if (!clickedElement.closest('.desktop-category-dropdown')) {
+      this.showDesktopCategories = false;
+    }
+  }
+
+  /**
+   * Navigates to wishlist page or shows warning if empty.
+   */
   goToWishlistPage() {
     this.checkMenuDropdownIsOpen();
     if (!(this.wCount() > 0)) {
@@ -390,10 +447,23 @@ onDocumentClick(event: Event) {
     this.router.navigate(['/wishlist']);
   }
 
+  /**
+   * Closes account menu dropdown.
+   */
   checkMenuDropdownIsOpen() {
     this.isMenuOpen = false;
   }
 
+  /**
+   * Returns country label based on its currency code.
+   */
+  getCountryLabel(code: string): string {
+    return this.countryOptions.find(c => c.value === code)?.label || '';
+  }
+
+  /**
+   * Updates selected currency in localStorage and CurrencyService.
+   */
   onCurrencyChange(code: string) {
     localStorage.setItem('currency', code);
     this.currencyService.setCurrency(code);

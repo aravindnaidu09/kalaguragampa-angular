@@ -7,7 +7,7 @@
   align-items: center;
   flex-wrap: wrap;
   padding: 10px 20px;
-  background-color: #fcf9f5;
+  // background-color: #fcf9f5;
 
   .logo {
     display: flex;
@@ -216,7 +216,7 @@
       font-size: 14px;
       color: #333;
       cursor: pointer;
-  
+
       img {
         width: 24px;
         height: 24px;
@@ -257,7 +257,7 @@
 
 /* Responsive styles */
 @media (max-width: 991.98px) {
-  
+
   .app-header {
     padding: 8px 12px;
     .logo {
@@ -295,7 +295,7 @@
 .mobile-bottom-search-bar {
   border-top: 3px solid #682f12;
   background: #fcf9f5;
-  
+
   .search-bar {
     background: transparent;
 
@@ -531,7 +531,7 @@
     color: #333;
     border: none;
     padding: 8px 16px;
-    
+
     cursor: pointer;
     font-weight: 500;
     font-size: 14px;

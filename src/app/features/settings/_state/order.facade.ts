@@ -1,7 +1,7 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { OrderState } from './order.state';
-import { LoadOrders } from './order.actions';
+import { CancelOrder, LoadOrders } from './order.actions';
 
 @Injectable({ providedIn: 'root' })
 export class OrderFacade {
@@ -19,6 +19,20 @@ export class OrderFacade {
     status?: string;
   }) {
     return this.store.dispatch(new LoadOrders(filters));
+  }
+
+  cancelOrder(deliveryId: number) {
+    return this.store.dispatch(new CancelOrder(deliveryId));
+  }
+
+  updateTrackingSignal(newStatus: any) {
+    this.store.reset({
+      ...this.store.snapshot(),
+      track: {
+        ...this.store.snapshot().track,
+        status: newStatus
+      }
+    });
   }
 
   orderById = (id: number) =>

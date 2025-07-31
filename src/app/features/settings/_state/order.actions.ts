@@ -27,3 +27,8 @@ export class LoadOrdersFail {
   static readonly type = '[Order] Load Orders Fail';
   constructor(public error: any) {}
 }
+
+export class CancelOrder {
+  static readonly type = '[TrackOrder] Cancel';
+  constructor(public deliveryId: number) {}
+}

@@ -12,4 +12,6 @@ export class TrackFacade {
   loadTracking(deliveryId: number) {
     this.store.dispatch(new LoadTrackingInfo(deliveryId));
   }
+
+
 }

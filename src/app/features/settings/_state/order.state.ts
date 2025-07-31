@@ -3,9 +3,10 @@ import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { IOrder } from '../_model/order-model';
 import { OrderService } from '../_services/order.service';
-import { LoadOrders, LoadOrdersSuccess, LoadOrdersFail } from './order.actions';
+import { LoadOrders, LoadOrdersSuccess, LoadOrdersFail, CancelOrder } from './order.actions';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { TrackStateModel } from '../../orders/_state/track.state';
 
 export interface OrderStateModel {
   orders: IOrder[];
@@ -70,5 +71,23 @@ export class OrderState {
   @Action(LoadOrdersFail)
   loadOrdersFail(ctx: StateContext<OrderStateModel>, action: LoadOrdersFail) {
     ctx.patchState({ loading: false, error: action.error });
+  }
+
+  @Action(CancelOrder)
+  cancelOrder(ctx: StateContext<TrackStateModel>, action: CancelOrder) {
+    ctx.patchState({ loading: true });
+
+    return this.orderService.cancelOrder(action.deliveryId).pipe(
+      tap(() => {
+        ctx.patchState({ loading: false });
+      }),
+      catchError((error) => {
+        ctx.patchState({
+          loading: false,
+          error: error?.message || 'Failed to cancel order'
+        });
+        return of(error);
+      })
+    );
   }
 }

@@ -34,7 +34,7 @@ export class OrderHistoryComponent {
   totalCountSignal = this.orderFacade.totalCountSignal;
 
   currentPage = 1;
-  pageSize = 5;
+  pageSize = 10;
 
   statuses = ['all', 'pending', 'delivered', 'cancelled'];
   selectedStatus = 'all';
