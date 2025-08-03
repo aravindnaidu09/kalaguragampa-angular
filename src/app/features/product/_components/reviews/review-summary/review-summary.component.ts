@@ -28,5 +28,12 @@ export class ReviewSummaryComponent {
   }
 
 
-  getRatingPercentage(rating: any) {}
+  getRatingPercentage(star: number): number {
+    const total = this.reviews.length;
+    if (total === 0) return 0;
+
+    const count = this.reviews.filter(r => r.rating === star).length;
+    return Math.round((count / total) * 100);
+  }
+
 }

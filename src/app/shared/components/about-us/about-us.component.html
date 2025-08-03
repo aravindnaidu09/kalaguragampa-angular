@@ -1,0 +1,18 @@
+<div class="about-us-container">
+  <div class="hero-section">
+    <img src="assets/images/kalagura-about-banner.png" alt="About Kalagura Gampa" class="about-banner" />
+    <div class="hero-illustration"></div>
+  </div>
+
+  <div class="content-section">
+    <h1>About Kalagura Gampa</h1>
+
+    <div class="paragraph fade-in" *ngFor="let para of paragraphs">
+      <p>{{ para }}</p>
+    </div>
+
+    <div class="cta-wrapper fade-in" style="animation-delay: 1.2s;">
+      <button class="cta-button" routerLink="/detail-view">Explore Our Products</button>
+    </div>
+  </div>
+</div>

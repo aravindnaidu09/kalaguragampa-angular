@@ -88,9 +88,9 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
     this.fetchCategories();
 
     this.breadcrumbFacade.setBreadcrumb([
-    { label: 'Home', url: '/' },
-    { label: 'Cart', url: '/cart' }
-  ]);
+      { label: 'Home', url: '/' },
+      { label: 'Cart', url: '/cart' }
+    ]);
   }
 
   fetchCartList() {
@@ -134,13 +134,12 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
       confirmText: 'Remove',
       cancelText: 'Cancel'
     }).subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
       this.deletingItemIds.add(itemId);
-      if (confirmed) {
-        this.cartFacade.removeCartItems([itemId]).subscribe({
-          next: () => this.deletingItemIds.delete(itemId),
-          error: () => this.deletingItemIds.delete(itemId)
-        });;
-      }
+      this.cartFacade.removeCartItems([itemId]).subscribe({
+        next: () => this.deletingItemIds.delete(itemId),
+        error: () => this.deletingItemIds.delete(itemId)
+      });;
     });
   }
 

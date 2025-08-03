@@ -20,6 +20,7 @@
     "apple-touch-icons": "off",
     "manifest-exists": "off",
     "compat-api/html": "off",
-    "typescript-config/consistent-casing": "off"
+    "typescript-config/consistent-casing": "off",
+    "meta-viewport": "off"
   }
 }

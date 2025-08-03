@@ -56,7 +56,7 @@ export class MenuService {
       this.menuItemsSignal.set([
         { label: 'Login with OTP', action: () => this.triggerAction('otp') },
         { label: 'Login with Password', action: () => this.triggerAction('password') },
-        { label: 'Help', action: () => console.log('Help clicked') }
+        // { label: 'Help', action: () => console.log('Help clicked') }
       ]);
     }
   }

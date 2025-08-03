@@ -107,6 +107,18 @@ export class ShippingBillingComponent implements OnInit {
   }
 
   emitContinue() {
+    const addressList = this.addresses();
+    const selectedId = this.selectedAddressId();
+
+    if (!addressList || addressList.length === 0) {
+      this.toastService.showError('Please add a delivery address before continuing.');
+      return;
+    }
+
+    if (!selectedId) {
+      this.toastService.showError('Please select a delivery address before continuing.');
+      return;
+    }
     if (this.selectedAddressId != null) {
       this.continue.emit();
     }

@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, Signal, ViewChild, ChangeDetectorRef, computed, inject, signal } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, Signal, ViewChild, ChangeDetectorRef, computed, inject, signal, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../_services/product.service';
 import { IProduct } from '../../_models/product-model';
@@ -22,6 +22,7 @@ import { BreadcrumbFacade } from '../../../../core/state/breadcrumb.facade';
 import { MatIconModule } from '@angular/material/icon';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { HtmlDecodePipe } from '../../../../core/pipes/html-decode.pipe';
+import { slugify } from '../../../../core/utils/slugify.utils';
 
 @Component({
   selector: 'app-view-product',
@@ -90,20 +91,49 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
 
   reviews = signal([
     {
-      userName: 'John Doe',
-      userImage: 'https://i.pravatar.cc/40',
+      userName: 'Amit Reddy',
+      userImage: 'https://i.pravatar.cc/41?img=1',
       rating: 5,
-      comment: 'Excellent product! Highly recommended.',
-      date: '2024-03-14'
+      comment: 'The packaging was perfect and the quality is truly organic. Will definitely buy again!',
+      date: '2025-07-30'
     },
     {
-      userName: 'Jane Smith',
-      userImage: 'https://i.pravatar.cc/41',
+      userName: 'Sneha Kapoor',
+      userImage: 'https://i.pravatar.cc/41?img=2',
       rating: 4,
-      comment: 'Good quality, but shipping took longer than expected.',
-      date: '2024-03-12'
+      comment: 'Loved the fragrance and texture. Felt natural and soothing on skin.',
+      date: '2025-07-28'
+    },
+    {
+      userName: 'Ravi Teja',
+      userImage: 'https://i.pravatar.cc/41?img=3',
+      rating: 3,
+      comment: 'Good product but delivery was delayed by 3 days.',
+      date: '2025-07-25'
+    },
+    {
+      userName: 'Fatima Noor',
+      userImage: 'https://i.pravatar.cc/41?img=4',
+      rating: 5,
+      comment: 'I’ve used this for over a week now. My hair feels softer and shinier. Highly recommended!',
+      date: '2025-07-23'
+    },
+    {
+      userName: 'Karthik Iyer',
+      userImage: 'https://i.pravatar.cc/41?img=5',
+      rating: 4,
+      comment: 'Packaging was eco-friendly and product works well. Would’ve loved more usage instructions though.',
+      date: '2025-07-22'
+    },
+    {
+      userName: 'Ananya Sharma',
+      userImage: 'https://i.pravatar.cc/41?img=6',
+      rating: 5,
+      comment: 'Authentic herbal feel. Perfect for my skincare routine.',
+      date: '2025-07-21'
     }
   ]);
+
   newReview = signal({ comment: '', rating: 0 });
   doesExistsInWishlist = signal(false);
   showShareMenu = false;
@@ -116,15 +146,17 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
 
     }
   }
- @HostListener('window:resize', [])
+  @HostListener('window:resize', [])
   onResize() {
     this.checkScreenWidth();
   }
 
   private checkScreenWidth() {
     const width = window.innerWidth;
-    this.isScreenBetween996And400 = width <= 958 && width >= 320 ;
+    this.isScreenBetween996And400 = width <= 958 && width >= 320;
   }
+
+  constructor(@Inject(DOCUMENT) private document: Document) {}
 
   ngOnInit(): void {
     this.route.params
@@ -135,9 +167,9 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
         this.fetchProductDetails(productId);
       });
     this.checkScreenWidth();
-        window.addEventListener('resize', () => {
-          this.checkScreenWidth();
-        });
+    window.addEventListener('resize', () => {
+      this.checkScreenWidth();
+    });
     this.wishlistItems = this.wishlistFacade.wishlistSignal;
 
     this.updateWishlistCheck();
@@ -187,6 +219,8 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
           { label: response.name!, url: this.router.url }
         ]);
 
+        this.setupSEO(response);
+
         // ✅ SEO Setup
         this.seoService.update(
           `${response.name} - Buy Online at Kalagura Gampa`,
@@ -202,6 +236,41 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
         this.isLoading.set(false);
       },
     });
+  }
+
+  setupSEO(response: any) {
+    this.seoService.update(
+      `${response.name}`,
+      response.shortDescription,
+      `${response.name}, ${response.categoryName}, Kalagura Gampa`,
+      `${environment.apiBaseUrl}${response.images?.[0]?.image}`
+    );
+
+    const canonicalSlug = slugify(response.name);
+    this.seoService.setCanonical(`https://kalaguragampa.com/product/${canonicalSlug}/${response.id}`);
+
+    // ✅ Inject Product JSON-LD Structured Data
+    this.seoService.injectStructuredData({
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": response.name,
+      "image": response.images?.map((img: any) => `${environment.apiBaseUrl}${img.image}`),
+      "description": response.shortDescription || response.description,
+      "sku": response.sku,
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "INR",
+        "price": response.price,
+        "availability": response.stockStatus === 'in_stock' ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        "url": `https://kalaguragampa.com/product/${canonicalSlug}/${response.id}`
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": response.rating,
+        "reviewCount": response.reviewsCount
+      }
+    });
+
   }
 
   private fetchRelatedProducts(): void {
@@ -384,6 +453,7 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
   toggleShareMenu(): void {
     this.showShareMenu = !this.showShareMenu;
     this.cdr.detectChanges();
@@ -391,43 +461,50 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
 
 
   share(platform: string) {
-  const url = window.location.href;
+    const url = window.location.href;
 
-  switch (platform) {
-    case 'facebook':
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-      break;
+    switch (platform) {
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        break;
 
-    case 'twitter':
-      window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`, '_blank');
-      break;
+      case 'twitter':
+        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`, '_blank');
+        break;
 
-    case 'email':
-      window.location.href = `mailto:?subject=Check this out&body=${encodeURIComponent(url)}`;
-      break;
+      case 'email':
+        window.location.href = `mailto:?subject=Check this out&body=${encodeURIComponent(url)}`;
+        break;
 
-    case 'whatsapp':
-      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(url)}`, '_blank');
-      break;
+      case 'whatsapp':
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(url)}`, '_blank');
+        break;
 
-    case 'copy':
-      this.copyUrlToClipboard(url);
-      break;
+      case 'copy':
+        this.copyUrlToClipboard(url);
+        break;
 
-    default:
-      console.warn('Unknown share platform:', platform);
-      break;
+      default:
+        console.warn('Unknown share platform:', platform);
+        break;
+    }
   }
-}
 
-copyUrlToClipboard(text: string) {
-  navigator.clipboard.writeText(text).then(() => {
-    this.toastService.showSuccess('URL copied to clipboard!');
-  }).catch(err => {
-    console.error('Clipboard error:', err);
-    this.toastService.showError('Failed to copy URL.');
-  });
-}
+  get shareUrl(): string {
+    const product = this.product();
+    const slug = slugify(product?.name || '');
+    return `${window.location.origin}/product/${slug}/${product?.id}`;
+  }
+
+
+  copyUrlToClipboard(text: string) {
+    navigator.clipboard.writeText(text).then(() => {
+      this.toastService.showSuccess('URL copied to clipboard!');
+    }).catch(err => {
+      console.error('Clipboard error:', err);
+      this.toastService.showError('Failed to copy URL.');
+    });
+  }
 
 
 }

@@ -148,7 +148,45 @@ $primary-brown: #682f12;
 
   }
 }
- 
+
+.checkout-timer-banner {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 8px 14px;
+  border: 1px solid #ffeeba;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  display: inline-flex; // 🔸 makes it wrap neatly
+  align-items: center;
+  gap: 8px;
+  margin: 0.75rem 0;
+  animation: fadeIn 0.3s ease-in-out;
+
+  strong {
+    font-weight: 600;
+    color: #333;
+  }
+
+  // Optional: icon styling
+  &::before {
+    content: "⏳";
+    font-size: 16px;
+  }
+}
+
+
+.flow-disruption-msg {
+  padding: 10px;
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  font-weight: 500;
+  margin: 15px 0;
+  border-radius: 6px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
 
 .spinner {
   width: 18px;
@@ -167,10 +205,11 @@ $primary-brown: #682f12;
     transform: rotate(360deg);
   }
 }
+
 .mobile-checkout-steps {
   background: #fff;
   border-radius: 1rem;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
 }
 
 .mobile-stepper {
@@ -194,7 +233,7 @@ $primary-brown: #682f12;
     background: #007bff;
     color: #fff;
     border: 2px solid #007bff;
-    box-shadow: 0 0 0 4px rgba(0,123,255,0.1);
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
   }
 
   &.completed .step-circle {
@@ -243,7 +282,8 @@ $primary-brown: #682f12;
 .mobile-step-content {
   background: #fafbfc;
   border-radius: 0.5rem;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+
   // padding: 0.5rem 0.2rem;
   .payment-wrapper {
     padding: 2rem;
@@ -280,7 +320,7 @@ $primary-brown: #682f12;
         background-color: #682f12;
         color: white;
         border: none;
-       padding: 8px 12px;
+        padding: 8px 12px;
         border-radius: 6px;
         font-weight: 600;
         cursor: pointer;

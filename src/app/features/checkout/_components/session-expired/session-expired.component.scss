@@ -1,0 +1,43 @@
+.dialog-container {
+  padding: 24px 32px;
+  text-align: center;
+}
+
+.dialog-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #682f12;
+  margin-bottom: 16px;
+}
+
+.dialog-message {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: space-around;
+  gap: 16px;
+}
+
+.btn {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-home {
+  background-color: #fcece5;
+  color: #682f12;
+}
+
+.btn-retry {
+  background-color: transparent;
+  color: #682f12;
+  border: 1px solid #682f12;
+}

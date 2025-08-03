@@ -31,7 +31,7 @@ import { messageInterceptor } from './core/interceptors/message.interceptor';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, messageInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     provideRouter(routes, withHashLocation()),
     provideAnimationsAsync(),
     provideHttpClient(),

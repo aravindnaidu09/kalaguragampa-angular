@@ -1,7 +1,9 @@
 <div class="review-card">
   <div class="review-header">
-    <strong class="user-name">{{ review.fullName }}</strong>
-    <span class="review-date">{{ review.createdAt }}</span>
+    <div class="user-name">
+      <strong>{{ review.fullName }}</strong>
+    </div>
+    <span class="verified-badge">✔ Verified Purchase</span>
   </div>
 
   <div class="review-stars">
@@ -10,5 +12,24 @@
 
   <div class="review-comment">
     {{ review.comment }}
+  </div>
+
+  <div class="review-footer">
+    <div class="review-date">{{ review.createdAt | date: 'dd-MMM-yyyy' }}</div>
+
+    <!-- <div class="review-actions">
+      <button [class.active]="userVote() === 'helpful'" (click)="markHelpful()" [@voteClickAnimation]
+        matTooltip="Helpful">
+        <mat-icon>thumb_up</mat-icon>
+        <span class="count" [@countChange]="helpfulCount()">{{ helpfulCount() }}</span>
+      </button>
+
+      <button [class.active]="userVote() === 'notHelpful'" (click)="markNotHelpful()" [@voteClickAnimation]
+        matTooltip="Not Helpful">
+        <mat-icon>thumb_down</mat-icon>
+        <span class="count" [@countChange]="notHelpfulCount()">{{ notHelpfulCount() }}</span>
+      </button>
+    </div> -->
+
   </div>
 </div>

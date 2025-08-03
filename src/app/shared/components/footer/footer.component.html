@@ -3,7 +3,8 @@
   <!-- Footer Top Section -->
   <div class="footer-top">
     <!-- Get to Know Us Section -->
-    <div class="footer-section company-info" [ngClass]="{'w-100': isScreenBetween996And400, 'w-25': !isScreenBetween996And400}">
+    <div class="footer-section company-info"
+      [ngClass]="{'w-100': isScreenBetween996And400, 'w-25': !isScreenBetween996And400}">
       <div class="logo-container">
         <img src="../../../../assets/images/logo.png" alt="Kalagura Gampa Logo" class="footer-logo" />
         <h5>Kalagura Gampa</h5>
@@ -17,95 +18,83 @@
         <img src="../../../../assets/images/card_payments.png" alt="Payment Methods" />
       </div>
     </div>
-<div [ngClass]="{'': isScreenBetween996And400, 'w-50': !isScreenBetween996And400}" class="d-inline-flex">
-  <!-- Quick Links Section -->
-  <div class="footer-section" [ngClass]="{'w-50': isScreenBetween996And400}">
-    <h4>Quick Links</h4>
-    <ul>
-      <li><a href="#">About Us</a></li>
-      <!-- <li><a href="#">Products</a></li> -->
-      <li><a href="#">F.A.Q's</a></li>
-      <li><a href="#">Tracking Orders</a></li>
-    </ul>
-  </div>
+    <div [ngClass]="{'': isScreenBetween996And400, 'w-50': !isScreenBetween996And400}" class="d-inline-flex">
+      <!-- Quick Links Section -->
+      <div class="footer-section" [ngClass]="{'w-50': isScreenBetween996And400}">
+        <h4>Quick Links</h4>
+        <ul class="quick-links-wrapper">
+          <li class="quick-link-item"><a (click)="goToPolicyPage('/about-us')">About Us</a></li>
+          <!-- <li><a href="#">Products</a></li> -->
+          <li class="quick-link-item"><a href="#">F.A.Q's</a></li>
+          <li class="quick-link-item"><a (click)="goToPolicyPage('/settings/orders')">Tracking Orders</a></li>
+        </ul>
+      </div>
 
-  <!-- Policy Section -->
-  <div class="footer-section" [ngClass]="{'w-50': isScreenBetween996And400}">
-    <h4>Policy</h4>
-    <ul>
-      <li><a class="policy-links" (click)="goToPolicyPage('/refund-policy')">Refund</a></li>
-      <li><a class="policy-links" (click)="goToPolicyPage('/privacy-policy')">Privacy</a></li>
-      <li><a class="policy-links" (click)="goToPolicyPage('/shipping-policy')">Shipping</a></li>
-      <li><a class="policy-links" (click)="goToPolicyPage('/terms-services')">Terms of Services</a></li>
-    </ul>
-  </div>
-  </div>
-   <div class="footer-section" [ngClass]="{'w-100': isScreenBetween996And400}" >
+      <!-- Policy Section -->
+      <div class="footer-section" [ngClass]="{'w-50': isScreenBetween996And400}">
+        <h4>Policy</h4>
+        <ul>
+          <li><a class="policy-links" (click)="goToPolicyPage('/refund-policy')">Refund</a></li>
+          <li><a class="policy-links" (click)="goToPolicyPage('/privacy-policy')">Privacy</a></li>
+          <li><a class="policy-links" (click)="goToPolicyPage('/shipping-policy')">Shipping</a></li>
+          <li><a class="policy-links" (click)="goToPolicyPage('/terms-services')">Terms of Services</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-section" [ngClass]="{'w-100': isScreenBetween996And400}">
       <h4>Stores</h4>
       <ul [ngStyle]="isScreenBetween996And400 ? {'padding': '0'} : {}">
         <li [ngClass]="{'list-group-item':isScreenBetween996And400}">
           <strong>Kukatpally</strong>
           <p>
-        Plot No 277, Ground Floor H.No.3-6-13/2, Usha Enclave, Vivekananda Nagar, Kukatpally, Hyderabad, Telangana
-        500072
+            Plot No 277, Ground Floor H.No.3-6-13/2, Usha Enclave, Vivekananda Nagar, Kukatpally, Hyderabad, Telangana
+            500072
           </p>
-          <a
-          href="https://www.google.com/maps/search/?api=1&query=Plot+No+277+Ground+Floor+H.No.3-6-13%2F2+Usha+Enclave+Vivekananda+Nagar+Kukatpally+Hyderabad+Telangana+500072"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn-map"
-        >
-          View on Map
-        </a>
+          <a href="https://www.google.com/maps/search/?api=1&query=Plot+No+277+Ground+Floor+H.No.3-6-13%2F2+Usha+Enclave+Vivekananda+Nagar+Kukatpally+Hyderabad+Telangana+500072"
+            target="_blank" rel="noopener noreferrer" class="btn btn-map">
+            View on Map
+          </a>
           <a href="tel:+919063922966" class="btn btn-call">
-          Call +91-9063922966
-        </a>
+            Call +91-9063922966
+          </a>
         </li>
         <li [ngClass]="{'list-group-item':isScreenBetween996And400}">
           <strong>Aziz Nagar</strong>
           <p>Chilkur Road, Beside HP Petrol Bunk, Hyderabad, Telangana, India 500075</p>
-            <p>
-        <a
-          href="https://www.google.com/maps/search/?api=1&query=Chilkur+Road+Beside+HP+Petrol+Bunk+Hyderabad+Telangana+India+500075"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn-map"
-        >
-          View on Map
-        </a>
-        <a href="tel:+917815810496" class="btn btn-call">
-          Call +91-7815810496
-        </a>
-      </p>
+          <p>
+            <a href="https://www.google.com/maps/search/?api=1&query=Chilkur+Road+Beside+HP+Petrol+Bunk+Hyderabad+Telangana+India+500075"
+              target="_blank" rel="noopener noreferrer" class="btn btn-map">
+              View on Map
+            </a>
+            <a href="tel:+917815810496" class="btn btn-call">
+              Call +91-7815810496
+            </a>
+          </p>
         </li>
         <li [ngClass]="{'list-group-item':isScreenBetween996And400}">
           <strong>L.B. Nagar</strong>
           <p>
-        Chitra Layout Main Road, Court Lane, opp. Mahatma Gandhi Law College, beside RangaReddy Dist, NTR Nagar, L.
-        B.
-        Nagar, Hyderabad, Telangana 500074
+            Chitra Layout Main Road, Court Lane, opp. Mahatma Gandhi Law College, beside RangaReddy Dist, NTR Nagar, L.
+            B.
+            Nagar, Hyderabad, Telangana 500074
           </p>
           <p>
-        <a
-          href="https://www.google.com/maps/search/?api=1&query=Chitra+Layout+Main+Road+Court+Lane+opp+Mahatma+Gandhi+Law+College+beside+RangaReddy+Dist+NTR+Nagar+LB+Nagar+Hyderabad+Telangana+500074"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn-map"
-        >
-          View on Map
-        </a>
-        <a href="tel:+919281113560" class="btn btn-call">
-          Call +91-9281113560
-        </a>
-      </p>
+            <a href="https://www.google.com/maps/search/?api=1&query=Chitra+Layout+Main+Road+Court+Lane+opp+Mahatma+Gandhi+Law+College+beside+RangaReddy+Dist+NTR+Nagar+LB+Nagar+Hyderabad+Telangana+500074"
+              target="_blank" rel="noopener noreferrer" class="btn btn-map">
+              View on Map
+            </a>
+            <a href="tel:+919281113560" class="btn btn-call">
+              Call +91-9281113560
+            </a>
+          </p>
         </li>
       </ul>
+    </div>
   </div>
-</div>
 
-    <!-- Stores Section -->
-   
- 
+  <!-- Stores Section -->
+
+
 
   <!-- Footer Bottom Section -->
   <div class="footer-bottom">
@@ -115,16 +104,19 @@
     <div class="footer-right">
       <div class="social-links">
         <span>Follow us on</span>
-        <a class="social-icon" href="https://www.facebook.com/Kalaguragampa.Sreedevi" target="_blank" rel="noopener noreferrer">
+        <a class="social-icon" href="https://www.facebook.com/Kalaguragampa.Sreedevi" target="_blank"
+          rel="noopener noreferrer">
           <img src="../../../../assets/images/facebook-48.png" alt="Facebook" />
         </a>
         <a class="social-icon" href="https://www.youtube.com/c/KalaguraGampa" target="_blank" rel="noopener noreferrer">
           <img src="../../../../assets/images/youtube-48.png" alt="YouTube" />
         </a>
-        <a class="social-icon" href="https://x.com/i/flow/login?redirect_after_login=%2FKalagura_gampa" target="_blank" rel="noopener noreferrer">
+        <a class="social-icon" href="https://x.com/i/flow/login?redirect_after_login=%2FKalagura_gampa" target="_blank"
+          rel="noopener noreferrer">
           <img src="../../../../assets/images/x-48.png" alt="Twitter" />
         </a>
-        <a class="social-icon" href="https://www.instagram.com/kalagura_gampa/" target="_blank" rel="noopener noreferrer">
+        <a class="social-icon" href="https://www.instagram.com/kalagura_gampa/" target="_blank"
+          rel="noopener noreferrer">
           <img src="../../../../assets/images/instagram-48.png" alt="Instagram" />
         </a>
       </div>

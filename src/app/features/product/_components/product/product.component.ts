@@ -24,6 +24,7 @@ import { Signal } from '@angular/core';
 import { IWishlist } from '../../_models/wishlist-model';
 import { Router } from '@angular/router';
 import { CurrencyService } from '../../../../core/services/currency.service';
+import { slugify } from '../../../../core/utils/slugify.utils';
 
 @Component({
   selector: 'app-product',
@@ -43,6 +44,8 @@ export class ProductComponent {
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   currencyService = inject(CurrencyService);
+  private authService = inject(AuthService);
+  private toastService = inject(ToastService);
 
   @Input() product!: IProduct;
   @Input() wishlistItems!: Signal<IWishlist[]>;
@@ -97,10 +100,15 @@ export class ProductComponent {
   }
 
   navigateViewProduct(name: string, id: number) {
-    this.router.navigate([`product/${name}/${id}`])
+    const slug = slugify(name);
+    this.router.navigate([`product/${slug}/${id}`])
   }
 
   addToCart(product: IProduct) {
+    if (!this.authService.isAuthenticated()) {
+      this.toastService.showWarning('Please log in to add items to your cart!');
+      return;
+    }
     this.addToCartEvent.emit(product);
   }
 }

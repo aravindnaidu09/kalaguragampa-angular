@@ -31,7 +31,8 @@
                 "input": "public"
               },
               "src/assets",
-              "src/styles/fonts"
+              "src/styles/fonts",
+              "src/assets/robots.txt"
             ],
             "styles": [
               "@angular/material/prebuilt-themes/cyan-orange.css",

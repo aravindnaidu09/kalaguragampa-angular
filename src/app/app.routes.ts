@@ -18,14 +18,17 @@ import { NotificationPreferencesComponent } from './features/settings/_component
 import { OrderHistoryComponent } from './features/settings/_components/order-history/order-history.component';
 import { TrackOrderComponent } from './features/orders/_components/track-order/track-order.component';
 import { ChangePasswordComponent } from './features/auth/_components/change-password/change-password.component';
+import { AboutUsComponent } from './shared/components/about-us/about-us.component';
+import { ConfirmExitGuard } from './core/guards/confirm-exit.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'product/:productname/:id', component: ViewProductComponent },
+  { path: 'product/:slug/:id', component: ViewProductComponent },
   { path: 'checkout', component: CheckoutDetailsComponent },
   { path: 'cart', component: CartDetailsComponent },
   { path: 'wishlist', component: WishlistComponent },
+  { path: 'about-us', component: AboutUsComponent },
   { path: 'refund-policy', component: RefundPolicyComponent },
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: 'shipping-policy', component: ShipmentPolicyComponent },

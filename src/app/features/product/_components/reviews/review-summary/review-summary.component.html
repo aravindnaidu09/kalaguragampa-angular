@@ -1,16 +1,18 @@
 <div class="review-summary">
+  <!-- 🔹 Average Rating Block -->
   <div class="avg-rating">
     <h1>{{ averageRating.toFixed(1) }}★</h1>
     <p>{{ totalReviews }} Verified Buyer{{ totalReviews > 1 ? 's' : '' }}</p>
   </div>
 
+  <!-- 🔹 Rating Bars -->
   <div class="rating-bars">
-    <div *ngFor="let r of [5, 4, 3, 2, 1]">
-      <div class="bar-label">{{ r }}★</div>
-      <!-- <div class="bar">
-        <div class="fill" [style.width.%]="getRatingPercentage(r)"></div>
+    <div *ngFor="let r of ratingBreakdown" class="rating-bar-row">
+      <div class="bar-label">{{ r.star }}★</div>
+      <div class="bar">
+        <div class="fill" [style.width.%]="getRatingPercentage(r.star)"></div>
       </div>
-      <div class="count">{{ ratingBreakdown[r] || 0 }}</div> -->
+      <div class="count">{{ r.count }}</div>
     </div>
   </div>
 </div>

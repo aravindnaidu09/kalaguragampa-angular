@@ -1,0 +1,9 @@
+<div class="dialog-container">
+  <h2 class="dialog-title">Session Expired</h2>
+  <p class="dialog-message">{{ data.message }}</p>
+
+  <div class="dialog-actions">
+    <button class="btn btn-home" (click)="close('home')">Go to Home</button>
+    <button class="btn btn-retry" (click)="close('retry')">Retry Checkout</button>
+  </div>
+</div>

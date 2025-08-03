@@ -1,21 +1,15 @@
 <div class="review-wrapper">
-  <app-review-summary [reviews]="reviews()" />
-
-  <app-review-sort-filter
-    [selected]="sortBy()"
-    (sortChanged)="onSortChange($event)"
-  />
+  <ng-container *ngIf="!isLoading() && reviews().length > 0">
+    <app-review-summary [reviews]="reviews()" />
+  </ng-container>
 
   <div *ngIf="isLoading()">Loading reviews...</div>
 
-  <ng-container *ngIf="!isLoading() && filteredReviews.length > 0">
-    <app-review-card
-      *ngFor="let review of filteredReviews"
-      [review]="review"
-    />
+  <ng-container *ngIf="!isLoading() && reviews().length > 0">
+    <app-review-card *ngFor="let review of reviews()" [review]="review" />
   </ng-container>
 
-  <div *ngIf="!isLoading() && filteredReviews.length === 0">
+  <div *ngIf="!isLoading() && reviews().length === 0">
     <p>No reviews yet for this product.</p>
   </div>
 </div>
