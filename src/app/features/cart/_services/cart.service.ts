@@ -27,7 +27,7 @@ export class CartService {
   ) {
     const params: any = {};
     if (addressId !== undefined) params.address_id = addressId;
-    if (countryCode) params.country_code = countryCode;
+    // if (countryCode) params.country_code = countryCode;
 
     const url = `${this.baseUrl}${CART_API_URLS.cart.getCart}`; // or `${this.baseUrl}${...}`
     const options: { params: any; context?: HttpContext } = { params };
