@@ -46,8 +46,9 @@
             {{ product.productDetails.name | slice:0:30 }}<span
               *ngIf="product.productDetails?.name!.length > 30">...</span>
           </h3>
-          <p class="wishlist-price">{{ currencyService.getSymbol() }}{{
-            currencyService.convertPrice(product.productDetails.price) }}</p>
+          <p class="wishlist-price">
+            {{ currencyService.format(product.productDetails.price, currencyService.currency()) }}
+          </p>
         </div>
 
         <!-- ✅ Actions -->

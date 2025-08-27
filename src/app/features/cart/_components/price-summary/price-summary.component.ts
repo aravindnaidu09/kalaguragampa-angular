@@ -49,6 +49,8 @@ export class PriceSummaryComponent {
     return Number.isFinite(n) ? n : fallback;
   };
 
+  readonly isINR = computed(() => (this.cs.currency() ?? 'INR').toUpperCase() === 'INR');
+
   /** Convenience getter for templates */
   get cart() {
     return this.cartSignal();

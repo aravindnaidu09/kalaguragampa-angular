@@ -18,7 +18,7 @@
         <div class="product-scroll-container" #topSellersScroll>
           <app-product *ngFor="let product of topSellers(); trackBy: trackByProductId" [product]="product"
             [wishlistItems]="wishlistItems" [isUpdatingWishlist]="isUpdatingWishlist(product.id!)"
-            (wishlistToggle)="addToWishlist($event)" (addToCartEvent)="addProductToCart($event)"></app-product>
+            (wishlistToggle)="addToWishlist($event)" (addToCartEvent)="addProductToCart($event)" [isUpdatingCart]="isCartUpdating(product.id!)"></app-product>
         </div>
         <button class="scroll-button right" (click)="scrollRight('topSellersScroll')">&#10095;</button>
       </div>
@@ -44,7 +44,7 @@
         <div class="product-scroll-container" #weekTopSellersScroll>
           <app-product *ngFor="let product of weekTopSellers(); trackBy: trackByProductId" [product]="product"
             [wishlistItems]="wishlistItems" [isUpdatingWishlist]="isUpdatingWishlist(product.id!)"
-            (wishlistToggle)="addToWishlist($event)" (addToCartEvent)="addProductToCart($event)"></app-product>
+            (wishlistToggle)="addToWishlist($event)" (addToCartEvent)="addProductToCart($event)" [isUpdatingCart]="isCartUpdating(product.id!)"></app-product>
         </div>
         <button class="scroll-button right" (click)="scrollRight('weekTopSellersScroll')">&#10095;</button>
       </div>
@@ -71,7 +71,7 @@
         <div class="product-scroll-container" #newArrivalsScroll>
           <app-product *ngFor="let product of newArrivals(); trackBy: trackByProductId" [product]="product"
             [wishlistItems]="wishlistItems" [isUpdatingWishlist]="isUpdatingWishlist(product.id!)"
-            (wishlistToggle)="addToWishlist($event)" (addToCartEvent)="addProductToCart($event)"></app-product>
+            (wishlistToggle)="addToWishlist($event)" (addToCartEvent)="addProductToCart($event)" [isUpdatingCart]="isCartUpdating(product.id!)"></app-product>
         </div>
         <button class="scroll-button right" (click)="scrollRight('newArrivalsScroll')">&#10095;</button>
       </div>
@@ -129,7 +129,7 @@
         <div class="product-scroll-container" #scrollContainer>
           <app-product *ngFor="let product of productsList(); trackBy: trackByProductId" [product]="product"
             [wishlistItems]="wishlistItems" [isUpdatingWishlist]="isUpdatingWishlist(product.id!)"
-            (wishlistToggle)="addToWishlist($event)" (addToCartEvent)="addProductToCart($event)"></app-product>
+            (wishlistToggle)="addToWishlist($event)" (addToCartEvent)="addProductToCart($event)" [isUpdatingCart]="isCartUpdating(product.id!)"></app-product>
         </div>
 
         <!-- ▶️ Scroll Right Button -->

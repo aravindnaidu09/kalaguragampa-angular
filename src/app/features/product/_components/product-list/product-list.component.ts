@@ -4,7 +4,7 @@ import { ICategory } from '../../_models/category-model';
 import { IProduct } from '../../_models/product-model';
 import { ProductService } from '../../_services/product.service';
 import { Router } from '@angular/router';
-import { debounceTime, Subject, take } from 'rxjs';
+import { debounceTime, finalize, Subject, take } from 'rxjs';
 import { IProductQueryParams } from '../../_models/product-query-model';
 import { WishlistFacade } from '../../../cart/_state/wishlist.facade';
 import { ProductComponent } from '../product/product.component';
@@ -51,6 +51,9 @@ export class ProductListComponent implements OnInit {
 
   wishlistUpdatingIds = new Set<number>();
   wishlistUpdatingMap = signal<Map<number, boolean>>(new Map());
+
+  /** productId -> boolean (true while API in-flight) */
+  readonly cartUpdatingMap = signal<Map<number, boolean>>(new Map());
 
   @ViewChild('scrollContainer', { static: false }) scrollContainer!: ElementRef;
   @ViewChild('categoryScrollRef', { static: false }) categoryScrollRef!: ElementRef;
@@ -219,8 +222,40 @@ export class ProductListComponent implements OnInit {
     return this.wishlistUpdatingMap().get(productId) === true;
   }
 
+  /** 🔁 Your method, now with per-item loader + guards */
   addProductToCart(event: IProduct) {
-    this.store.dispatch(new AddToCart(event.id!, 1))
+    const id = Number(event?.id);
+    if (!id || this.isCartUpdating(id)) return;
+
+    const qty = Math.max(1, Number((event as any)?.minQty ?? 1));
+
+    // flip ON (use a new Map to trigger change detection)
+    const map = new Map(this.cartUpdatingMap());
+    map.set(id, true);
+    this.cartUpdatingMap.set(map);
+
+    this.store
+      .dispatch(new AddToCart(id, qty))
+      .pipe(
+        finalize(() => {
+          // flip OFF regardless of success/failure
+          map.set(id, false);
+          this.cartUpdatingMap.set(new Map(map));
+        })
+      )
+      .subscribe({
+        next: () => {
+          // this.toast?.showSuccess('Added to cart');
+          // if your cart badge needs refresh separately, do it here
+        },
+        error: () => {
+          this.toastService?.showError('Failed to add to cart');
+        }
+      });
+  }
+
+  isCartUpdating(id: number): boolean {
+    return !!this.cartUpdatingMap().get(id);
   }
 
   /** ✅ Navigate to full listing */

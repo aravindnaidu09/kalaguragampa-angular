@@ -1,10 +1,11 @@
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpContext, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, map } from "rxjs";
 import { APP_SETTINGS } from "../../../core/constants/app-settings";
 import { CART_API_URLS } from "../../../core/constants/cart-api-urls";
 import { ApiResponse } from "../../../core/models/api-response.model";
 import { CartResponseItem, deserializeCartResponse, CartItem } from "../_models/cart-item-model";
+import { SILENT_HTTP } from "../../../core/http/http-context.tokens";
 
 @Injectable({
   providedIn: 'root'
@@ -19,25 +20,25 @@ export class CartService {
    * ✅ Get current user's cart
    * Deserializes response to CartResponseItem (camelCase typed)
    */
-  getCart(addressId?: number, countryCode: string = 'IND'): Observable<ApiResponse<CartResponseItem>> {
+  getCart(
+    addressId?: number,
+    countryCode: string = 'IND',
+    opts?: { silent?: boolean }      // NEW
+  ) {
     const params: any = {};
+    if (addressId !== undefined) params.address_id = addressId;
+    if (countryCode) params.country_code = countryCode;
 
-    if (addressId !== undefined) {
-      params.address_id = addressId;
-    }
-
-    if (countryCode) {
-      params.country_code = countryCode;
-    }
+    const url = `${this.baseUrl}${CART_API_URLS.cart.getCart}`; // or `${this.baseUrl}${...}`
+    const options: { params: any; context?: HttpContext } = { params };
+    if (opts?.silent) options.context = SILENT_HTTP; // suppress global toast
 
     return this.httpClient
-      .get<ApiResponse<any>>(`${this.baseUrl}${CART_API_URLS.cart.getCart}`, { params })
-      .pipe(
-        map((response) => ({
-          ...response,
-          data: deserializeCartResponse(response.data)
-        }))
-      );
+      .get<ApiResponse<any>>(url, options)
+      .pipe(map((response) => ({
+        ...response,
+        data: deserializeCartResponse(response.data)
+      })));
   }
 
   /**
@@ -64,7 +65,6 @@ export class CartService {
    * ✅ Update quantity or item details
    */
   updateCartItems(items: { id: number; quantity: number }[]): Observable<ApiResponse<CartResponseItem>> {
-    console.log('url: ', `${this.baseUrl}${CART_API_URLS.cart.updateItem}`);
     return this.httpClient.put<ApiResponse<any>>(`${this.baseUrl}${CART_API_URLS.cart.updateItem}`, items).pipe(
       map((response) => ({
         ...response,

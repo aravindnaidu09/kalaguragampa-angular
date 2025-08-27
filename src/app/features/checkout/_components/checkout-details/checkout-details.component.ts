@@ -149,8 +149,8 @@ export class CheckoutDetailsComponent implements OnInit, OnDestroy {
         this.launchRazorpay(response.data);
         this.isProcessingPayment = false;
       },
-      error: () => {
-        this.toastService.showError('Failed to create order');
+      error: (err) => {
+        this.toastService.showError(err);
         this.isProcessingPayment = false;
       }
     });

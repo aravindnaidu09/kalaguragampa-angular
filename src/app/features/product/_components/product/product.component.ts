@@ -52,6 +52,9 @@ export class ProductComponent {
   @Input() wishlistItems!: Signal<IWishlist[]>;
   @Input() isUpdatingWishlist = false;
 
+  /** NEW: controlled by parent (per-item) */
+  @Input() isUpdatingCart = false;
+
 
   @Output() wishlistToggle = new EventEmitter<number>();
   @Output() addToCartEvent = new EventEmitter<IProduct>();
@@ -110,6 +113,8 @@ export class ProductComponent {
       this.toastService.showWarning('Please log in to add items to your cart!');
       return;
     }
+
+    if (this.isUpdatingCart) return;
     this.addToCartEvent.emit(product);
   }
 }

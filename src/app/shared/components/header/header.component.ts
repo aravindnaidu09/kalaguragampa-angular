@@ -160,7 +160,7 @@ export class HeaderComponent {
 
     // NGXS dispatches immediately; subscribe not required, but harmless
     // Use whichever method your CartFacade exposes:
-    this.cartFacade.loadCart().pipe(take(1)).subscribe() ??
+    this.cartFacade.loadCart({ silent: true, captureError: false }).pipe(take(1)).subscribe() ??
       (this.cartFacade as any).load?.() ??
       (this.cartFacade as any).refresh?.();
   }

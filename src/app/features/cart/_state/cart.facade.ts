@@ -53,12 +53,14 @@ export class CartFacade {
   readonly shippingFeeSignal = this.store.selectSignal((state) => state.cart.shippingFee ?? 0);
   readonly courierNameSignal = this.store.selectSignal((state) => state.cart.courierName ?? '');
   readonly estimatedDeliveryDaysSignal = this.store.selectSignal((state) => state.cart.estimatedDeliveryDays ?? '');
+  shippingErrorSignal = this.store.selectSignal(CartState.shippingError);
 
-  loadCart(): Observable<any> {
+  loadCart(opts?: boolean | { silent?: boolean; captureError?: boolean }): Observable<any> {
+    const o = typeof opts === 'boolean' ? { silent: opts, captureError: opts } : (opts ?? {});
     return this.addressFacade.loadAddresses().pipe(
       switchMap(() => {
         const addressId = this.addressFacade.selectedAddressId() ?? undefined;
-        return this.store.dispatch(new LoadCart(addressId, 'IND'));
+        return this.store.dispatch(new LoadCart(addressId, 'IND', o));
       })
     );
   }

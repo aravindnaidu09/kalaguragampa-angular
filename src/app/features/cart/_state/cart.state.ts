@@ -1,5 +1,5 @@
 import { catchError, map, tap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { ToastService } from '../../../core/services/toast.service';
 import { Injectable, inject } from '@angular/core';
 import { Selector, Action, StateContext, State, Store } from '@ngxs/store';
@@ -16,6 +16,7 @@ export interface CartStateModel {
   shippingFee?: number;
   courierName?: string;
   estimatedDeliveryDays?: string;
+  shippingError: string | null;
 }
 
 @State<CartStateModel>({
@@ -25,7 +26,8 @@ export interface CartStateModel {
     loading: false,
     shippingFee: 0,
     courierName: '',
-    estimatedDeliveryDays: ''
+    estimatedDeliveryDays: '',
+    shippingError: null
   }
 })
 @Injectable()
@@ -34,7 +36,7 @@ export class CartState {
     private cartService: CartService,
     private toast: ToastService,
     private store: Store
-  ) {}
+  ) { }
 
   @Selector()
   static cart(state: CartStateModel): CartResponseItem | null {
@@ -46,6 +48,11 @@ export class CartState {
     return state.loading;
   }
 
+  @Selector()
+  static shippingError(s: CartStateModel) {
+    return s.shippingError;
+  }
+
   /** Small helper so we don't duplicate dispatches everywhere */
   private triggerRevalidation(silent: boolean = true): void {
     this.store.dispatch(new RevalidateCoupon({ silent }));
@@ -55,18 +62,24 @@ export class CartState {
   loadCart(ctx: StateContext<CartStateModel>, action: LoadCart) {
     ctx.patchState({ loading: true });
 
-    return this.cartService.getCart(action.addressId, action.countryCode).pipe(
+    return this.cartService.getCart(action.addressId, action.countryCode, { silent: !!action?.opts?.silent }).pipe(
       tap((res) => {
         if (res?.data) {
-          ctx.patchState({ cart: res.data });
+          ctx.patchState({ cart: res.data, loading: false, shippingError: null });
           // ⬇️ Revalidate coupon against the fresh cart snapshot
           this.triggerRevalidation(true);
         }
         ctx.patchState({ loading: false });
       }),
-      catchError((err) => {
-        ctx.patchState({ loading: false });
-        return of(err);
+      catchError(err => {
+        const { silent, captureError } = action.opts ?? {};
+        if (captureError) {
+          const msg = err?.error?.message ?? err?.message ?? 'No recommended courier available for your address.';
+          ctx.patchState({ loading: false, shippingError: msg });
+        } else {
+          ctx.patchState({ loading: false });
+        }
+        return throwError(() => err);
       })
     );
   }
@@ -78,7 +91,8 @@ export class CartState {
       loading: false,
       shippingFee: undefined,
       courierName: undefined,
-      estimatedDeliveryDays: undefined
+      estimatedDeliveryDays: undefined,
+      shippingError: null
     });
     // ⬇️ If the cart is cleared, also clear any applied coupon
     this.store.dispatch(new ClearAppliedCoupon());

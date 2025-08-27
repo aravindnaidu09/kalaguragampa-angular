@@ -31,9 +31,15 @@
         ({{ product.rating }}) ⭐ | ({{product.reviewsCount}})
       </div>
 
-      <div class="add-to-cart-wrapper" (click)="addToCart(product)">
-        <span class="add-to-cart-icon" role="button" tabindex="0" aria-label="Add to Cart">🛒</span>
-        <!-- <i class="pi pi-shopping-cart add-to-cart-icon"></i> -->
+      <!-- 🛒 Add to Cart (loader controlled by parent) -->
+      <div class="add-to-cart-wrapper" [class.loading]="isUpdatingCart" (click)="addToCart(product)">
+        <ng-container *ngIf="!isUpdatingCart; else cartLoader">
+          <span class="add-to-cart-icon" role="button" tabindex="0" aria-label="Add to Cart"
+            [attr.aria-busy]="isUpdatingCart">🛒</span>
+        </ng-container>
+        <ng-template #cartLoader>
+          <div class="spinner mini"></div>
+        </ng-template>
         <div class="tooltip">Add to Cart</div>
       </div>
     </div>

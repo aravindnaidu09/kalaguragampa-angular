@@ -8,8 +8,13 @@
   </div>
 
   <!-- Tax row removed by requirement; show small inclusive caption instead -->
-  <div class="summary-caption">
+  <!-- <div class="summary-caption">
     Prices include taxes where applicable
+  </div> -->
+
+  <div class="summary-row" *ngIf="isINR()">
+    <span>Tax Amount(Included in MRP)</span>
+    <span>₹{{ cart?.taxAmount }}</span>
   </div>
 
   <!-- Discount on MRP -->
@@ -85,9 +90,9 @@
   </div>
 
   <!-- Currency disclosure -->
-  <div class="summary-disclaimer">
+  <!-- <div class="summary-disclaimer">
     Converted from INR for display. You’ll be charged in INR.
-  </div>
+  </div> -->
 
   <ng-container *ngIf="showPlaceOrderButton">
     <button class="place-order-btn" (click)="goToCheckoutPage()">PLACE ORDER</button>

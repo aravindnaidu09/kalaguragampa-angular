@@ -94,9 +94,8 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
   }
 
   fetchCartList() {
-
     this.isCartLoading = true;
-    this.cartFacade.loadCart().subscribe({
+    this.cartFacade.loadCart({ silent: true, captureError: true }).subscribe({
       next: () => {
         this.isCartLoading = false
         if (this.cartItemsSignal()?.length > 0) {
