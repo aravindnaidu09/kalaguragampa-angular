@@ -83,7 +83,9 @@
         </div>
 
         <div class="product-price">
-          <span>{{ currencyService.getSymbol() }}{{ currencyService.convertPrice(product()?.price) }}</span>
+          <span>
+            {{ currencyService.format(product()?.price, currencyService.currency()) }}
+          </span>
         </div>
 
         <div class="product-rating">
@@ -186,7 +188,7 @@
   <!-- ✅ Price -->
   <div class="mobile-product-price">
     <span>
-      {{ currencyService.getSymbol() }}{{ currencyService.convertPrice(product()?.price) }}
+      {{ currencyService.format(product()?.price, currencyService.currency()) }}
     </span>
   </div>
   <!-- ✅ Quantity Selector -->

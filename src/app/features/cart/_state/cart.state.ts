@@ -1,12 +1,14 @@
 import { catchError, map, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { ToastService } from '../../../core/services/toast.service';
-import { inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Selector, Action, StateContext, State, Store } from '@ngxs/store';
 import { CartResponseItem } from '../_models/cart-item-model';
 import { CartService } from '../_services/cart.service';
-import { LoadCart, ClearCart, AddToCart, UpdateCartItems, LoadShippingEstimate, RemoveCartItems } from './cart.actions';
+import { LoadCart, ClearCart, AddToCart, UpdateCartItems, LoadShippingEstimate, RemoveCartItems, ClearAppliedCoupon, RevalidateCoupon } from './cart.actions';
 import { DeliveryService } from '../../../core/services/delivery.service';
+
+// ⬇️ Revalidation/clear actions from Coupons feature
 
 export interface CartStateModel {
   cart: CartResponseItem | null;
@@ -15,7 +17,6 @@ export interface CartStateModel {
   courierName?: string;
   estimatedDeliveryDays?: string;
 }
-
 
 @State<CartStateModel>({
   name: 'cart',
@@ -33,7 +34,7 @@ export class CartState {
     private cartService: CartService,
     private toast: ToastService,
     private store: Store
-  ) { }
+  ) {}
 
   @Selector()
   static cart(state: CartStateModel): CartResponseItem | null {
@@ -45,6 +46,11 @@ export class CartState {
     return state.loading;
   }
 
+  /** Small helper so we don't duplicate dispatches everywhere */
+  private triggerRevalidation(silent: boolean = true): void {
+    this.store.dispatch(new RevalidateCoupon({ silent }));
+  }
+
   @Action(LoadCart)
   loadCart(ctx: StateContext<CartStateModel>, action: LoadCart) {
     ctx.patchState({ loading: true });
@@ -53,33 +59,17 @@ export class CartState {
       tap((res) => {
         if (res?.data) {
           ctx.patchState({ cart: res.data });
-        } else {
-          // this.toast.showError('Cart data is empty or malformed.');
+          // ⬇️ Revalidate coupon against the fresh cart snapshot
+          this.triggerRevalidation(true);
         }
         ctx.patchState({ loading: false });
       }),
       catchError((err) => {
-        // this.toast.showError('Failed to load cart.');
         ctx.patchState({ loading: false });
         return of(err);
       })
     );
   }
-
-
-  // @Action(ClearCart)
-  // clearCart(ctx: StateContext<CartStateModel>) {
-  //   return this.cartService.clearCart().pipe(
-  //     tap(() => {
-  //       ctx.patchState({ cart: null });
-  //       // this.toast.showSuccess('Cart cleared successfully.');
-  //     }),
-  //     catchError((err) => {
-  //       // this.toast.showError('Failed to clear cart.');
-  //       return of(err);
-  //     })
-  //   );
-  // }
 
   @Action(ClearCart)
   clearCart({ setState }: StateContext<CartStateModel>) {
@@ -90,8 +80,9 @@ export class CartState {
       courierName: undefined,
       estimatedDeliveryDays: undefined
     });
+    // ⬇️ If the cart is cleared, also clear any applied coupon
+    this.store.dispatch(new ClearAppliedCoupon());
   }
-
 
   @Action(AddToCart)
   addToCart(ctx: StateContext<CartStateModel>, action: AddToCart): Observable<boolean> {
@@ -99,15 +90,14 @@ export class CartState {
       tap((res) => {
         if (res?.data) {
           ctx.patchState({ cart: res.data });
+          // ⬇️ Cart changed → revalidate coupon
+          this.triggerRevalidation(true);
         }
       }),
-      map((res) => !!res?.data), // ✅ return true on success
-      catchError((err) => {
-        return of(false); // ✅ return false on failure
-      })
+      map((res) => !!res?.data),
+      catchError(() => of(false))
     );
   }
-
 
   @Action(UpdateCartItems)
   updateCartItems(ctx: StateContext<CartStateModel>, action: UpdateCartItems) {
@@ -115,37 +105,32 @@ export class CartState {
       tap((res) => {
         if (res?.data) {
           ctx.patchState({ cart: res.data });
-          // this.toast.showSuccess('Cart updated successfully.');
-        } else {
-          // this.toast.showError('Failed to update cart.');
+          // ⬇️ Cart changed → revalidate coupon
+          this.triggerRevalidation(true);
         }
       }),
-      catchError((err) => {
-        // this.toast.showError('Error updating cart.');
-        return of(err);
-      })
+      catchError((err) => of(err))
     );
   }
 
   @Action(RemoveCartItems)
   removeCartItems(ctx: StateContext<CartStateModel>, action: RemoveCartItems) {
-
     return this.cartService.removeCartItems(action.itemIds, action.countryCode ?? 'IND').pipe(
       tap((res) => {
         if (res?.data) {
           ctx.patchState({ cart: res.data });
-          this.store.dispatch(new LoadCart());
-        } else {
-          // this.toast.showError('Failed to remove selected items.');
+          // ⬇️ Cart changed → revalidate coupon
+          this.triggerRevalidation(true);
+
+          // NOTE: you previously dispatched LoadCart() here. That causes an extra HTTP call
+          // and will also trigger revalidation again in loadCart. If you still want a full
+          // reload from backend, uncomment the next line, but expect double revalidation.
+          // this.store.dispatch(new LoadCart());
         }
       }),
-      catchError((err) => {
-        // this.toast.showError('Error removing selected items from cart.');
-        return of(err);
-      })
+      catchError((err) => of(err))
     );
   }
-
 
   @Action(LoadShippingEstimate)
   loadShippingEstimate(ctx: StateContext<CartStateModel>, action: LoadShippingEstimate) {
@@ -166,6 +151,9 @@ export class CartState {
             estimatedDeliveryDays: ''
           });
         }
+
+        // ⬇️ Shipping/country/pincode changes can affect coupon eligibility → revalidate
+        this.triggerRevalidation(true);
       }),
       catchError((err) => {
         ctx.patchState({
@@ -173,9 +161,10 @@ export class CartState {
           courierName: '',
           estimatedDeliveryDays: ''
         });
+        // still revalidate, as the shipping context effectively changed/failed
+        this.triggerRevalidation(true);
         return of(err);
       })
     );
   }
-
 }

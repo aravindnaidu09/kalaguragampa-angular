@@ -4,6 +4,7 @@ export const ORDER_API_URLS = {
     invoiceDownload: (orderId: number) => `/orders/api/v1/${orderId}/invoice/`
   },
   coupon: {
-    apply: '/orders/api/v1/coupons/apply'
+    apply: '/orders/api/v1/coupons/apply',
+    available: '/orders/api/v1/coupons/available'
   }
 };

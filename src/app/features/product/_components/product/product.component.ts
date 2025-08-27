@@ -25,11 +25,12 @@ import { IWishlist } from '../../_models/wishlist-model';
 import { Router } from '@angular/router';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { slugify } from '../../../../core/utils/slugify.utils';
+import { AppCurrencyPipe } from "../../../../core/pipes/app-currency.pipe";
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AppCurrencyPipe],
   templateUrl: './product.component.html',
   styleUrl: './product.component.scss',
   providers: [

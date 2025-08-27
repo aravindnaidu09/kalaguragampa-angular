@@ -42,8 +42,8 @@ export const appConfig: ApplicationConfig = {
       withNgxsStoragePlugin({
         keys: [
           'auth.accessToken', // ✅ Store only accessToken
-          'auth.refreshToken' // ✅ Store only refreshToken,
-
+          'auth.refreshToken', // ✅ Store only refreshToken,
+          'coupons.applied'
         ]
       }),
     ),

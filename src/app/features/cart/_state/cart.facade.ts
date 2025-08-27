@@ -9,6 +9,7 @@ import { AddToCart, ClearCart, LoadCart, LoadShippingEstimate, RemoveCartItems, 
 import { CartResponseItem } from '../_models/cart-item-model';
 import { ToastService } from '../../../core/services/toast.service';
 import { AddressFacade } from '../../settings/_state/address.facade';
+import { CouponState } from './coupon.state';
 
 @Injectable({ providedIn: 'root' })
 export class CartFacade {
@@ -16,8 +17,35 @@ export class CartFacade {
   private toast = inject(ToastService);
   private addressFacade = inject(AddressFacade);
 
+  // raw cart from CartState
+  private cartRawSignal = this.store.selectSignal(CartState.cart);
 
-  readonly cartSignal = this.store.selectSignal(CartState.cart);
+  // applied coupon from CouponState
+  private appliedSignal = this.store.selectSignal(CouponState.applied);
+
+  /** Use this in components instead of the raw cart */
+  readonly cartSignal = computed(() => {
+    const cart = this.cartRawSignal();
+    if (!cart) return cart;
+
+    const applied = this.appliedSignal();
+    const baseTotal =
+      Number((cart as any).totalAmount ?? (cart as any).total_amount ?? 0);
+
+    const coupon = Math.max(0, Number(applied?.amount ?? 0));
+    const adjusted = Math.max(0, baseTotal - coupon);
+
+    return {
+      ...cart,
+      // expose coupon details for UI
+      couponCode: applied?.code,
+      couponAmount: coupon,
+      // derived total used by price summary
+      totalAmount: adjusted,
+    };
+  });
+
+  // readonly cartSignal = this.store.selectSignal(CartState.cart);
   readonly loadingSignal = this.store.selectSignal(CartState.loading);
 
   readonly countSignal = computed(() => this.cartSignal()?.items?.length ?? 0);

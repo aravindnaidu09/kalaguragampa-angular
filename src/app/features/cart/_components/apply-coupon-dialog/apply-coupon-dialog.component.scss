@@ -1,101 +1,184 @@
-.dialog-container {
-  padding: 1.5rem;
-  max-width: 400px;
+.coupon-dialog {
+  position: relative;
+  width: min(640px, 90vw);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  /* match dialog maxHeight */
+  overflow: hidden;
+  /* header fixed; list will scroll */
 
-  h2 {
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
-    color: #682f12;
+  /* Header with pinned close button */
+  .dlg-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    background: #fff;
+    /* avoid translucency when sticky */
+    margin: 0 0 .75rem;
+    padding-bottom: .25rem;
   }
 
-  .form-group {
-    margin-bottom: 1.5rem;
+  h3 {
+    margin: 0;
+    font-weight: 600;
+    padding-right: 2.25rem;
+    /* avoid overlap with absolute button if needed */
+  }
 
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: #682f12;
+  .icon-btn {
+    position: absolute;
+    /* lock to top-right regardless of title length */
+    top: .75rem;
+    right: .75rem;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    background: transparent;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #682f12;
+    border-radius: .5rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: rgba(104, 47, 18, .08);
     }
+
+    &:focus-visible {
+      outline: 2px solid rgba(104, 47, 18, .35);
+      outline-offset: 2px;
+    }
+  }
+
+  .apply-box {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: .5rem;
+    margin-bottom: .5rem;
 
     input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
+      padding: .55rem .7rem;
+      border: 1px solid #ddd;
+      border-radius: .5rem;
+      outline: none;
 
       &:focus {
-        border-color: #682f12;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(104, 47, 18, 0.1);
+        border-color: #a06c4e;
+        box-shadow: 0 0 0 3px rgba(160, 108, 78, .12);
       }
     }
-  }
 
-  .coupon-list {
-    margin-bottom: 1.5rem;
-
-    .list-title {
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: #333;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-
-      li {
-        padding: 0.5rem 1rem;
-        margin-bottom: 0.5rem;
-        background-color: #f5f5f5;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background 0.2s ease;
-
-        &:hover {
-          background-color: #e0dbd8;
-        }
-      }
-    }
-  }
-
-  .actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-
-    .btn {
-      padding: 0.6rem 1.2rem;
-      font-weight: 600;
+    .btn-apply {
+      padding: .55rem .9rem;
       border: none;
-      border-radius: 8px;
+      border-radius: .5rem;
+      background: #682f12;
+      color: #fff;
       cursor: pointer;
 
-      &.cancel {
-        background-color: #ccc;
-        color: #333;
-      }
-
-      &.apply {
-        background-color: #682f12;
-        color: #fff;
-
-        &:disabled {
-          background-color: #aaa;
-          cursor: not-allowed;
-        }
+      &:disabled {
+        opacity: .6;
+        cursor: default;
       }
     }
   }
 
-  .error-message {
-    margin-top: 0.4rem;
-    font-size: 0.85rem;
-    color: #d32f2f;
-    font-weight: 500;
+  .error {
+    color: #b00020;
+    margin-top: .25rem;
   }
 
+  .divider {
+    height: 1px;
+    background: #eee;
+    margin: .75rem 0;
+  }
+
+  .list-head {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .5rem;
+
+    span {
+      font-weight: 600;
+    }
+
+    small {
+      color: #666;
+    }
+  }
+
+  /* The scrolling region */
+  .coupon-list {
+    display: grid;
+    gap: .5rem;
+    flex: 1 1 auto;
+    min-height: 0;
+    /* important so it can shrink inside flex column */
+    overflow-y: auto;
+    padding-right: .25rem;
+    /* space for scrollbar */
+  }
+
+  .coupon-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: .75rem;
+    border: 1px dashed #d7c1b7;
+    border-radius: .75rem;
+    padding: .75rem .9rem;
+
+    .code {
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    .desc {
+      color: #444;
+      margin-top: .25rem;
+    }
+
+    .meta {
+      margin-top: .25rem;
+      display: flex;
+      gap: .5rem;
+      color: #666;
+      font-size: .85rem;
+    }
+
+    .right .btn-outline {
+      background: transparent;
+      color: #682f12;
+      border: 1px solid #682f12;
+      border-radius: .5rem;
+      padding: .45rem .9rem;
+      cursor: pointer;
+
+      &:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+      }
+    }
+
+    .reason.ineligible {
+      color: #a33;
+      margin-top: .25rem;
+      font-size: .85rem;
+    }
+  }
+
+  .empty {
+    color: #666;
+    font-style: italic;
+  }
 }

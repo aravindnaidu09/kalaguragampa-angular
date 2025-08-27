@@ -87,3 +87,33 @@ $primary-brown: #682f12;
   }
 
 }
+
+/* pill for the applied coupon */
+.applied-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: .15rem .5rem;
+  border-radius: .375rem;
+  background: #f6efe9;
+  color: #682f12;
+  font-weight: 600;
+  letter-spacing: .25px;
+}
+
+.apply-link.change,
+.apply-link.remove {
+  margin-left: .5rem;
+  font-size: .85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.savings {
+  border-top: 1px dashed #e6e6e6;
+  padding-top: .5rem;
+}

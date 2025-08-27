@@ -1,35 +1,66 @@
 <div class="summary-card">
   <h4 class="summary-title">PRICE DETAILS</h4>
 
+  <!-- Total MRP (items subtotal) -->
   <div class="summary-row">
     <span>Total MRP</span>
-    <span>₹{{ cart?.cartTotal }}</span>
+    <span>{{ totals().items | appCurrency:(currencyCode()) }}</span>
   </div>
 
-  <div class="summary-row">
-    <span>Tax Amount(Included in MRP)</span>
-    <span>₹{{ cart?.taxAmount }}</span>
+  <!-- Tax row removed by requirement; show small inclusive caption instead -->
+  <div class="summary-caption">
+    Prices include taxes where applicable
   </div>
 
+  <!-- Discount on MRP -->
   <div class="summary-row">
     <span>Discount on MRP</span>
-    <span class="green">- ₹{{ cart?.discountAmount }}</span>
+    <span class="green" *ngIf="totals().discount > 0">
+      - {{ totals().discount | appCurrency:(currencyCode()) }}
+    </span>
+    <span class="muted" *ngIf="totals().discount <= 0">—</span>
   </div>
 
+  <!-- Applied coupon badge + remove -->
+  <div class="summary-row" *ngIf="hasCouponApplied()">
+    <span>Applied Coupon</span>
+    <span class="applied-pill">
+      <code class="badge">{{ cart?.couponCode }}</code>
+      <a class="apply-link remove" (click)="removeAppliedCoupon()">Remove</a>
+    </span>
+  </div>
+
+  <!-- Coupon Discount / Apply -->
   <div class="summary-row">
     <span>Coupon Discount</span>
-    <span class="apply-link" (click)="openCouponDialog()">Apply Coupon</span>
+
+    <ng-container *ngIf="hasCouponApplied(); else applyCouponTpl">
+      <span class="green">
+        - {{ totals().coupon | appCurrency:(currencyCode()) }}
+      </span>
+      <a class="apply-link change" (click)="openCouponDialog()">Change</a>
+    </ng-container>
+
+    <ng-template #applyCouponTpl>
+      <span class="apply-link" (click)="openCouponDialog()">Apply Coupon</span>
+    </ng-template>
   </div>
 
+  <!-- Shipping -->
   <div class="summary-row" *ngIf="!shouldHideShippingAndDelivery()">
     <span class="label-with-icon">
       Shipping Fee
       <img src="assets/images/icons8-info-50.png" alt="Info"
         title="Shipping charges vary based on your location and order value." class="info-icon" />
     </span>
-    <span class="green">{{ isShippingFree ? 'FREE' : '₹' + cart?.shippingAmount }}</span>
+
+    <span class="green" *ngIf="isShippingFree">FREE</span>
+    <span *ngIf="!isShippingFree">
+      {{ totals().ship | appCurrency:(currencyCode()) }}
+    </span>
   </div>
 
+  <!-- Estimated Delivery -->
   <div class="summary-row" *ngIf="!shouldHideShippingAndDelivery() && estimatedDeliveryDaysSignal()">
     <span>Estimated Delivery</span>
     <span>
@@ -39,14 +70,26 @@
     </span>
   </div>
 
+  <!-- Savings -->
+  <div class="summary-row savings" *ngIf="totals().savings > 0">
+    <span>You Save</span>
+    <span class="green">{{ totals().savings | appCurrency:(currencyCode()) }}</span>
+  </div>
 
+  <hr />
+
+  <!-- Grand Total -->
   <div class="summary-total">
     <span>Total Amount</span>
-    <span>₹{{ cart?.totalAmount | number: '1.2-2' }}</span>
+    <span>{{ totals().grand | appCurrency:(currencyCode()) }}</span>
+  </div>
+
+  <!-- Currency disclosure -->
+  <div class="summary-disclaimer">
+    Converted from INR for display. You’ll be charged in INR.
   </div>
 
   <ng-container *ngIf="showPlaceOrderButton">
     <button class="place-order-btn" (click)="goToCheckoutPage()">PLACE ORDER</button>
   </ng-container>
-
 </div>

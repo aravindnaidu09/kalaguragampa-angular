@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Inject } from '@angular/core';
+import { Component, DestroyRef, inject, Inject, Input } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CouponFacade } from '../../_state/coupon.facade';
+import { Coupon } from '../../_models/coupon.model';
 
 @Component({
   selector: 'app-apply-coupon-dialog',
@@ -15,54 +16,43 @@ import { CouponFacade } from '../../_state/coupon.facade';
   styleUrl: './apply-coupon-dialog.component.scss'
 })
 export class ApplyCouponDialogComponent {
-  private couponFacade = inject(CouponFacade);
+  @Input() addressId?: number | null;
+  @Input() countryCode: string = 'IND';
 
-  form: FormGroup;
-  availableCoupons: string[] = ['KGNEW100', 'FREESHIP', 'SAVE10', 'LOYALTY20'];
-  errorMessage: string | null = null;
+  private facade = inject(CouponFacade);
+  private destroyRef = inject(DestroyRef);
+
+  code = new FormControl('', [Validators.required, Validators.minLength(3)]);
+  available$ = this.facade.available$;
+  loading$ = this.facade.loading$;
+  applying$ = this.facade.applying$;
+  error$ = this.facade.error$;
 
   constructor(
-    private fb: FormBuilder,
-    private dialogRef: MatDialogRef<ApplyCouponDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    this.form = this.fb.group({
-      code: ['', Validators.required]
-    });
+    private ref: MatDialogRef<ApplyCouponDialogComponent, string | null>
+  ) { }
+
+  ngOnInit(): void {
+    this.facade.loadAvailable(this.addressId ?? null, this.countryCode);
   }
 
-  applyCoupon() {
-    this.errorMessage = null;
-
-    if (this.form.invalid) return;
-
-    const enteredCode = this.codeControl.value?.trim();
-
-    // 🔁 Local validation
-    if (!this.availableCoupons.includes(enteredCode)) {
-      this.errorMessage = 'Invalid coupon code. Please select a valid one.';
-      return;
-    }
-
-    // Or use API call here:
-    // this.couponService.validateCode(enteredCode).subscribe(...)
-    if (enteredCode) {
-      this.couponFacade.applyCoupon(enteredCode);
-    }
-
-    this.dialogRef.close(enteredCode);
+  pick(c: Coupon) {
+    this.code.setValue(c.code);
   }
 
-  cancel() {
-    this.dialogRef.close();
+  apply() {
+    if (this.code.invalid) { this.code.markAsTouched(); return; }
+    this.facade.applyCoupon(this.code.value!, this.countryCode);
+
+    this.ref.close(this.code.value!.trim());
+    // let the caller close dialog on success (or close here once applied$ emits)
   }
 
-  selectCoupon(coupon: string) {
-    this.form.patchValue({ code: coupon });
+  close(): void {
+    // this.ref.close(null);
+    this.ref.close(null);
   }
 
-  get codeControl(): FormControl {
-    return this.form.get('code') as FormControl;
-  }
+  trackById = (_: number, c: Coupon) => c.id;
 
 }
