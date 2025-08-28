@@ -3,4 +3,7 @@ export class LoadTrackingInfo {
   constructor(public deliveryId: number) {}
 }
 
-
+export class ClearTrackingInfo {
+  static readonly type = '[TrackOrder] Clear';
+  constructor(public deliveryId?: number) {}
+}

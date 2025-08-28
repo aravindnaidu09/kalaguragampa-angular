@@ -1,59 +1,111 @@
-import { Injectable } from "@angular/core";
-import { State, Action, StateContext, Selector } from "@ngxs/store";
-import { tap, catchError, of } from "rxjs";
-import { DeliveryService } from "../../../core/services/delivery.service";
-import { LoadTrackingInfo } from "./track.actions";
+import { Injectable } from '@angular/core';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { DeliveryService } from '../../../core/services/delivery.service';
+import { catchError, of, tap } from 'rxjs';
+import { ClearTrackingInfo, LoadTrackingInfo } from './track.actions';
+import { TrackingVM, ShiprocketTrackApi, toTrackingVM } from '../_models/tracking.model';
 
 export interface TrackStateModel {
-  status: any | null;
-  loading: boolean;
-  error: string | null;
+  /** per deliveryId cache */
+  entries: Record<number, TrackingVM | null>;
+  loading: Record<number, boolean>;
+  error: Record<number, string | null>;
 }
 
 @State<TrackStateModel>({
   name: 'track',
   defaults: {
-    status: null,
-    loading: false,
-    error: null
+    entries: {},
+    loading: {},
+    error: {}
   }
 })
 @Injectable()
 export class TrackState {
-  constructor(private trackService: DeliveryService) { }
+  constructor(private deliveryService: DeliveryService) { }
+
+  /** Selectors */
 
   @Selector()
-  static status(state: TrackStateModel): any | null {
-    return state.status;
+  static byId(state: TrackStateModel) {
+    return (deliveryId: number): TrackingVM | null | undefined => {
+      return state.entries[deliveryId];
+    };
   }
 
   @Selector()
-  static loading(state: TrackStateModel): boolean {
+  static loading(state: TrackStateModel) {
+    return (deliveryId: number): boolean => !!state.loading[deliveryId];
+  }
+
+  @Selector()
+  static error(state: TrackStateModel) {
+    return (deliveryId: number): string | null | undefined => state.error[deliveryId];
+  }
+
+  @Selector()
+  static entriesMap(state: TrackStateModel) {
+    return state.entries;
+  }
+
+  @Selector()
+  static loadingMap(state: TrackStateModel) {
     return state.loading;
   }
 
-  @Action(LoadTrackingInfo)
-  loadTrackingInfo(ctx: StateContext<TrackStateModel>, action: LoadTrackingInfo) {
-    ctx.patchState({ loading: true });
+  @Selector()
+  static errorMap(state: TrackStateModel) {
+    return state.error;
+  }
 
-    return this.trackService.trackDelivery(action.deliveryId).pipe(
-      tap((res) => {
+
+  /** Actions */
+
+  @Action(LoadTrackingInfo)
+  loadTracking(ctx: StateContext<TrackStateModel>, { deliveryId }: LoadTrackingInfo) {
+    const s = ctx.getState();
+    ctx.patchState({
+      loading: { ...s.loading, [deliveryId]: true },
+      error: { ...s.error, [deliveryId]: null }
+    });
+
+    return this.deliveryService.trackDelivery(deliveryId).pipe(
+      tap((res: ShiprocketTrackApi) => {
+        // Handle non-200 or missing data as a negative case
+        const vm = toTrackingVM(res);
+        const msg =
+          (!res || res.statusCode !== 200) ? (res?.message || 'Failed to fetch tracking') :
+            (!res.data) ? 'No tracking data found' :
+              null;
+
+        const current = ctx.getState();
         ctx.patchState({
-          status: res,
-          loading: false,
-          error: null
+          entries: { ...current.entries, [deliveryId]: vm },
+          loading: { ...current.loading, [deliveryId]: false },
+          error: { ...current.error, [deliveryId]: msg }
         });
       }),
-      catchError((error) => {
+      catchError((err) => {
+        const current = ctx.getState();
         ctx.patchState({
-          loading: false,
-          error: error?.message || 'Failed to load tracking info'
+          loading: { ...current.loading, [deliveryId]: false },
+          error: { ...current.error, [deliveryId]: err?.message || 'Network error. Please try again.' }
         });
-        return of(error);
+        return of(err);
       })
     );
   }
 
-
-
+  @Action(ClearTrackingInfo)
+  clearTracking(ctx: StateContext<TrackStateModel>, { deliveryId }: ClearTrackingInfo) {
+    const s = ctx.getState();
+    if (deliveryId != null) {
+      const { [deliveryId]: _, ...restEntries } = s.entries;
+      const { [deliveryId]: __, ...restLoading } = s.loading;
+      const { [deliveryId]: ___, ...restError } = s.error;
+      ctx.patchState({ entries: restEntries, loading: restLoading, error: restError });
+    } else {
+      ctx.setState({ entries: {}, loading: {}, error: {} });
+    }
+  }
 }

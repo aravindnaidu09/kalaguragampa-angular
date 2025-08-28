@@ -1,33 +1,146 @@
-<ng-container *ngIf="trackingSignal() as tracking; else loadingOrError">
-  <div class="track-order-wrapper">
-    <h2>Track Order #{{ tracking.delivery_id }}</h2>
-    <p>Status: <span class="status">{{ tracking.status }}</span></p>
-    <p>Estimated Delivery: {{ tracking.etd | date: 'longDate' }}</p>
+<!-- track-order.component.html -->
+<ng-container *ngIf="loadingSignal(); else loadedOrError">
+  <!-- Modern loading skeleton -->
+  <div class="track-skeleton">
+    <div class="card">
+      <div class="row shimmer title"></div>
+      <div class="row shimmer meta"></div>
+      <div class="row shimmer meta half"></div>
 
-    <div class="timeline" *ngIf="tracking.tracking_history?.length > 0; else noEvents">
-      <div class="timeline-event" *ngFor="let event of tracking.tracking_history">
-        <div class="dot"></div>
-        <div class="details">
-          <div class="timestamp">{{ event.timestamp | date: 'medium' }}</div>
-          <div class="status">{{ event.status }}</div>
-          <div class="desc">{{ event.description }}</div>
-          <div class="location">{{ event.location }}</div>
+      <div class="timeline">
+        <div class="line"></div>
+        <div class="item">
+          <div class="dot shimmer"></div>
+          <div class="content">
+            <div class="row shimmer w60"></div>
+            <div class="row shimmer w40"></div>
+            <div class="row shimmer w50"></div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="dot shimmer"></div>
+          <div class="content">
+            <div class="row shimmer w55"></div>
+            <div class="row shimmer w35"></div>
+          </div>
         </div>
       </div>
     </div>
-
-    <ng-template #noEvents>
-      <p class="no-tracking">Tracking details not available for this order.</p>
-    </ng-template>
   </div>
 </ng-container>
 
-<!-- 🛠️ Define this template -->
-<ng-template #loadingOrError>
-  <p *ngIf="loadingSignal()">Loading tracking info...</p>
-  <div class="empty-state" *ngIf="!loadingSignal()">
-    <img src="../../../../../assets/images/empty-truck.webp" alt="No tracking available for Order"
-      class="empty-state-img" />
-    <p class="empty-state-text">No tracking info available.</p>
-  </div>
+<ng-template #loadedOrError>
+  <ng-container *ngIf="errorSignal() as err; else loaded">
+    <div class="empty-state">
+      <!-- header/empty image -->
+      <img src="assets/images/empty-truck.webp" alt="No tracking available" class="empty-state-img"/>
+      <p class="empty-state-text">{{ err }}</p>
+      <button class="btn-outline" (click)="retry()">Try Again</button>
+    </div>
+  </ng-container>
+
+  <ng-template #loaded>
+    <ng-container *ngIf="trackingSignal() as tracking; else noData">
+      <section class="track-wrap">
+        <!-- decorative bg image (optional) -->
+        <img class="decor-bg" src="assets/images/pattern-leaf.jpeg" alt="" aria-hidden="true"/>
+
+        <article class="card">
+          <header class="header">
+            <h2 class="title">
+              <!-- header icon -->
+              <img src="assets/images/truck-pickup.jpeg" class="title-icon" alt="Delivery"/>
+              Track Order
+              <span class="muted">#{{ tracking.deliveryId }}</span>
+            </h2>
+
+            <div class="meta">
+              <div class="pair">
+                <span class="label">Status</span>
+                <span class="pill"
+                      [class.success]="tracking.status === 'Delivered'"
+                      [class.warn]="tracking.status === 'Out for Delivery' || tracking.status === 'In Transit'"
+                      [class.pending]="tracking.status === 'Pending'"
+                      [class.error]="tracking.status?.toLowerCase()?.includes('cancel') || tracking.status?.toLowerCase()?.includes('return')">
+                  <!-- status icon + text -->
+                  <img class="pill-icon" src="assets/images/pending.jpeg" alt="" *ngIf="tracking.status === 'Pending'">
+                  <img class="pill-icon" src="assets/images/in-transit.jpeg" alt="" *ngIf="tracking.status === 'In Transit'">
+                  <img class="pill-icon" src="assets/images/out-for-pickup.jpeg" alt="" *ngIf="tracking.status === 'Out for Delivery'">
+                  <img class="pill-icon" src="assets/images/delivered.jpeg" alt="" *ngIf="tracking.status === 'Delivered'">
+                  <img class="pill-icon" src="assets/images/cancelled.jpeg" alt="" *ngIf="tracking.status?.toLowerCase()?.includes('cancel') || tracking.status?.toLowerCase()?.includes('return')">
+                  <span class="pill-text">{{ tracking.status }}</span>
+                </span>
+              </div>
+
+              <div class="pair" *ngIf="tracking.etd">
+                <span class="label">Estimated Delivery</span>
+                <span class="value">
+                  <img class="inline-icon" src="assets/images/calendar.jpeg" alt="Estimated Delivery"/>
+                  {{ toDate(tracking.etd) || tracking.etd | date:'fullDate' }}
+                </span>
+              </div>
+            </div>
+          </header>
+
+          <section class="timeline" *ngIf="tracking.trackingHistory?.length; else noEvents">
+            <div class="line"></div>
+
+            <div class="item" *ngFor="let ev of tracking.trackingHistory; let i = index" [class.active]="i === 0">
+              <!-- status image bubble -->
+              <div class="dot-img">
+                <!-- Map statuses to icons (adjust as needed) -->
+                <img src="assets/images/received.jpeg" alt="Data Received" *ngIf="ev.status === 'DRC'">
+                <img src="assets/images/out-for-pickup.jpeg" alt="Out for Pickup" *ngIf="ev.status === 'OFP'">
+                <img src="assets/images/pickup-not-done.jpeg" alt="Pickup Not Done" *ngIf="ev.description?.toLowerCase()?.includes('pickup not done')">
+                <img src="assets/images/in-transit.jpeg" alt="In Transit" *ngIf="ev.status === 'In Transit'">
+                <img src="assets/images/delivered.jpeg" alt="Delivered" *ngIf="ev.status === 'Delivered'">
+                <!-- fallback -->
+                <img src="assets/images/default-status.png" alt="Status"/>
+              </div>
+
+              <div class="content">
+                <div class="time">
+                  <img class="inline-icon" src="assets/images/clock.jpeg" alt="Time"/>
+                  {{ toDate(ev.timestamp) || ev.timestamp | date:'medium' }}
+                </div>
+                <div class="status">
+                  {{ ev.status }}
+                </div>
+                <div class="desc" *ngIf="ev.description">
+                  {{ ev.description }}
+                </div>
+                <div class="place" *ngIf="ev.location">
+                  <!-- <img class="inline-icon" src="assets/images/pin.jpeg" alt="Location"/> -->
+                  {{ ev.location }}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <ng-template #noEvents>
+            <div class="no-tracking">
+              <img src="assets/images/no-events.jpeg" alt="" class="no-events-img"/>
+              <span>Tracking details not available for this order yet.</span>
+              <button class="btn-link" (click)="retry()">Refresh</button>
+            </div>
+          </ng-template>
+
+          <footer class="footer" *ngIf="tracking.trackUrl">
+            <a [href]="tracking.trackUrl" target="_blank" rel="noopener" class="btn-link">
+              <img class="inline-icon" src="assets/images/external.jpeg" alt="Open"/>
+              View on Courier Site
+            </a>
+          </footer>
+        </article>
+      </section>
+    </ng-container>
+
+    <ng-template #noData>
+      <div class="empty-state">
+        <img src="assets/images/empty-truck.webp" alt="No tracking available" class="empty-state-img"/>
+        <p class="empty-state-text">No tracking info available.</p>
+        <button class="btn-outline" (click)="retry()">Refresh</button>
+      </div>
+    </ng-template>
+  </ng-template>
 </ng-template>

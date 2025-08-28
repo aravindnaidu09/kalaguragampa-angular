@@ -6,7 +6,6 @@ import { OrderService } from '../_services/order.service';
 import { LoadOrders, LoadOrdersSuccess, LoadOrdersFail, CancelOrder } from './order.actions';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { TrackStateModel } from '../../orders/_state/track.state';
 
 export interface OrderStateModel {
   orders: IOrder[];
@@ -74,7 +73,7 @@ export class OrderState {
   }
 
   @Action(CancelOrder)
-  cancelOrder(ctx: StateContext<TrackStateModel>, action: CancelOrder) {
+  cancelOrder(ctx: StateContext<OrderStateModel>, action: CancelOrder) {
     ctx.patchState({ loading: true });
 
     return this.orderService.cancelOrder(action.deliveryId).pipe(
