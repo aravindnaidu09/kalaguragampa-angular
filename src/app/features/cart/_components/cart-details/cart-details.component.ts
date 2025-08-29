@@ -18,6 +18,8 @@ import { AddressFacade } from '../../../settings/_state/address.facade';
 import { Address } from '../../../settings/_model/address-model';
 import { BreadcrumbComponent } from '../../../../shared/components/breadcrumb/breadcrumb.component';
 import { BreadcrumbFacade } from '../../../../core/state/breadcrumb.facade';
+import { AppCurrencyPipe } from "../../../../core/pipes/app-currency.pipe";
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 @Component({
   selector: 'app-cart-details',
@@ -26,8 +28,9 @@ import { BreadcrumbFacade } from '../../../../core/state/breadcrumb.facade';
     FormsModule,
     RouterModule,
     PriceSummaryComponent,
-    BreadcrumbComponent
-  ],
+    BreadcrumbComponent,
+    AppCurrencyPipe
+],
   templateUrl: './cart-details.component.html',
   styleUrls: ['./cart-details.component.scss'],
 })
@@ -36,6 +39,8 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService);
   private addressFacade = inject(AddressFacade);
   private dialogService = inject(ConfirmDialogService);
+  currencyService = inject(CurrencyService);
+
 
   @Input() showCartTitle: boolean = true;
   @Input() showPriceSummaryBlock: boolean = true; // Flag to show/hide the button
@@ -76,6 +81,9 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
 
   private quantityChangeSubjectMap: { [key: number]: Subject<number> } = {};
   private loadingItems: Set<number> = new Set();
+
+  currencyCode = this.currencyService.currency; // signal<string>
+isINR = computed(() => (this.currencyService.currency() ?? 'INR').toUpperCase() === 'INR');
 
   constructor(private readonly router: Router,
     private readonly toastService: ToastService,

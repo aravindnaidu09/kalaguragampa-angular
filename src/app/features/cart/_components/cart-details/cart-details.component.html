@@ -47,13 +47,29 @@
             </div>
 
             <div class="price-block">
-              <span class="new-price">MRP: ₹{{ item.productMrp }}</span>
-              <span class="old-price">GST: {{ item.gstRate }}%</span>
-              <span class="old-price">BasePrice: {{ item.basePrice }}</span>
+              <span class="new-price">
+                MRP: {{ item?.productMrp | appCurrency:(currencyCode()) }}
+              </span>
 
-              <span class="old-price">Tax: {{ item.taxAmount }}</span>
-              <span class="old-price">Sub-Total: ₹{{ item.subtotal }}</span>
+              <!-- Show GST% only for INR (optional; remove *ngIf to always show) -->
+              <span class="old-price" *ngIf="isINR()">
+                GST: {{ item?.gstRate ?? 0 }}%
+              </span>
+
+              <span class="old-price">
+                Base Price: {{ item?.basePrice | appCurrency:(currencyCode()) }}
+              </span>
+
+              <!-- Show Tax amount only for INR, and format strictly as ₹ without the ≈ sign -->
+              <span class="old-price" *ngIf="isINR()">
+                Tax: {{ item?.taxAmount | appCurrency:'INR' }}
+              </span>
+
+              <span class="old-price">
+                Subtotal: {{ item?.subtotal | appCurrency:(currencyCode()) }}
+              </span>
             </div>
+
           </div>
 
           <ng-container *ngIf="!showNavigationButtons">
