@@ -39,16 +39,27 @@
         <div class="product-title-row">
           <h1 class="product-title">{{ product()?.name }}</h1>
           <div class="icon-actions">
-            <button mat-icon-button aria-label="Add to Wishlist" tooltip="Add to Wishlist"
+            <button mat-icon-button class="heart-btn" type="button" [disabled]="isWishlistUpdating"
+              [class.active]="doesExistsInWishlist()" [attr.aria-pressed]="doesExistsInWishlist()"
+              aria-label="Toggle wishlist"
               (click)="addToWishlist(product()?.id!)">
-              <ng-container *ngIf="doesExistsInWishlist(); else notWishlisted">
-                <span title="Already Added">❤️</span>
-              </ng-container>
-              <ng-template #notWishlisted>
-                <span aria-label="Add to Wishlist" title="Add to Wishlist">🤍</span>
-              </ng-template>
 
+              <!-- Single Material icon that toggles outline/fill -->
+              <mat-icon class="heart-icon">
+                {{ doesExistsInWishlist() ? 'favorite' : 'favorite_border' }}
+              </mat-icon>
+
+              <!-- Optional mini loader while API is in-flight -->
+              <div class="spinner mini" *ngIf="isWishlistUpdating"></div>
+
+              <!-- Firecracker burst layer (same structure you already use) -->
+              <div class="burst" *ngIf="showBurst">
+                <i class="spark" *ngFor="let p of particles" [style.--angle]="p.angle" [style.--dist]="p.dist"
+                  [style.--delay.ms]="p.delay" [style.--hue]="p.hue"></i>
+              </div>
             </button>
+
+
             <button #shareIconRef mat-icon-button aria-label="Share Product" tooltip="Share"
               (click)="toggleShareMenu()">
               <mat-icon aria-label="Share Product" title="Share">share</mat-icon>

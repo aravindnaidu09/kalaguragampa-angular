@@ -1,3 +1,5 @@
+$kg-brown: #682f12;
+
 .product-card {
   flex: 0 0 auto;
   width: 250px;
@@ -20,22 +22,221 @@
     right: 10px;
     cursor: pointer;
     font-size: 20px;
-    transition: transform 0.3s ease;
+    line-height: 1;
+    user-select: none;
+    transition: transform .2s ease;
 
-    &.active .heart-icon {
-      color: red;
-      transform: scale(1.2);
+    &:active {
+      transform: scale(.98);
     }
 
-    .heart-icon {
-      color: #ccc;
+    .heart-icon,
+    .heart-outline {
+      display: inline-block;
     }
 
-    &:hover .heart-icon {
-      transform: scale(1.1);
+    /* subtle pop when it becomes active */
+    .heart-icon.active {
+      animation: heartPop .35s ease-out;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .25));
+    }
+
+    /* burst layer - no pointer events */
+    .burst {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    /* confetti particles */
+    .particle {
+      --angle: 0deg;
+      /* set from TS e.g. '34deg' */
+      --dist: 42px;
+      /* set from TS e.g. '48px' */
+      --delay: 0ms;
+      /* stagger */
+      --hue: 24;
+      /* warm KG palette 18–36 */
+
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: hsl(var(--hue), 85%, 55%);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, .6) inset;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      animation:
+        shoot 620ms cubic-bezier(.16, .84, .28, .98) forwards,
+        fadeOut 620ms ease-out forwards;
+      animation-delay: var(--delay);
+
+      /* some particles are star/rect shapes */
+      &:nth-child(3n) {
+        border-radius: 2px;
+        width: 7px;
+        height: 7px;
+      }
+
+      &:nth-child(5n) {
+        clip-path: polygon(50% 0, 61% 38%, 100% 38%, 68% 59%, 79% 100%, 50% 74%, 21% 100%, 32% 59%, 0 38%, 39% 38%);
+        width: 8px;
+        height: 8px;
+      }
     }
   }
 
+  /* --- Wishlist as a button with one Material icon --- */
+  .heart-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    transition: transform .18s ease;
+
+    &:hover {
+      transform: translateY(-1px) scale(1.05);
+    }
+
+    &:active {
+      transform: scale(.96);
+    }
+
+    .spinner.mini {
+      position: absolute;
+    }
+
+    /* the Material icon */
+    .heart-icon {
+      font-size: 22px;
+      /* icon size */
+      line-height: 1;
+      color: #c7c7c7;
+      /* outline color */
+      transition: color .22s ease, transform .18s ease, filter .18s ease;
+      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .15));
+    }
+
+    &.active .heart-icon {
+      color: #ff4d6d;
+      /* filled heart color */
+      animation: heartPop .36s ease-out;
+    }
+
+    /* burst layer */
+    .burst {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    /* mini heart sparks (CSS heart shape) */
+    .spark {
+      --angle: 0deg;
+      /* set from TS */
+      --dist: 44px;
+      /* set from TS */
+      --delay: 0ms;
+      /* set from TS */
+      --hue: 14;
+      /* 14–42 warm palette */
+
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      transform: translate(-50%, -50%) rotate(45deg);
+      /* heart base */
+      opacity: 0;
+
+      background: hsl(var(--hue), 85%, 54%);
+      border-radius: 2px;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, .55) inset;
+
+      animation:
+        shootHeart 680ms cubic-bezier(.16, .84, .28, .98) forwards,
+        fadeOut 680ms ease-out forwards;
+      animation-delay: var(--delay);
+
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: inherit;
+        border-radius: 50%;
+        box-shadow: inherit;
+      }
+
+      &::before {
+        left: -50%;
+        top: 0;
+      }
+
+      &::after {
+        left: 0;
+        top: -50%;
+      }
+    }
+  }
+
+  /* keyframes (reuse if already present) */
+  @keyframes heartPop {
+    0% {
+      transform: scale(.8);
+    }
+
+    60% {
+      transform: scale(1.25);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes shootHeart {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) rotate(45deg) scale(.6);
+    }
+
+    15% {
+      opacity: 1;
+    }
+
+    100% {
+      transform:
+        translate(-50%, -50%) rotate(var(--angle)) translate(var(--dist)) rotate(45deg) scale(1);
+    }
+  }
+
+  @keyframes fadeOut {
+    0% {
+      opacity: 0;
+    }
+
+    25% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+    }
+  }
 
 
   .product-image {
@@ -162,13 +363,15 @@
     }
   }
 }
+
 @media (max-width: 768px) {
-  .wishlist-icon{
+  .wishlist-icon {
     position: absolute;
     top: 5px;
     right: 5px;
     font-size: 15px;
   }
+
   .product-card {
     width: 125px;
     margin: 10px 0;
@@ -199,6 +402,7 @@
         .product-rating {
           font-size: 13px;
         }
+
         .add-to-cart-wrapper .add-to-cart-icon {
           font-size: 18px;
         }
@@ -208,12 +412,13 @@
 }
 
 @media (max-width: 576px) {
-    .wishlist-icon{
+  .wishlist-icon {
     position: absolute;
     top: 5px;
     right: 5px;
     font-size: 15px;
   }
+
   .product-card {
     width: 120px;
     padding: 6px;
@@ -242,6 +447,7 @@
         .product-rating {
           font-size: 12px;
         }
+
         .add-to-cart-wrapper .add-to-cart-icon {
           font-size: 16px;
         }

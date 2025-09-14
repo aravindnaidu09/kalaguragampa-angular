@@ -1,20 +1,24 @@
-<!-- 🔍 Filter Controls -->
-<div class="order-filters">
-  <!-- Status Filter -->
-  <div class="filter-group">
-    <label>Status:</label>
-    <button
-      *ngFor="let status of statuses"
-      (click)="selectStatus(status)"
-      [class.active]="selectedStatus === status">
-      {{ status | titlecase }}
-    </button>
+<!-- 🔍 Filter Controls (wrap layout, no horizontal scroll) -->
+<div class="order-filters v2">
+
+  <!-- Status row -->
+  <div class="filter-row">
+    <div class="filter-label">Status:</div>
+
+    <div class="chip-grid">
+      <button type="button" class="chip-v3" *ngFor="let s of statusOptions" (click)="selectStatus(s.key)"
+        [class.active]="selectedStatus === s.key" role="radio" [attr.aria-checked]="selectedStatus === s.key">
+        <span class="dot" [style.background]="s.color" aria-hidden="true"></span>
+        <span class="label">{{ s.label }}</span>
+        <span class="count" *ngIf="statusCounts?.[s.key]">{{ statusCounts[s.key] }}</span>
+      </button>
+    </div>
   </div>
 
-  <!-- Time Filter -->
-  <div class="filter-group">
-    <label>Time:</label>
-    <select [(ngModel)]="selectedTime" (change)="onTimeFilterChange()">
+  <!-- Time row -->
+  <div class="filter-row">
+    <div class="filter-label">Time:</div>
+    <select [(ngModel)]="selectedTime" (change)="onTimeFilterChange()" class="time-select">
       <option value="3">Last 3 Months</option>
       <option value="6">Last 6 Months</option>
       <option value="12">Last 1 Year</option>
@@ -25,9 +29,9 @@
 </div>
 
 <!-- 💬 Active Filter Summary Chips -->
-<div class="active-filters" *ngIf="selectedStatus !== 'all' || selectedTime !== '3'">
+<div class="active-filters v2" *ngIf="selectedStatus !== 'all' || selectedTime !== '3'">
   <span *ngIf="selectedStatus !== 'all'" class="chip">
-    Status: {{ selectedStatus | titlecase }}
+    Status: {{ getStatusLabel(selectedStatus) }}
     <button (click)="clearStatus()">✕</button>
   </span>
   <span *ngIf="selectedTime !== '3'" class="chip">
@@ -37,6 +41,7 @@
 
   <button class="reset-btn" (click)="resetFilters()">Reset Filters</button>
 </div>
+
 
 <!-- 📦 Order List -->
 <div class="order-history">
@@ -64,10 +69,8 @@
 
       <span class="page-indicator">Page {{ currentPage }}</span>
 
-      <button
-        class="page-btn"
-        (click)="nextPage()"
-        [disabled]="(currentPage * pageSize) >= totalCountSignal()">
+      <button class="page-btn" (click)="nextPage()
+        " [disabled]="(currentPage * pageSize) >= totalCountSignal()">
         Next
       </button>
     </div>

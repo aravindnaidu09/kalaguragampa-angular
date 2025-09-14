@@ -55,15 +55,22 @@ export class CartFacade {
   readonly estimatedDeliveryDaysSignal = this.store.selectSignal((state) => state.cart.estimatedDeliveryDays ?? '');
   shippingErrorSignal = this.store.selectSignal(CartState.shippingError);
 
-  loadCart(opts?: boolean | { silent?: boolean; captureError?: boolean }): Observable<any> {
+  // cart.facade.ts
+  loadCart(opts?: boolean | { silent?: boolean; captureError?: boolean; ignoreAddress?: boolean }) {
     const o = typeof opts === 'boolean' ? { silent: opts, captureError: opts } : (opts ?? {});
-    return this.addressFacade.loadAddresses().pipe(
-      switchMap(() => {
-        const addressId = this.addressFacade.selectedAddressId() ?? undefined;
-        return this.store.dispatch(new LoadCart(addressId, 'IND', o));
-      })
+    const useAddress = !o.ignoreAddress;
+
+    const addressId$ = useAddress
+      ? this.addressFacade.loadAddresses().pipe(
+        switchMap(() => of(this.addressFacade.selectedAddressId() ?? undefined))
+      )
+      : of(undefined);
+
+    return addressId$.pipe(
+      switchMap((addressId) => this.store.dispatch(new LoadCart(addressId, 'IND', o)))
     );
   }
+
 
   clearCart(): void {
     this.store.dispatch(new ClearCart());

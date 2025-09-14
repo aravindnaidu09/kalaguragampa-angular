@@ -1,5 +1,5 @@
 import { catchError, map, tap } from 'rxjs/operators';
-import { Observable, of, throwError } from 'rxjs';
+import { EMPTY, Observable, of, throwError } from 'rxjs';
 import { ToastService } from '../../../core/services/toast.service';
 import { Injectable, inject } from '@angular/core';
 import { Selector, Action, StateContext, State, Store } from '@ngxs/store';
@@ -60,29 +60,36 @@ export class CartState {
 
   @Action(LoadCart)
   loadCart(ctx: StateContext<CartStateModel>, action: LoadCart) {
+    const { addressId, countryCode, opts } = action;
+    const silent = !!opts?.silent;
+    const captureError = !!opts?.captureError;
+    const ignoreAddress = !!opts?.ignoreAddress;
+
     ctx.patchState({ loading: true });
 
-    return this.cartService.getCart(action.addressId, action.countryCode, { silent: !!action?.opts?.silent }).pipe(
+    const effectiveAddressId = ignoreAddress ? undefined : addressId;
+
+    return this.cartService.getCart(effectiveAddressId, countryCode, { silent }).pipe(
       tap((res) => {
         if (res?.data) {
           ctx.patchState({ cart: res.data, loading: false, shippingError: null });
-          // ⬇️ Revalidate coupon against the fresh cart snapshot
           this.triggerRevalidation(true);
-        }
-        ctx.patchState({ loading: false });
-      }),
-      catchError(err => {
-        const { silent, captureError } = action.opts ?? {};
-        if (captureError) {
-          const msg = err?.error?.message ?? err?.message ?? 'No recommended courier available for your address.';
-          ctx.patchState({ loading: false, shippingError: msg });
         } else {
           ctx.patchState({ loading: false });
         }
-        return throwError(() => err);
+      }),
+      catchError((err) => {
+        if (captureError) {
+          const msg = err?.error?.message ?? err?.message ?? 'Unable to load cart.';
+          ctx.patchState({ loading: false, shippingError: msg });
+          return throwError(() => err);
+        }
+        ctx.patchState({ loading: false });
+        return silent ? EMPTY : throwError(() => err);
       })
     );
   }
+
 
   @Action(ClearCart)
   clearCart({ setState }: StateContext<CartStateModel>) {

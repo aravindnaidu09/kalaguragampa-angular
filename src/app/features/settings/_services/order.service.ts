@@ -40,8 +40,8 @@ export class OrderService {
     );
   }
 
-  cancelOrder(deliveryId: number): Observable<any> {
-    return this.http.post(`${APP_SETTINGS.apiBaseUrl}${DELIVERY_API_URLS.delivery.cancelOrder}`, { delivery_order_id: deliveryId });
+  cancelOrder(id: number): Observable<any> {
+    return this.http.post(`${APP_SETTINGS.apiBaseUrl}${DELIVERY_API_URLS.delivery.cancelOrder}`, { order_id: id });
   }
 
   /**

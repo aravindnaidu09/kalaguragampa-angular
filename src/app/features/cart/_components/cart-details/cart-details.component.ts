@@ -30,7 +30,7 @@ import { CurrencyService } from '../../../../core/services/currency.service';
     PriceSummaryComponent,
     BreadcrumbComponent,
     AppCurrencyPipe
-],
+  ],
   templateUrl: './cart-details.component.html',
   styleUrls: ['./cart-details.component.scss'],
 })
@@ -83,7 +83,7 @@ export class CartDetailsComponent implements OnInit, OnDestroy {
   private loadingItems: Set<number> = new Set();
 
   currencyCode = this.currencyService.currency; // signal<string>
-isINR = computed(() => (this.currencyService.currency() ?? 'INR').toUpperCase() === 'INR');
+  isINR = computed(() => (this.currencyService.currency() ?? 'INR').toUpperCase() === 'INR');
 
   constructor(private readonly router: Router,
     private readonly toastService: ToastService,
@@ -266,8 +266,6 @@ isINR = computed(() => (this.currencyService.currency() ?? 'INR').toUpperCase() 
 
     return null;
   }
-
-
 
   openEstimateDialog() {
     this.dialog.open(EstimateDeliveryDialogComponent, {

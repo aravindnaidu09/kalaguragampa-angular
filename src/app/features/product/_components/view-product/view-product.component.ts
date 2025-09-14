@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../../core/services/toast.service';
 import { CartFacade } from '../../../cart/_state/cart.facade';
 import { ReviewContainerComponent } from "../reviews/review-container/review-container.component";
-import { Observable, of } from 'rxjs';
+import { finalize, Observable, of, take } from 'rxjs';
 import { AuthService } from '../../../auth/_services/auth.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { ProductComponent } from '../product/product.component';
@@ -88,6 +88,12 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
   @ViewChild('shareMenuRef') shareMenuRef!: ElementRef;
   @ViewChild('shareIconRef') shareIconRef!: ElementRef;
 
+  isWishlistUpdating = false;
+
+  // burst state
+  showBurst = false;
+  particles: Array<{ angle: string; dist: string; delay: number; hue: number }> = [];
+
 
   reviews = signal([
     {
@@ -156,7 +162,7 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
     this.isScreenBetween996And400 = width <= 958 && width >= 320;
   }
 
-  constructor(@Inject(DOCUMENT) private document: Document) {}
+  constructor(@Inject(DOCUMENT) private document: Document) { }
 
   ngOnInit(): void {
     this.route.params
@@ -413,17 +419,59 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
 
   /** ✅ Handle wishlist toggling */
   addToWishlist(productId: number): void {
-    if (!(this.auth.isAuthenticated())) {
+    if (!productId) return;
+
+    if (!this.auth.isAuthenticated()) {
       this.toastService.showWarning('Please log in to add items!');
       return;
     }
-    const isWishlisted = this.wishlistFacade.isInWishlistSignal(productId)();
 
-    if (isWishlisted) {
-      this.wishlistFacade.remove(productId).subscribe();
-    } else {
-      this.wishlistFacade.add(productId).subscribe();
-    }
+    // prevent double taps while an API call is in-flight
+    if (this.isWishlistUpdating) return;
+    this.isWishlistUpdating = true;
+
+    const wasWishlisted = this.wishlistFacade.isInWishlistSignal(productId)();
+
+    const op$ = wasWishlisted
+      ? this.wishlistFacade.remove(productId)
+      : this.wishlistFacade.add(productId);
+
+    op$
+      .pipe(take(1), finalize(() => (this.isWishlistUpdating = false)))
+      .subscribe({
+        next: () => {
+          // NGXS store/signal will flip after success.
+          // Trigger burst ONLY when we successfully add (false -> true).
+          if (!wasWishlisted) {
+            this.playBurst(); // uses your spark/burst CSS
+          }
+
+          // optional toasts
+          // this.toastService.showSuccess(wasWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
+        },
+        error: (err) => {
+          this.toastService.showError('Could not update wishlist. Please try again.');
+          // no state change; button remains in previous state
+        },
+      });
+  }
+
+  private makeParticles(count = 14) {
+    // random, warm palette like your CSS comments (hue 14–42)
+    const rand = (min: number, max: number) => Math.random() * (max - min) + min;
+    return Array.from({ length: count }, (_, i) => ({
+      angle: `${rand(0, 360).toFixed(0)}deg`,
+      dist: `${rand(32, 56).toFixed(0)}px`,
+      delay: Math.round(i * 18 + rand(0, 50)),
+      hue: Math.round(rand(14, 42)),
+    }));
+  }
+
+  private playBurst() {
+    this.particles = this.makeParticles();
+    this.showBurst = true;
+    // match your keyframe ~680ms
+    setTimeout(() => (this.showBurst = false), 700);
   }
 
   scrollLeft() {

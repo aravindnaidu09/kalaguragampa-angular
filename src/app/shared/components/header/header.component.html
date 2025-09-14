@@ -74,18 +74,17 @@
 
   <!-- DESKTOP SEARCH BAR -->
   <div class="search-bar d-none d-lg-flex" *ngIf="!compact">
-    <div class="search-input-wrapper" style="position: relative; width: 100%;">
-      <input type="text" class="search-input w-100 rounded-5" placeholder="Search for products..."
-        [value]="searchQuery()" (input)="onSearchChange($event)" (keydown)="onSearchKeyDown($event)"
-        (click)="checkMenuDropdownIsOpen()" aria-label="Search for products" style="padding-right: 40px;" />
-      <button class="search-icon-btn" type="button"
-        style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 0; cursor: pointer;"
-        tabindex="-1" aria-label="Search">
-        <img src="../../../../assets/images/search.png" width="20" height="20" alt="Search Icon" />
-      </button>
-    </div>
+    <div class="search-input-wrapper">
+      <input type="text" class="search-input" placeholder="Search for products…" [value]="searchQuery()"
+        (input)="onSearchChange($event)" (keydown)="onSearchKeyDown($event)" (click)="checkMenuDropdownIsOpen()"
+        aria-label="Search for products" />
 
-    <div class="loader-spinner" *ngIf="isLoading()" aria-label="Loading..."></div>
+      <button class="search-icon-btn" type="button" tabindex="-1" aria-label="Search">
+        <img src="../../../../assets/images/search.png" width="18" height="18" alt="Search Icon" />
+      </button>
+
+      <div class="loader-spinner" *ngIf="isLoading()" aria-label="Loading…"></div>
+    </div>
 
     <div class="search-suggestions search-suggestions-lg" *ngIf="showSuggestions()">
       <ng-container *ngIf="(products$ | async)?.length! > 0; else noResults">
@@ -95,17 +94,19 @@
             <img [src]="getImagePath(product.images![0].image)" alt="{{ product.name }}" class="product-img"
               (error)="onImageError($event)" />
             <div class="product-info">
-              <span class="product-name">{{ product.name }}</span>
+              <span class="product-name" [title]="product.name">{{ product.name }}</span>
               <span class="product-price">₹{{ product.price }}</span>
             </div>
           </li>
         </ul>
       </ng-container>
+
       <ng-template #noResults>
         <div class="no-results">No products found</div>
       </ng-template>
     </div>
   </div>
+
 
   <div class="header-actions" *ngIf="!compact">
     <!-- <div class="action-item" (click)="goToHomePage()">

@@ -1,14 +1,22 @@
 <div class="product-card">
-  <!-- ❤️ Wishlist Icon -->
-  <div class="wishlist-icon" (click)="onWishlistClick()">
-    <ng-container *ngIf="!isUpdatingWishlist; else wishlistLoader">
-      <span *ngIf="isWishlistedSignal(); else notWishlisted">❤️</span>
-      <ng-template #notWishlisted><span>🤍</span></ng-template>
-    </ng-container>
-    <ng-template #wishlistLoader>
-      <div class="spinner mini"></div>
-    </ng-template>
-  </div>
+  <!-- ❤️ Wishlist Icon (Material Icon; single element) -->
+  <button class="wishlist-icon heart-btn" #wishIcon type="button" (click)="onWishlistClick()"
+    [disabled]="isWishlistUpdating" [class.active]="isWishlistedSignal()" aria-label="Toggle wishlist"
+    [attr.aria-pressed]="isWishlistedSignal()">
+    <!-- One icon that toggles between outline/fill glyphs -->
+    <mat-icon class="heart-icon">
+      {{ isWishlistedSignal() ? 'favorite' : 'favorite_border' }}
+    </mat-icon>
+
+    <!-- Loader (optional) -->
+    <div class="spinner mini" *ngIf="isUpdatingWishlist"></div>
+
+    <!-- Firecracker particles -->
+    <div class="burst" *ngIf="showBurst">
+      <i class="spark" *ngFor="let p of particles" [style.--angle]="p.angle" [style.--dist]="p.dist"
+        [style.--delay.ms]="p.delay" [style.--hue]="p.hue"></i>
+    </div>
+  </button>
 
   <!-- 📦 Product Image -->
   <div class="product-image" (click)="navigateViewProduct(product.name!, product.id!)">

@@ -30,5 +30,5 @@ export class LoadOrdersFail {
 
 export class CancelOrder {
   static readonly type = '[TrackOrder] Cancel';
-  constructor(public deliveryId: number) {}
+  constructor(public id: number) {}
 }

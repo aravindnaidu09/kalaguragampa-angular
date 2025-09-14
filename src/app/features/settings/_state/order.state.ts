@@ -76,7 +76,7 @@ export class OrderState {
   cancelOrder(ctx: StateContext<OrderStateModel>, action: CancelOrder) {
     ctx.patchState({ loading: true });
 
-    return this.orderService.cancelOrder(action.deliveryId).pipe(
+    return this.orderService.cancelOrder(action.id).pipe(
       tap(() => {
         ctx.patchState({ loading: false });
       }),

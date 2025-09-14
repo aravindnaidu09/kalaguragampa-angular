@@ -1,6 +1,26 @@
+/** Options for loading the cart */
+export interface LoadCartOptions {
+  /** Suppress UI noise (toasts/etc.) at call sites that treat this as best-effort */
+  silent?: boolean;
+  /** Capture the error into state (e.g., set `shippingError`) instead of rethrowing */
+  captureError?: boolean;
+  /** Do NOT send address_id (useful for header init / generic cart fetch) */
+  ignoreAddress?: boolean;
+}
+
 export class LoadCart {
   static readonly type = '[Cart] Load Cart';
-  constructor(public addressId?: number, public countryCode: string = 'IND', public opts?: { silent?: boolean; captureError?: boolean } ) { }
+
+  /**
+   * @param addressId  Optional address; ignored when `opts.ignoreAddress === true`
+   * @param countryCode Defaults to 'IND'
+   * @param opts        See LoadCartOptions
+   */
+  constructor(
+    public addressId?: number,
+    public countryCode: string = 'IND',
+    public opts: LoadCartOptions = {}
+  ) { }
 }
 
 export class ClearCart {

@@ -2,8 +2,8 @@
   <!-- Header Row -->
   <div class="order-header">
     <div>
-      <div class="order-id">Order #{{ item.order_id }}
-        <button class="copy-btn" (click)="copyOrderId(item.order_id)" title="Copy Order ID">
+      <div class="order-id">Order #{{ item.receipt }}
+        <button class="copy-btn" (click)="copyOrderId(item.receipt!)" title="Copy Order ID">
           📋
         </button>
       </div>
@@ -42,9 +42,9 @@
     </div>
 
     <div class="right-actions">
-      <button class="primary-btn" (click)="goToTrack(item.delivery_id!)">Track Order</button>
+      <button class="primary-btn" (click)="goToTrack(item.order_id!)">Track Order</button>
       <button *ngIf="item.delivery_status === 'Pending'" class="btn-cancel-order"
-        (click)="onCancelOrder(item.delivery_id!)" [disabled]="cancelLoading">
+        (click)="onCancelOrder(item.order_id!)" [disabled]="cancelLoading">
         <ng-container *ngIf="!cancelLoading; else loadingTpl">Cancel Order</ng-container>
       </button>
 

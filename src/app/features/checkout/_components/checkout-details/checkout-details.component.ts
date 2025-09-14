@@ -60,7 +60,7 @@ export class CheckoutDetailsComponent implements OnInit, OnDestroy {
   isProcessingPayment = false;
   isScreenBetween996And400 = false;
 
-  countdownMinutes = 1;
+  countdownMinutes = 10;
   remainingTime = signal(this.countdownMinutes * 60);
   private timerInterval: any;
 
@@ -223,11 +223,11 @@ export class CheckoutDetailsComponent implements OnInit, OnDestroy {
         this.dialogService.confirm({
           title: 'Session Expired',
           message: 'Your checkout session has expired. Would you like to go back to home or retry checkout?',
-          confirmText: 'Go To Dashboard',
+          confirmText: 'Go To Cart',
           cancelText: 'Retry'
         }).subscribe((confirmed: boolean) => {
           if (confirmed) {
-            this.router.navigate(['/']);
+            this.router.navigate(['/cart']);
           } else {
             // 💡 Reset logic on retry
             this.remainingTime.set(this.countdownMinutes * 60);

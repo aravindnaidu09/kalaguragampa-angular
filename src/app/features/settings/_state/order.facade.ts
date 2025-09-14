@@ -21,8 +21,8 @@ export class OrderFacade {
     return this.store.dispatch(new LoadOrders(filters));
   }
 
-  cancelOrder(deliveryId: number) {
-    return this.store.dispatch(new CancelOrder(deliveryId));
+  cancelOrder(id: number) {
+    return this.store.dispatch(new CancelOrder(id));
   }
 
   updateTrackingSignal(newStatus: any) {

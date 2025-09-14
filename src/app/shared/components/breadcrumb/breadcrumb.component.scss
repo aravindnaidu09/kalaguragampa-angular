@@ -1,29 +1,71 @@
+$brown: #682f12;
+
 .breadcrumb-nav {
-  display: flex;
-  align-items: center;
+  padding: 4px 6px;
   font-size: 14px;
   color: #5a5a5a;
-  padding-left: 5px;
-  margin-bottom: 5px;
+}
 
-  a.breadcrumb-link {
-    color: #555;
-    text-decoration: none;
-    margin-right: 4px;
-    transition: color 0.2s ease;
+.breadcrumb-list {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 
-    &:hover {
-      color: #682f12; // Kalagura Gampa brown
+  .breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0; // enable label truncation
+
+    // Separator via CSS, not extra span
+    & + .breadcrumb-item::before {
+      content: "/";
+      margin: 0 8px;
+      color: #9a9a9a;
     }
   }
+}
 
-  .breadcrumb-separator {
-    margin: 0 6px;
-    color: #999;
-  }
+.breadcrumb-link,
+.breadcrumb-text,
+.breadcrumb-current {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
 
-  .breadcrumb-current {
-    font-weight: 600;
-    color: #682f12; // Highlight last item
+.breadcrumb-link {
+  color: #555;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  &:hover { color: $brown; }
+}
+
+.breadcrumb-current {
+  font-weight: 600;
+  color: $brown;
+}
+
+.breadcrumb-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.breadcrumb-ellipsis {
+  color: #888;
+}
+
+/* Truncate long labels on small screens */
+@media (max-width: 768px) {
+  .breadcrumb-list .breadcrumb-item span[itemprop="name"] {
+    max-width: 150px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
   }
 }

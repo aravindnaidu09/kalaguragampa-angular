@@ -1,10 +1,37 @@
 <!-- breadcrumb.component.html -->
-<nav class="breadcrumb-nav" aria-label="breadcrumb">
-  <ng-container *ngFor="let crumb of breadcrumbs(); let last = last">
-    <ng-container *ngIf="!last">
-      <a [routerLink]="crumb.url" class="breadcrumb-link">{{ crumb.label }}</a>
-      <span class="breadcrumb-separator">/</span>
-    </ng-container>
-    <span *ngIf="last" class="breadcrumb-current">{{ crumb.label }}</span>
-  </ng-container>
+<nav class="breadcrumb-nav" aria-label="Breadcrumb">
+  <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+    <li class="breadcrumb-item" *ngFor="let crumb of viewCrumbs(); let i = index; let last = last"
+      itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+
+      <!-- Ellipsis (collapsed middle) -->
+      <ng-container *ngIf="crumb.label === '…'; else crumbTpl">
+        <span class="breadcrumb-ellipsis" aria-hidden="true">…</span>
+        <meta itemprop="position" [content]="positionAt(i)" />
+      </ng-container>
+
+      <ng-template #crumbTpl>
+        <!-- Non-last: link when url available -->
+        <a *ngIf="!last && isLink(crumb)" class="breadcrumb-link" [routerLink]="crumb.url"
+          [queryParams]="crumb.queryParams" itemprop="item" [attr.aria-label]="crumb.ariaLabel || crumb.label">
+          <mat-icon *ngIf="crumb.icon" aria-hidden="true" class="breadcrumb-icon">{{ crumb.icon }}</mat-icon>
+          <span itemprop="name">{{ crumb.label }}</span>
+        </a>
+
+        <!-- Non-last: plain text when no url -->
+        <span *ngIf="!last && !isLink(crumb)" class="breadcrumb-text">
+          <mat-icon *ngIf="crumb.icon" aria-hidden="true" class="breadcrumb-icon">{{ crumb.icon }}</mat-icon>
+          <span itemprop="name">{{ crumb.label }}</span>
+        </span>
+
+        <!-- Last: current page (no link) -->
+        <span *ngIf="last" class="breadcrumb-current" aria-current="page">
+          <mat-icon *ngIf="crumb.icon" aria-hidden="true" class="breadcrumb-icon">{{ crumb.icon }}</mat-icon>
+          <span itemprop="name">{{ crumb.label }}</span>
+        </span>
+
+        <meta itemprop="position" [content]="positionAt(i)" />
+      </ng-template>
+    </li>
+  </ol>
 </nav>

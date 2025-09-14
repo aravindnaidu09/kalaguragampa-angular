@@ -108,8 +108,8 @@ export class OrderCardComponent {
     this.router.navigate(['/review-product', item.id]);
   }
 
-  copyOrderId(orderId: number): void {
-    navigator.clipboard.writeText(orderId.toString()).then(() => {
+  copyOrderId(orderId: string): void {
+    navigator.clipboard.writeText(orderId).then(() => {
       this.toast.showSuccess('Order ID copied!');
     }).catch(() => {
       this.toast.showError('Failed to copy Order ID');
@@ -139,7 +139,7 @@ export class OrderCardComponent {
   }
 
 
-  onCancelOrder(deliveryId: number) {
+  onCancelOrder(id: number) {
     this.confirmService.confirm({
       title: 'Cancel Order',
       message: 'Are you sure you want to cancel this order?',
@@ -148,7 +148,7 @@ export class OrderCardComponent {
     }).subscribe((confirmed) => {
       if (confirmed) {
         this.cancelLoading = true;
-        this.orderFacade.cancelOrder(deliveryId).subscribe({
+        this.orderFacade.cancelOrder(id).subscribe({
           next: () => {
             this.cancelLoading = false;
 

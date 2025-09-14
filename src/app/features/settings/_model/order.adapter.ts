@@ -12,7 +12,11 @@ export function deserializeOrder(raw: any): IOrder {
     delivery_date: raw.delivery_date ?? null,
     delivery_status: raw.delivery_status ?? null,
     delivery_id: raw.delivery_id ?? null,
-    product: raw.product
+    product: raw.product,
+    awb_code: raw.awb_code,
+    receipt: raw.receipt,
+    shipment_number: raw.shipment_number,
+    order_status: raw.order_status
   };
 }
 
@@ -31,6 +35,10 @@ export function serializeOrder(order: IOrder): any {
     coupon_discount: order.coupon_discount,
     created_at: order.created_at,
     delivery_date: order.delivery_date,
-    delivery_status: order.delivery_status
+    delivery_status: order.delivery_status,
+    order_status: order.order_status,
+    awb_code: order.awb_code,
+    receipt: order.receipt,
+    shipment_number: order.shipment_number,
   };
 }

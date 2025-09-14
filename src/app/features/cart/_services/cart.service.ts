@@ -20,26 +20,25 @@ export class CartService {
    * ✅ Get current user's cart
    * Deserializes response to CartResponseItem (camelCase typed)
    */
-  getCart(
-    addressId?: number,
-    countryCode: string = 'IND',
-    opts?: { silent?: boolean }      // NEW
-  ) {
-    const params: any = {};
-    if (addressId !== undefined) params.address_id = addressId;
-    // if (countryCode) params.country_code = countryCode;
+  // cart.service.ts
+  getCart(addressId?: number, countryCode: string = 'IND', opts?: { silent?: boolean }) {
+    let params = new HttpParams();
+    if (addressId !== undefined && addressId !== null) {
+      params = params.set('address_id', String(addressId));   // ← conditional
+    }
+    // If your API needs country here, uncomment:
+    // params = params.set('country_code', countryCode);
 
-    const url = `${this.baseUrl}${CART_API_URLS.cart.getCart}`; // or `${this.baseUrl}${...}`
-    const options: { params: any; context?: HttpContext } = { params };
-    if (opts?.silent) options.context = SILENT_HTTP; // suppress global toast
+    const url = `${this.baseUrl}${CART_API_URLS.cart.getCart}`;
 
     return this.httpClient
-      .get<ApiResponse<any>>(url, options)
+      .get<ApiResponse<any>>(url, { params })                 // ← no HttpContext needed
       .pipe(map((response) => ({
         ...response,
-        data: deserializeCartResponse(response.data)
+        data: deserializeCartResponse(response.data),
       })));
   }
+
 
   /**
    * ✅ Clear entire cart

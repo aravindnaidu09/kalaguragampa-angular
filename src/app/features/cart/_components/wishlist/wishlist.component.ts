@@ -13,13 +13,15 @@ import { CartFacade } from '../../_state/cart.facade';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { BreadcrumbFacade } from '../../../../core/state/breadcrumb.facade';
 import { BreadcrumbComponent } from '../../../../shared/components/breadcrumb/breadcrumb.component';
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-wishlist',
   imports: [
     CommonModule,
     FormsModule,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    MatIconModule
   ],
   templateUrl: './wishlist.component.html',
   styleUrl: './wishlist.component.scss'
@@ -39,6 +41,8 @@ export class WishlistComponent implements OnInit {
   movingItemIds = new Set<number>();
   isBulkClearing = false;
   isBulkAdding = false;
+
+  animatingDeleteId: number | null = null;
 
   constructor(
     private readonly cartService: CartService,
@@ -99,7 +103,24 @@ export class WishlistComponent implements OnInit {
     this.gridView.set(!this.gridView());
   }
 
+  onRemoveClick(id: number) {
+    // play animation first
+    this.animatingDeleteId = id;
+
+    // let the lid pop & shake finish (≈420ms), then call your existing method
+    setTimeout(() => {
+      this.removeFromWishlist(id);
+    }, 420);
+
+    // clear the animating flag after full cycle
+    setTimeout(() => {
+      if (this.animatingDeleteId === id) this.animatingDeleteId = null;
+    }, 900);
+  }
+
   removeFromWishlist(productId: number): void {
+    this.animatingDeleteId = productId;
+
     this.confirmService.confirm({
       title: 'Remove Item',
       message: 'Are you sure you want to remove this item from the wishlist?',

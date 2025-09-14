@@ -13,6 +13,7 @@ import {
   OnChanges,
   signal,
   computed,
+  effect,
 } from '@angular/core';
 import { IProduct } from '../../_models/product-model';
 import { WishlistStore } from '../../_services/wishliststore';
@@ -26,11 +27,17 @@ import { Router } from '@angular/router';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { slugify } from '../../../../core/utils/slugify.utils';
 import { AppCurrencyPipe } from "../../../../core/pipes/app-currency.pipe";
+import { MatIconModule } from '@angular/material/icon';
+
+type Particle = { angle: string; dist: string; delay: number; hue: number };
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, AppCurrencyPipe],
+  imports: [
+    CommonModule,
+    MatIconModule
+  ],
   templateUrl: './product.component.html',
   styleUrl: './product.component.scss',
   providers: [
@@ -42,6 +49,8 @@ import { AppCurrencyPipe } from "../../../../core/pipes/app-currency.pipe";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductComponent {
+  @ViewChild('wishIcon', { static: false }) wishIcon!: ElementRef<HTMLDivElement>;
+
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   currencyService = inject(CurrencyService);
@@ -60,6 +69,48 @@ export class ProductComponent {
   @Output() addToCartEvent = new EventEmitter<IProduct>();
 
   isWishlistUpdating = false;
+  private prevWishlisted = false;
+
+  showBurst = false;
+  particles: Particle[] = [];
+
+  constructor() {
+    // Auto-burst when becomes wishlisted (and not updating)
+    effect(() => {
+      const now = this.isWishlistedSignal();
+      if (now && !this.prevWishlisted) {
+        this.triggerFirecracker();
+      }
+      this.prevWishlisted = now;
+    });
+  }
+
+  /** Call this after successful wishlist add */
+  triggerFirecracker(): void {
+    const N = 16; // number of particles
+    const particles: Particle[] = [];
+    for (let i = 0; i < N; i++) {
+      const base = (360 / N) * i;
+      const angle = base + (Math.random() * 14 - 7); // ±7°
+      const dist = 36 + Math.random() * 22; // 36–58px
+      const delay = Math.random() * 40; // 0–40ms
+      const hue = 18 + Math.floor(Math.random() * 24); // warm 18–42
+      particles.push({
+        angle: `${angle}deg`,
+        dist: `${dist}px`,
+        delay,
+        hue,
+      });
+    }
+    this.particles = particles;
+    this.showBurst = true;
+
+    // remove DOM after anim finishes so it doesn't stack
+    window.setTimeout(() => {
+      this.showBurst = false;
+      this.particles = [];
+    }, 650);
+  }
 
   readonly isWishlistedSignal = computed(() =>
     this.wishlistItems()?.some(
