@@ -3,6 +3,8 @@ export interface RazorpayOrder {
   id: string;
   amount: number;
   currency: string;
+  display_currency?: string; // e.g. 'USD'
+  display_amount?: number;   // e.g. 12.34 (major units)
 }
 
 export interface RazorpayPaymentResponse {

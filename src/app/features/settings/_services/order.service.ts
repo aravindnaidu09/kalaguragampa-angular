@@ -28,7 +28,7 @@ export class OrderService {
       .set('limit', filters.limit)
       .set('offset', filters.offset);
 
-    if (filters.status && filters.status !== 'all') params = params.set('status', filters.status);
+    if (filters.status && filters.status !== 'all') params = params.set('delivery_status', filters.status);
     if (filters.range && filters.range !== 'none') params = params.set('range', filters.range);
     if (filters.year && filters.year !== 'none') params = params.set('year', filters.year);
 

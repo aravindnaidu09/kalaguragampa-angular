@@ -25,6 +25,10 @@ import { OrderSuccessDialogComponent } from '../../../../shared/components/order
 import { ConfirmExit } from '../../../../core/guards/confirm-exit.guard';
 import { SessionExpiredComponent } from '../session-expired/session-expired.component';
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
+import { CurrencyService } from '../../../../core/services/currency.service';
+import { AddressLike, buildCreateOrderPayload, countryToCurrency, deriveShippingContext, enhanceRazorpayDisplay } from '../../../../core/utils/geo-currency.helper';
+
+// ✅ Use your helpers (path mirrors your existing import style)
 
 @Component({
   selector: 'app-checkout-details',
@@ -51,6 +55,7 @@ export class CheckoutDetailsComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private dialog = inject(MatDialog);
   private dialogService = inject(ConfirmDialogService);
+  private currencyService = inject(CurrencyService);
 
   currentStep = 0;
   formMode: 'add' | 'edit' = 'add';
@@ -128,7 +133,13 @@ export class CheckoutDetailsComponent implements OnInit, OnDestroy {
     this.selectedDeliveryOption = option;
   }
 
+  /* =========================
+     PAYMENT FLOW (uses helpers)
+     ========================= */
+
   makePayment() {
+    if (this.isProcessingPayment) return;
+
     const addressId = this.addressFacade.selectedAddressId();
     if (!addressId) {
       this.toastService.showWarning('Please select a delivery address');
@@ -137,31 +148,98 @@ export class CheckoutDetailsComponent implements OnInit, OnDestroy {
 
     this.isProcessingPayment = true;
 
-    const payload = {
-      total_amount: Number(this.cartFacade.cartSignal()?.totalAmount || 0),
-      address_id: addressId,
-      courier_company_id: '0',
-      country_code: 'IND'
+    // cart total in INR (major units as per your app rule)
+    const cartTotalInInr = Number(this.cartFacade.cartSignal()?.totalAmount || 0);
+    // shopper’s UI currency (AUD/USD/…/INR)
+    const uiCurrency = this.currencyService.getCurrency()().toUpperCase();
+
+    // Addresses source (signal) — optional chain to avoid breaking if facade differs
+    const addressesRaw: Address[] | undefined = this.addressFacade.addresses();
+    const addressesLike: AddressLike[] | undefined = addressesRaw?.map(a => this.toAddressLike(a));
+
+    const selectedAddressIdStr = String(addressId);
+
+    // ✅ Use your helper to derive authoritative shipping context
+    const { addressCountry, currencyCountry, mismatch } =
+      deriveShippingContext(addressesLike, selectedAddressIdStr, uiCurrency);
+
+    const proceed = () => {
+      // ✅ Build BE payload via helper (country from address, charge INR)
+      const payload = buildCreateOrderPayload(
+        cartTotalInInr,
+        selectedAddressIdStr,
+        addressCountry
+      );
+
+
+      const apiPayload: {
+        total_amount: number;
+        country_code: string;
+        address_id: number;
+        courier_company_id: string;
+      } = {
+        total_amount: payload.total_amount,
+        country_code: payload.country_code,
+        address_id: Number(payload.address_id),        // 👈 fix the type here
+        courier_company_id: payload.courier_company_id
+      };
+
+      this.paymentService.createOrder(apiPayload).subscribe({
+        next: (response) => {
+          // pass cart total + selected UI currency so we can compute display fields
+          this.launchRazorpay(response.data, cartTotalInInr, uiCurrency);
+          this.isProcessingPayment = false;
+        },
+        error: (err) => {
+          this.toastService.showError(err);
+          this.isProcessingPayment = false;
+        }
+      });
     };
 
-    this.paymentService.createOrder(payload).subscribe({
-      next: (response) => {
-        this.launchRazorpay(response.data);
-        this.isProcessingPayment = false;
-      },
-      error: (err) => {
-        this.toastService.showError(err);
-        this.isProcessingPayment = false;
-      }
-    });
+    // Guard mismatch with a professional prompt
+    if (mismatch) {
+      const addressCurrency = countryToCurrency(addressCountry);
+      this.dialogService.confirm({
+        title: 'Currency & address don’t match',
+        message: `Your shipping address is in ${addressCountry}, but prices are shown in ${uiCurrency}.
+For accurate totals, switch to ${addressCurrency} or change your shipping address.`,
+        confirmText: `Use ${addressCurrency}`,
+        cancelText: 'Change address'
+      }).subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          // Auto-heal: align UI currency with address country and continue
+          this.currencyService.setCurrency(addressCurrency);
+          proceed();
+        } else {
+          // Let user change address; keep state consistent
+          this.isProcessingPayment = false;
+          this.goToStep(0);
+        }
+      });
+      return; // wait for user choice
+    }
+
+    // No mismatch
+    proceed();
   }
 
-  private launchRazorpay(order: any): void {
-    const razorpayOrder: RazorpayOrder = {
+  // note: kept same signature; just enhanced using your helper
+  private launchRazorpay(order: any, cartTotalInInr: number, uiCurrency: string): void {
+    let razorpayOrder: RazorpayOrder = {
       id: order.payment_order_id,
+      // ⚠️ If backend already returns subunits, remove "* 100"
       amount: Number(order.amount) * 100,
-      currency: order.currency
+      currency: order.currency // 'INR'
     };
+
+    // ✅ Add display currency using your helper (visual only)
+    razorpayOrder = enhanceRazorpayDisplay(
+      razorpayOrder as any,
+      cartTotalInInr,
+      uiCurrency,
+      (inr, to) => this.currencyService.convertInr(inr, to)
+    ) as any;
 
     const userInfo = {
       name: this.authFacade.userSignal()?.full_name!,
@@ -244,6 +322,14 @@ export class CheckoutDetailsComponent implements OnInit, OnDestroy {
     const minutes = Math.floor(this.remainingTime() / 60);
     const seconds = this.remainingTime() % 60;
     return `${minutes}m ${seconds.toString().padStart(2, '0')}s`;
+  }
+
+  private toAddressLike(a: Address): AddressLike {
+    return {
+      id: a.id != null ? String(a.id) : undefined,   // number -> string
+      country_code: a.country ?? null,               // country -> country_code
+      is_default: !!a.isDefault                      // isDefault -> is_default
+    };
   }
 
   ngOnDestroy(): void {
