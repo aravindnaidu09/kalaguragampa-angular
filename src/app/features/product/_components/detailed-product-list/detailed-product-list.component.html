@@ -20,10 +20,9 @@
 
       <!-- ✅ Wishlist & Add to Cart -->
       <div class="product-actions">
-        <div class="wishlist-icon" (click)="toggleWishlist(product)" title="Toggle Wishlist">
-          <span *ngIf="isWishlisted(product.id!); else notWishlisted">❤️</span>
-          <ng-template #notWishlisted><span>🤍</span></ng-template>
-        </div>
+        <app-wishlist-button [active]="isWishlisted(product.id!)" [busy]="isWishlistUpdating(product.id!)"
+          (toggle)="toggleWishlist(product)">
+        </app-wishlist-button>
       </div>
 
       <div class="add-to-cart-wrapper d-flex">

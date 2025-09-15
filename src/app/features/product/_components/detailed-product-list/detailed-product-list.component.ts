@@ -13,11 +13,13 @@ import { IWishlist } from '../../_models/wishlist-model';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { Store } from '@ngxs/store';
 import { AddToCart } from '../../../cart/_state/cart.actions';
+import { WishlistButtonComponent } from "../../../../shared/components/wishlist-button/wishlist-button.component";
 
 @Component({
   selector: 'app-detailed-product-list',
   imports: [
     CommonModule,
+    WishlistButtonComponent
   ],
   templateUrl: './detailed-product-list.component.html',
   styleUrl: './detailed-product-list.component.scss'
@@ -36,8 +38,11 @@ export class DetailedProductListComponent implements OnInit, OnChanges {
 
   @Input() wishlistItems!: Signal<IWishlist[]>;
 
+  private _busy = signal<Set<number>>(new Set());
+  isWishlistUpdating = (id: number) => this._busy().has(id);
+
   constructor(private readonly productService: ProductService,
-     private readonly store: Store,
+    private readonly store: Store,
     private readonly router: Router,
     private readonly authService: AuthService,
     private readonly wishlistFacade: WishlistFacade,
@@ -55,19 +60,14 @@ export class DetailedProductListComponent implements OnInit, OnChanges {
     }
   }
 
-  isWishlisted(productId: number): boolean {
-    const items = this.wishlistFacade.wishlistItems();
-    return items?.some(item => item.productDetails?.id === productId) ?? false;
-  }
-
-addProductToCart(product: IProduct): void {
+  addProductToCart(product: IProduct): void {
     if (!this.authService.isAuthenticated()) {
       this.toastService.showWarning('Please log in to add items to your cart!');
       return;
     }
     this.store.dispatch(new AddToCart(product.id!, 1));
     this.toastService.showSuccess('Product added to cart successfully!');
-    }
+  }
 
   navigateToProductPage(item: IProduct) {
     this.router.navigate([`/product/${item.name}/${item.id}`]);
@@ -77,19 +77,46 @@ addProductToCart(product: IProduct): void {
    * ✅ Toggle Wishlist
    */
   toggleWishlist(product: IProduct): void {
-    if (!(this.authService.isAuthenticated())) {
+    // ev?.stopPropagation();
+
+    if (!this.authService.isAuthenticated()) {
       this.toastService.showWarning('Please log in to add items!');
       return;
     }
-    const isWishlisted = this.wishlistFacade.isInWishlistSignal(product.id!)();
 
-    if (isWishlisted) {
-      this.wishlistFacade.remove(product.id!).subscribe();
-    } else {
-      this.wishlistFacade.add(product.id!).subscribe(); ''
-    }
+    const id = product.id!;
+    if (this.isWishlistUpdating(id)) return; // guard against double click
+
+    const set = new Set(this._busy());
+    set.add(id);
+    this._busy.set(set);
+
+    const isIn = this.wishlistFacade.isInWishlistSignal(id)();
+
+    const obs = isIn
+      ? this.wishlistFacade.remove(id)
+      : this.wishlistFacade.add(id);
+
+    obs.subscribe({
+      next: () => {
+        // optional: toast success
+      },
+      error: (e) => {
+        this.toastService.showError('Wishlist action failed. Please try again.');
+        // optional: revert optimistic UI if you flipped anything locally
+      },
+      complete: () => {
+        const after = new Set(this._busy());
+        after.delete(id);
+        this._busy.set(after);
+      }
+    });
   }
 
+  isWishlisted(productId: number): boolean {
+    const items = this.wishlistFacade.wishlistItems();
+    return items?.some(i => i.productDetails?.id === productId) ?? false;
+  }
   /**
    * ✅ TrackBy for Performance
    */
