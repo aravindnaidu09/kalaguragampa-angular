@@ -15,6 +15,14 @@ export class CouponFacade {
   applied$: Observable<AppliedCoupon  | null> = this.store.select(CouponState.applied);
   error$: Observable<string | null | undefined> = this.store.select(CouponState.error);
 
+  appliedSignal = this.store.selectSignal(CouponState.applied);
+
+  // ✅ add a snapshot getter for places where you need a plain value (e.g., building payloads)
+  getAppliedCode(): string | null {
+    const a = this.store.selectSnapshot(CouponState.applied);
+    return a?.code?.trim() || null;
+  }
+
   loadAvailable(addressId?: number | null, countryCode: string = 'IND') {
     this.store.dispatch(new LoadAvailableCoupons({ addressId, countryCode }));
   }

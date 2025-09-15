@@ -10,6 +10,7 @@ import { ApplyCouponDialogComponent } from '../apply-coupon-dialog/apply-coupon-
 import { filter, take, tap } from 'rxjs/operators';
 import { AppCurrencyPipe } from '../../../../core/pipes/app-currency.pipe';
 import { CurrencyService } from '../../../../core/services/currency.service';
+import { rememberAppliedCoupon } from '../../../../core/utils/coupon-context.helper';
 
 @Component({
   selector: 'app-price-summary',
@@ -127,6 +128,7 @@ export class PriceSummaryComponent {
       .pipe(
         take(1),
         tap(() => {
+          // rememberAppliedCoupon(code);
           // Refresh cart totals after successful apply; support multiple facades
           this.cartFacade.loadCart?.().pipe(take(1)).subscribe?.() ||
           (this.cartFacade as any).refresh?.() ||

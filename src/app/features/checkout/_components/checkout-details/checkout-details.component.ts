@@ -27,6 +27,7 @@ import { SessionExpiredComponent } from '../session-expired/session-expired.comp
 import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
 import { AddressLike, buildCreateOrderPayload, countryToCurrency, deriveShippingContext, enhanceRazorpayDisplay } from '../../../../core/utils/geo-currency.helper';
+import { CouponFacade } from '../../../cart/_state/coupon.facade';
 
 // ✅ Use your helpers (path mirrors your existing import style)
 
@@ -56,6 +57,7 @@ export class CheckoutDetailsComponent implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
   private dialogService = inject(ConfirmDialogService);
   private currencyService = inject(CurrencyService);
+  private couponFacade = inject(CouponFacade);
 
   currentStep = 0;
   formMode: 'add' | 'edit' = 'add';
@@ -171,17 +173,19 @@ export class CheckoutDetailsComponent implements OnInit, OnDestroy {
         addressCountry
       );
 
-
+      const couponCode = this.couponFacade.getAppliedCode();
       const apiPayload: {
         total_amount: number;
         country_code: string;
         address_id: number;
         courier_company_id: string;
+        coupon_code?: string | null;
       } = {
         total_amount: payload.total_amount,
         country_code: payload.country_code,
         address_id: Number(payload.address_id),        // 👈 fix the type here
-        courier_company_id: payload.courier_company_id
+        courier_company_id: payload.courier_company_id,
+        ...(couponCode ? { coupon_code: couponCode } : {})
       };
 
       this.paymentService.createOrder(apiPayload).subscribe({

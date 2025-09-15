@@ -22,8 +22,10 @@ export class PaymentService {
     country_code: string;
     address_id: number;
     courier_company_id: string;
+    coupon_code?: string | null;
   }): Observable<ApiResponse<{ id: string; amount: number; currency: string }>> {
-    return this.http.post<ApiResponse<any>>(`${this.baseUrl}${PAYMENT_API_URLS.payment.createOrder}`, payload);
+    const body = payload.coupon_code ? payload : { ...payload, coupon_code: undefined };
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}${PAYMENT_API_URLS.payment.createOrder}`, body);
   }
 
   /**

@@ -25,19 +25,32 @@
       <div class="coupon-card" *ngFor="let c of coupons; trackBy: trackById">
         <div class="left">
           <div class="code">{{ c.code }}</div>
+
+          <!-- Keep preview/description as-is (often server-generated text). -->
           <div class="desc">{{ c.discount_preview || c.description }}</div>
+
           <div class="meta">
             <span *ngIf="c.coupon_type">{{ c.coupon_type | uppercase }}</span>
-            <span *ngIf="c.min_order_value">Min Order Value: ₹{{ c.min_order_value }}</span>
-            <span *ngIf="c.max_discount">Max Off: ₹{{ c.max_discount }}</span>
+
+            <!-- ✅ Format INR amounts using selected currency; passing currency() ensures reactivity -->
+            <span *ngIf="c.min_order_value">
+              Min Order Value: {{ fmt(c.min_order_value, currency()) }}
+            </span>
+
+            <span *ngIf="c.max_discount">
+              Max Off: {{ fmt(c.max_discount, currency()) }}
+            </span>
           </div>
+
           <div class="reason ineligible" *ngIf="c.ineligible_reason">{{ c.ineligible_reason }}</div>
         </div>
+
         <div class="right">
           <button class="btn-outline" (click)="pick(c)" [disabled]="!!c.ineligible_reason">Use</button>
         </div>
       </div>
     </ng-container>
+
     <ng-template #empty>
       <div class="empty">No coupons found for your cart.</div>
     </ng-template>

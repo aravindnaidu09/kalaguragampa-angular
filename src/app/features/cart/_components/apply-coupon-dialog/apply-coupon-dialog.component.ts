@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, Inject, Input } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, DestroyRef, inject, Input } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import { CouponFacade } from '../../_state/coupon.facade';
 import { Coupon } from '../../_models/coupon.model';
+import { CurrencyService } from '../../../../core/services/currency.service'; // ✅ add
 
 @Component({
   selector: 'app-apply-coupon-dialog',
@@ -21,6 +22,7 @@ export class ApplyCouponDialogComponent {
 
   private facade = inject(CouponFacade);
   private destroyRef = inject(DestroyRef);
+  private currencyService = inject(CurrencyService); // ✅ add
 
   code = new FormControl('', [Validators.required, Validators.minLength(3)]);
   available$ = this.facade.available$;
@@ -28,9 +30,12 @@ export class ApplyCouponDialogComponent {
   applying$ = this.facade.applying$;
   error$ = this.facade.error$;
 
+  // ✅ expose the selected currency as a signal for template reactivity
+  readonly currency = this.currencyService.getCurrency();
+
   constructor(
     private ref: MatDialogRef<ApplyCouponDialogComponent, string | null>
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.facade.loadAvailable(this.addressId ?? null, this.countryCode);
@@ -43,16 +48,17 @@ export class ApplyCouponDialogComponent {
   apply() {
     if (this.code.invalid) { this.code.markAsTouched(); return; }
     this.facade.applyCoupon(this.code.value!, this.countryCode);
-
     this.ref.close(this.code.value!.trim());
-    // let the caller close dialog on success (or close here once applied$ emits)
   }
 
   close(): void {
-    // this.ref.close(null);
     this.ref.close(null);
   }
 
   trackById = (_: number, c: Coupon) => c.id;
 
+  // ✅ tiny formatter that keeps all inputs in INR but *displays* as selected currency
+  fmt(amountInInr: number | string | undefined, code: string): string {
+    return this.currencyService.format(amountInInr, code);
+  }
 }
