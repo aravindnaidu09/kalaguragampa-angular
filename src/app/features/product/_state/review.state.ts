@@ -1,10 +1,11 @@
+// review.state.ts
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { tap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { EMPTY } from 'rxjs';
 import {
   SubmitReview, SubmitReviewFailure, SubmitReviewSuccess, ResetReviewState,
-  LoadProductById, LoadProductByIdSuccess, LoadProductByIdFailure,
+  // LoadProductById, LoadProductByIdSuccess, LoadProductByIdFailure,  <-- remove these
   SetReviewProduct
 } from './review.actions';
 import { ReviewProductInfo } from '../_models/add-review.model';
@@ -19,57 +20,39 @@ export interface ReviewStateModel {
 
 @State<ReviewStateModel>({
   name: 'review',
-  defaults: {
-    loading: false,
-    error: null,
-    submitted: false,
-    product: null
-  }
+  defaults: { loading: false, error: null, submitted: false, product: null }
 })
 @Injectable()
 export class ReviewState {
-  constructor(private reviewService: ReviewService) { }
+  constructor(private reviewService: ReviewService) {}
 
-  @Selector()
-  static isLoading(state: ReviewStateModel) {
-    return state.loading;
-  }
+  // Selectors
+  @Selector() static isLoading(s: ReviewStateModel)     { return s.loading; }
+  @Selector() static errorMessage(s: ReviewStateModel)  { return s.error; }       // string|null
+  @Selector() static isSubmitted(s: ReviewStateModel)   { return s.submitted; }
+  @Selector() static product(s: ReviewStateModel)       { return s.product; }
 
-  @Selector()
-  static hasError(state: ReviewStateModel) {
-    return !!state.error;
-  }
-
-  @Selector()
-  static isSubmitted(state: ReviewStateModel) {
-    return state.submitted;
-  }
-
-  @Selector()
-  static product(state: ReviewStateModel) {
-    return state.product;
-  }
-
+  // Submit Review
   @Action(SubmitReview)
-  submitReview(ctx: StateContext<ReviewStateModel>, action: SubmitReview) {
+  submitReview(ctx: StateContext<ReviewStateModel>, a: SubmitReview) {
     ctx.patchState({ loading: true, error: null, submitted: false });
-    return this.reviewService.addReview(action.id, action.payload).pipe(
+    return this.reviewService.addReview(a.id, a.payload).pipe(
       tap(() => ctx.dispatch(new SubmitReviewSuccess())),
       catchError(err => {
         ctx.dispatch(new SubmitReviewFailure(err?.message || 'Submit failed'));
-        return of();
+        return EMPTY;
       })
     );
   }
 
   @Action(SubmitReviewSuccess)
   submitSuccess(ctx: StateContext<ReviewStateModel>) {
-    ctx.patchState({ loading: false, submitted: true });
+    ctx.patchState({ loading: false, submitted: true, error: null });
   }
 
   @Action(SubmitReviewFailure)
-  submitFailure(ctx: StateContext<ReviewStateModel>, action: SubmitReviewFailure) {
-    ctx.patchState({ loading: false, error: action.error });
+  submitFailure(ctx: StateContext<ReviewStateModel>, a: SubmitReviewFailure) {
+    ctx.patchState({ loading: false, error: a.error, submitted: false });
   }
 
   @Action(ResetReviewState)
@@ -77,31 +60,10 @@ export class ReviewState {
     ctx.setState({ loading: false, error: null, submitted: false, product: null });
   }
 
-  // Add this inside the @State class:
   @Action(SetReviewProduct)
-  setProduct(ctx: StateContext<ReviewStateModel>, action: SetReviewProduct) {
-    ctx.patchState({ product: action.product });
+  setProduct(ctx: StateContext<ReviewStateModel>, a: SetReviewProduct) {
+    ctx.patchState({ product: a.product });
   }
 
-  // @Action(LoadProductById)
-  // loadProduct(ctx: StateContext<ReviewStateModel>, action: LoadProductById) {
-  //   ctx.patchState({ loading: true, error: null });
-  //   return this.reviewService.getProductById(action.productId).pipe(
-  //     tap((product: ReviewProductInfo) => ctx.dispatch(new LoadProductByIdSuccess(product))),
-  //     catchError(err => {
-  //       ctx.dispatch(new LoadProductByIdFailure(err?.message || 'Product not found'));
-  //       return of();
-  //     })
-  //   );
-  // }
-
-  @Action(LoadProductByIdSuccess)
-  loadProductSuccess(ctx: StateContext<ReviewStateModel>, action: LoadProductByIdSuccess) {
-    ctx.patchState({ product: action.product, loading: false });
-  }
-
-  @Action(LoadProductByIdFailure)
-  loadProductFail(ctx: StateContext<ReviewStateModel>, action: LoadProductByIdFailure) {
-    ctx.patchState({ loading: false, error: action.error });
-  }
+  // ⛔️ Remove LoadProductById handlers entirely
 }

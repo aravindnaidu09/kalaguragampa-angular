@@ -25,8 +25,15 @@ export class ReviewService {
   /**
    * Add a review for a product
    */
-  addReview(productId: number, review: any): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}${PRODUCT_API_URLS.product.reviews.add(productId)}`, review);
+  addReview(productId: number, review: { rating: number; description?: string; comment?: string; title?: string }): Observable<any> {
+    const payload = {
+      rating: review.rating,
+      comment: review.comment ?? review.description ?? ''   // map description -> comment
+    };
+    return this.httpClient.post(
+      `${this.baseUrl}${PRODUCT_API_URLS.product.reviews.add(productId)}`,
+      payload
+    );
   }
 
 }

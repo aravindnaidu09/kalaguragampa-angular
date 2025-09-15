@@ -97,16 +97,19 @@ export class OrderCardComponent {
   }
 
   reviewProduct(item: IOrderProduct) {
+    const id = Number(item.id);                   // make sure it's a number
+    if (!Number.isFinite(id)) { return; }         // optional guard
+
     const reviewProductInfo: ReviewProductInfo = {
-      id: item.id,
-      name: item.name,
-      image: item.images && item.images.length > 0 ? item.images[0] : '', // use first image if available
-      // add any other relevant fields if needed
+      id,
+      name: item.name ?? '',
+      image: item.images?.[0] ?? ''               // safe optional chaining
     };
 
     this.reviewFacade.setProduct(reviewProductInfo);
-    this.router.navigate(['/review-product', item.id]);
+    this.router.navigate(['/review-product', id]); // route should be /review-product/:id
   }
+
 
   copyOrderId(orderId: string): void {
     navigator.clipboard.writeText(orderId).then(() => {

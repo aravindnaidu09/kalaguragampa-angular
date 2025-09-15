@@ -1,28 +1,24 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { StarRatingComponent } from "../star-rating/star-rating.component";
-import { ReviewFormData, ReviewProductInfo } from '../../../_models/add-review.model';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ReviewFacade } from '../../../_state/review.facade';
-import { filter, Observable, take, withLatestFrom } from 'rxjs';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { StarRatingComponent } from '../star-rating/star-rating.component';
+import { ReviewFormData, ReviewProductInfo } from '../../../_models/add-review.model';
 import { environment } from '../../../../../../environments/environment.dev';
-import { ToastService } from '../../../../../core/services/toast.service';
+
+type ReviewForm = {
+  rating: FormControl<number>;
+  description: FormControl<string>;
+  title: FormControl<string>;
+};
 
 @Component({
   selector: 'app-add-review',
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    StarRatingComponent
-  ],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, StarRatingComponent],
   templateUrl: './add-review.component.html',
-  styleUrl: './add-review.component.scss'
+  styleUrls: ['./add-review.component.scss'],
 })
-export class AddReviewComponent {
-  private reviewFacade = inject(ReviewFacade);
-  private toastService = inject(ToastService);
-
+export class AddReviewComponent implements OnChanges {
   @Input() loading = false;
   @Input() submitted = false;
   @Input() error: string | null = null;
@@ -30,60 +26,36 @@ export class AddReviewComponent {
 
   @Output() submitReviewEmit = new EventEmitter<ReviewFormData>();
 
-  product$: Observable<ReviewProductInfo | null> = this.reviewFacade.product$;
+  private fb = inject(FormBuilder);
 
-  isSubmitting = false;
+  form = this.fb.nonNullable.group({
+    rating: this.fb.nonNullable.control(0, { validators: [Validators.min(1)] }),
+    description: this.fb.nonNullable.control('', { validators: [Validators.required, Validators.minLength(10)] }),
+    title: this.fb.nonNullable.control('')
+  });
 
-  formData: ReviewFormData = {
-    rating: 0,
-    description: '',
-    title: '',
-  };
+  ngOnChanges(changes: SimpleChanges): void {
+    // Reset when parent tells us submission succeeded
+    if (changes['submitted']?.currentValue === true) {
+      this.form.reset({ rating: 0, description: '', title: '' }, { emitEvent: false });
+    }
+  }
 
-
-  // submitReview() {
-  //   if (!this.formData.rating || !this.formData.description) {
-  //     alert('Please provide a rating and description.');
-  //     return;
-  //   }
-
-  //   console.log('Review Submitted', this.formData);
-  //   // TODO: Call backend service here
-
-  // }
+  /** Type-safe accessor: ensures `[formControl]` always receives a FormControl, not AbstractControl|null */
+  ctrl(name: 'rating'): FormControl<number>;
+  ctrl(name: 'description'): FormControl<string>;
+  ctrl(name: 'title'): FormControl<string>;
+  ctrl(name: keyof ReviewForm) {
+    return this.form.controls[name];
+  }
 
   submitReview(): void {
-    if (!this.formData.rating || !this.formData.description) {
-      this.toastService.showError('Please provide both rating and review text.');
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
-
-    this.isSubmitting = true;
-
-    this.reviewFacade.submitted$
-      .pipe(
-        withLatestFrom(this.reviewFacade.product$),
-        filter(([submitted, product]) => !!product && submitted === true),
-        take(1)
-      )
-      .subscribe(([_, product]) => {
-        this.toastService.showSuccess('Thank you! Your review has been submitted.');
-        this.resetForm();
-        this.isSubmitting = false;
-      });
-
-    // Dispatch after setting up the subscription
-    this.reviewFacade.product$
-      .pipe(take(1))
-      .subscribe(product => {
-        if (!product?.id) {
-          this.toastService.showError('Invalid product context.');
-          this.isSubmitting = false;
-          return;
-        }
-
-        this.reviewFacade.submitReview(product.id, this.formData);
-      });
+    const value = this.form.value as ReviewFormData;
+    this.submitReviewEmit.emit(value);
   }
 
   onImageError(event: Event): void {
@@ -91,19 +63,10 @@ export class AddReviewComponent {
   }
 
   getImagePath(imagePath?: string): string {
-    return imagePath?.trim()
-      ? `${environment.apiBaseUrl}${imagePath}`
-      : `${environment.apiBaseUrl}/media/KG_LOGO.png`;
-  }
-
-  resetForm(): void {
-    this.formData = {
-      rating: 0,
-      description: '',
-      title: ''
-    };
-    this.submitted = false;
-    this.error = null;
-    this.isSubmitting = false;
+    if (!imagePath || !imagePath.trim()) {
+      return `${environment.apiBaseUrl}/media/KG_LOGO.png`;
+    }
+    // normalize slashes
+    return `${environment.apiBaseUrl}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
   }
 }

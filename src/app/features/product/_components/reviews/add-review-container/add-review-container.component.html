@@ -1,2 +1,7 @@
-<app-add-review (submitReviewEmit)="handleSubmit(0, $event)" [loading]="(facade.loading$ | async) ?? false"
-  [submitted]="(facade.submitted$ | async) ?? false" [product]="facade.product$ | async" />
+<app-add-review
+  [loading]="(loading$ | async) ?? false"
+  [submitted]="(submitted$ | async) ?? false"
+  [product]="(product$ | async) ?? null"
+  [error]="(error$ | async) ?? null"
+  (submitReviewEmit)="handleSubmit($event)">
+</app-add-review>

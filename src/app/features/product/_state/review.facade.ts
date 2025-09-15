@@ -1,38 +1,29 @@
-import { inject, Injectable } from '@angular/core';
-import { Store, Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import {
-  SubmitReview,
-  ResetReviewState,
-  LoadProductById,
-  SetReviewProduct
-} from './review.actions';
-import { ReviewState } from './review.state';
-import { ReviewFormData, ReviewProductInfo } from '../_models/add-review.model';
+import { Injectable, inject } from "@angular/core";
+import { Store } from "@ngxs/store";
+import { ReviewFormData, ReviewProductInfo } from "../_models/add-review.model";
+import { SubmitReview, ResetReviewState, SetReviewProduct } from "./review.actions";
+import { ReviewState } from "./review.state";
 
+// review.facade.ts
 @Injectable({ providedIn: 'root' })
 export class ReviewFacade {
   private store = inject(Store);
 
-  loading$ = this.store.select(ReviewState.isLoading);
-  error$ = this.store.select(ReviewState.hasError);
+  loading$   = this.store.select(ReviewState.isLoading);
+  error$     = this.store.select(ReviewState.errorMessage); // string|null
   submitted$ = this.store.select(ReviewState.isSubmitted);
-  product$ = this.store.select(ReviewState.product);
-
+  product$   = this.store.select(ReviewState.product);
 
   submitReview(id: number, data: ReviewFormData) {
-    this.store.dispatch(new SubmitReview(id, data));
+    return this.store.dispatch(new SubmitReview(id, data));
   }
 
   reset() {
-    this.store.dispatch(new ResetReviewState());
+    return this.store.dispatch(new ResetReviewState());
   }
 
-  loadProductById(id: string) {
-    this.store.dispatch(new LoadProductById(id));
-  }
-
+  // ⛔️ Remove loadProductById — not needed for review submit
   setProduct(product: ReviewProductInfo) {
-    this.store.dispatch(new SetReviewProduct(product));
+    return this.store.dispatch(new SetReviewProduct(product));
   }
 }

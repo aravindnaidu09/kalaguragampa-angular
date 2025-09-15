@@ -1,4 +1,4 @@
-<div class="add-review-wrapper">
+<div class="add-review-wrapper" *ngIf="product as p">
   <!-- Left: Guidelines -->
   <aside class="guidelines">
     <h3>What makes a good review</h3>
@@ -10,20 +10,25 @@
   </aside>
 
   <!-- Right: Review Form -->
-  <section class="form-section" *ngIf="product$ | async as product">
+  <section class="form-section">
     <div class="product-meta">
-      <span class="product-name">{{ product?.name }}</span>
-      <img [src]="getImagePath(product?.image)" alt="{{ product.name }}" loading="lazy"
-        (error)="onImageError($event)" />
+      <span class="product-name">{{ p.name }}</span>
+      <img [src]="getImagePath(p.image)" alt="{{ p.name }}" loading="lazy" (error)="onImageError($event)" />
     </div>
 
-    <app-star-rating [(rating)]="formData.rating" />
+    <!-- star rating should support [(ngModel)] OR ControlValueAccessor; if it’s CVA, bind via formControlName -->
+    <app-star-rating [rating]="form.get('rating')!.value"
+      (ratingChange)="form.get('rating')!.setValue($event)"></app-star-rating>
 
-    <textarea [(ngModel)]="formData.description" placeholder="Description..." rows="5"></textarea>
-    <input [(ngModel)]="formData.title" placeholder="Title (optional)" />
+    <textarea class="form-control" placeholder="Write your experience (min 10 chars)…" rows="5"
+      [formControl]="ctrl('description')"></textarea>
 
+    <input class="form-control mt-2" placeholder="Title (optional)" [formControl]="ctrl('title')" />
 
-    <button class="submit-btn" (click)="submitReview()" [disabled]="isSubmitting">{{ isSubmitting ? 'Submitting...' :
-      'Submit Review' }}</button>
+    <button class="submit-btn mt-3" (click)="submitReview()" [disabled]="loading || form.invalid">
+      {{ loading ? 'Submitting…' : 'Submit Review' }}
+    </button>
+
+    <p class="text-danger mt-2" *ngIf="error">{{ error }}</p>
   </section>
 </div>
