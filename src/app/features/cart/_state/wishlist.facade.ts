@@ -35,15 +35,17 @@ export class WishlistFacade {
     this.store.dispatch(new WishlistActions.Clear());
   }
 
-  /** ✅ Return a reactive signal indicating if a product is wishlisted */
+  /** Reactive signal indicating if a product is in wishlist */
   isInWishlistSignal(productId: number): Signal<boolean> {
     return computed(() => {
-      if (typeof productId !== 'number' || isNaN(productId)) return false;
+      if (!Number.isFinite(productId)) return false;
 
-      const items: IWishlist[] = this.wishlistSignal();
-      return items.some(
-        item => item.isAddedInWishlist && item?.id === productId
-      );
+      const items = this.wishlistSignal() ?? [];
+      return items.some(item => {
+        const pid = item.productDetails?.id;           // <-- correct source of product id
+        const isAdded = item.isAddedInWishlist ?? true; // if undefined, treat as true
+        return isAdded && pid === productId;
+      });
     });
   }
 }

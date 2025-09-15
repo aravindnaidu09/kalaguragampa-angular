@@ -57,7 +57,7 @@ export class OrderHistoryComponent {
   /** single source of truth for statuses (includes aliases) */
   statusOptions: OrderStatusOption[] = [
     { key: 'all', label: 'All', color: '#6b7280' },
-    { key: 'Pending', label: 'Pending', color: '#0ea5e9' },
+    { key: 'pending', label: 'Pending', color: '#0ea5e9' },
     // { key: 'processing', label: 'Processing', color: '#0ea5e9', aliases: ['pending'] },
     // { key: 'picked_up', label: 'Picked Up', color: '#8b5cf6' },
     { key: 'in_transit', label: 'In Transit', color: '#f59e0b' },

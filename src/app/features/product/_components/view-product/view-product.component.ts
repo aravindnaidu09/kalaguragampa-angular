@@ -23,6 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { HtmlDecodePipe } from '../../../../core/pipes/html-decode.pipe';
 import { slugify } from '../../../../core/utils/slugify.utils';
+import { WishlistButtonComponent } from "../../../../shared/components/wishlist-button/wishlist-button.component";
 
 @Component({
   selector: 'app-view-product',
@@ -34,7 +35,8 @@ import { slugify } from '../../../../core/utils/slugify.utils';
     ProductComponent,
     BreadcrumbComponent,
     MatIconModule,
-    HtmlDecodePipe
+    HtmlDecodePipe,
+    WishlistButtonComponent
   ],
   templateUrl: './view-product.component.html',
   styleUrl: './view-product.component.scss',
@@ -89,6 +91,8 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
   @ViewChild('shareIconRef') shareIconRef!: ElementRef;
 
   isWishlistUpdating = false;
+  /** Optional helper if you want a function for busy binding by id */
+  isWishlistUpdatingById = (id?: number) => !!this.isWishlistUpdating;
 
   // burst state
   showBurst = false;
@@ -162,15 +166,30 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
     this.isScreenBetween996And400 = width <= 958 && width >= 320;
   }
 
+  // Build a reactive set of product ids currently wishlisted
+  readonly wishlistIds = computed(() => {
+    const items = this.wishlistFacade.wishlistSignal() ?? [];
+    return new Set(
+      items
+        .filter(it => (it.isAddedInWishlist ?? true) && typeof it.productDetails?.id === 'number')
+        .map(it => it.productDetails!.id as number)
+    );
+  });
+
+  readonly isWishlisted = computed(() => {
+    const id = this.product()?.id ?? -1;
+    return this.wishlistIds().has(id);
+  });
+
   constructor(@Inject(DOCUMENT) private document: Document) { }
 
   ngOnInit(): void {
     this.route.params
       .subscribe((params: any) => {
-        const productId = params['id'];
+        const productId = Number(params['id']);;
         console.log("Product ID from route params:", productId);
         this.product.set({ id: productId, name: params['name'] } as IProduct); // Set product id and empty name before fetching
-        this.fetchProductDetails(productId);
+        this.fetchProductDetails(String(productId));
       });
     this.checkScreenWidth();
     window.addEventListener('resize', () => {
@@ -426,7 +445,6 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    // prevent double taps while an API call is in-flight
     if (this.isWishlistUpdating) return;
     this.isWishlistUpdating = true;
 
@@ -436,43 +454,23 @@ export class ViewProductComponent implements OnInit, AfterViewInit {
       ? this.wishlistFacade.remove(productId)
       : this.wishlistFacade.add(productId);
 
-    op$
-      .pipe(take(1), finalize(() => (this.isWishlistUpdating = false)))
+    op$.pipe(take(1), finalize(() => (this.isWishlistUpdating = false)))
       .subscribe({
         next: () => {
-          // NGXS store/signal will flip after success.
-          // Trigger burst ONLY when we successfully add (false -> true).
+          // The computed `isWishlisted()` will flip automatically after NGXS updates.
           if (!wasWishlisted) {
-            this.playBurst(); // uses your spark/burst CSS
+            // If you're still using the inline heart block, keep this.
+            // If you migrated to <app-wishlist-button>, remove this call;
+            // the child component already pops the burst on active=true.
+            // this.playBurst?.();
           }
-
-          // optional toasts
-          // this.toastService.showSuccess(wasWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
         },
-        error: (err) => {
+        error: () => {
           this.toastService.showError('Could not update wishlist. Please try again.');
-          // no state change; button remains in previous state
-        },
+        }
       });
   }
 
-  private makeParticles(count = 14) {
-    // random, warm palette like your CSS comments (hue 14–42)
-    const rand = (min: number, max: number) => Math.random() * (max - min) + min;
-    return Array.from({ length: count }, (_, i) => ({
-      angle: `${rand(0, 360).toFixed(0)}deg`,
-      dist: `${rand(32, 56).toFixed(0)}px`,
-      delay: Math.round(i * 18 + rand(0, 50)),
-      hue: Math.round(rand(14, 42)),
-    }));
-  }
-
-  private playBurst() {
-    this.particles = this.makeParticles();
-    this.showBurst = true;
-    // match your keyframe ~680ms
-    setTimeout(() => (this.showBurst = false), 700);
-  }
 
   scrollLeft() {
     this.scrollContainer.nativeElement.scrollBy({ left: -300, behavior: 'smooth' });

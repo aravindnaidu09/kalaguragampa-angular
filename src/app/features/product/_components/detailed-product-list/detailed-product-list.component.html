@@ -28,7 +28,7 @@
       <div class="add-to-cart-wrapper d-flex">
         <!-- <div class="rating-cart-wrapper"> -->
         <div class="product-rating">
-          ({{ product.rating ?? 4.1 }}) ⭐ | 200
+          ({{ product.rating }}) ⭐ | {{ product.reviewsCount }}
         </div>
 
         <div class="add-to-cart-wrapper" (click)="addProductToCart(product)">

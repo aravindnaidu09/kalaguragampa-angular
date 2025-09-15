@@ -1,3 +1,5 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Component, effect, EventEmitter, input, Output, signal } from '@angular/core';
 import { MatIcon } from "@angular/material/icon";
 
@@ -5,7 +7,11 @@ type Particle = { angle: string; dist: string; delay: number; hue: number };
 
 @Component({
   selector: 'app-wishlist-button',
-  imports: [MatIcon],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatIcon],
   templateUrl: './wishlist-button.component.html',
   styleUrl: './wishlist-button.component.scss'
 })

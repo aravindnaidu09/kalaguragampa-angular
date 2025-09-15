@@ -1,21 +1,13 @@
- <button class="heart-btn"
-            type="button"
-            [disabled]="disabled() || busy()"
-            [class.active]="active()"
-            (click)="onClick($event)"
-            [attr.aria-pressed]="active()"
-            aria-label="Toggle wishlist">
-      <mat-icon class="heart-icon">
-        {{ active() ? 'favorite' : 'favorite_border' }}
-      </mat-icon>
+<button class="heart-btn" type="button" [disabled]="disabled() || busy()" [class.active]="active()"
+  (click)="onClick($event)" [attr.aria-pressed]="active()" aria-label="Toggle wishlist">
+  <mat-icon class="heart-icon">
+    {{ active() ? 'favorite' : 'favorite_border' }}
+  </mat-icon>
 
-      <div class="spinner mini" *ngIf="busy()"></div>
+  <div class="spinner mini" *ngIf="busy()"></div>
 
-      <div class="burst" *ngIf="showBurst()">
-        <i class="spark" *ngFor="let p of particles()"
-           [style.--angle]="p.angle"
-           [style.--dist]="p.dist"
-           [style.--delay.ms]="p.delay"
-           [style.--hue]="p.hue"></i>
-      </div>
-    </button>
+  <div class="burst" *ngIf="showBurst()">
+    <i class="spark" *ngFor="let p of particles()" [style.--angle]="p.angle" [style.--dist]="p.dist"
+      [style.--delay.ms]="p.delay" [style.--hue]="p.hue"></i>
+  </div>
+</button>
